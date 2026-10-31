@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 import { parseBody, eventCreateSchema } from "@/lib/validation";
 
@@ -25,8 +25,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const user = await getAuthUser(request);
+  if (!user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       ...rest,
       startDate: new Date(startDate),
       endDate: endDate ? new Date(endDate) : null,
-      hostId: session.user.id,
+      hostId: user.id,
     },
     include: {
       host: { select: { id: true, name: true, image: true } },

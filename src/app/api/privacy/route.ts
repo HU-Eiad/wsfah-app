@@ -1,25 +1,25 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth-mobile";
 import { parseBody, privacySchema } from "@/lib/validation";
 
-export async function GET() {
-  const session = await auth();
-  if (!session?.user?.id) {
+export async function GET(req: Request) {
+  const user = await getAuthUser(req);
+  if (!user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
+  const settings = await prisma.user.findUnique({
+    where: { id: user.id },
     select: { privacyFollowers: true, privacyLikes: true, privacySaved: true },
   });
 
-  return NextResponse.json(user);
+  return NextResponse.json(settings);
 }
 
 export async function PATCH(req: Request) {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const user = await getAuthUser(req);
+  if (!user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -39,7 +39,7 @@ export async function PATCH(req: Request) {
   }
 
   const updated = await prisma.user.update({
-    where: { id: session.user.id },
+    where: { id: user.id },
     data,
     select: { privacyFollowers: true, privacyLikes: true, privacySaved: true },
   });

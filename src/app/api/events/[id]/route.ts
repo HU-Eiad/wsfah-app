@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const session = await auth();
+  const user = await getAuthUser(request);
 
   const event = await prisma.event.findUnique({
     where: { id },
@@ -22,9 +22,9 @@ export async function GET(
   }
 
   let userRsvp = null;
-  if (session?.user?.id) {
+  if (user?.id) {
     const rsvp = await prisma.eventRsvp.findUnique({
-      where: { eventId_userId: { eventId: id, userId: session.user.id } },
+      where: { eventId_userId: { eventId: id, userId: user.id } },
     });
     userRsvp = rsvp?.status || null;
   }
@@ -33,11 +33,11 @@ export async function GET(
 }
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session?.user?.id) {
+  const user = await getAuthUser(request);
+  if (!user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -48,7 +48,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Event not found" }, { status: 404 });
   }
 
-  if (event.hostId !== session.user.id) {
+  if (event.hostId !== user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
