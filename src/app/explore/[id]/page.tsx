@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { use } from "react";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import BrandIcon from "@/components/BrandIcon";
 import FollowButton from "@/components/FollowButton";
 import CommentSection from "@/components/CommentSection";
 import BottomNav from "@/components/BottomNav";
@@ -99,43 +100,43 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
   if (!post) {
     return (
-      <div className="bg-background-light min-h-screen flex items-center justify-center">
+      <div className="bg-background-light text-espresso min-h-screen flex items-center justify-center p-6">
         <div className="text-center">
-          <MaterialIcon icon="error_outline" className="text-4xl text-red-400" />
-          <p className="text-sm text-slate-500 mt-2">المنشور غير موجود</p>
-          <Link href="/explore" className="text-primary text-sm font-bold mt-3 block">العودة للاستكشاف</Link>
+          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <p className="text-sm text-espresso/70">المنشور غير موجود</p>
+          <Link href="/explore" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">العودة للاستكشاف</Link>
         </div>
       </div>
     );
   }
 
   const displayName = post.company?.name || post.author.name || "مجهول";
-  const displayAvatar = post.company?.logo || post.author.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=25f459&color=fff&size=64`;
+  const displayAvatar = post.company?.logo || post.author.image || "/brand/banners/avatar-placeholder.svg";
   const profileLink = post.company ? `/brand/${post.company.id}` : "#";
   const followUserId = post.author.id;
   const isOwnPost = currentUserId === post.author.id;
 
   return (
-    <div className="bg-background-light font-display text-espresso min-h-screen flex flex-col">
+    <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center p-4 justify-between bg-background-light/80 backdrop-blur-md border-b border-primary/10">
-        <Link href="/explore" className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10">
-          <MaterialIcon icon="arrow_back" />
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link href="/explore" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">منشور</h2>
-        <button onClick={handleShare} className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10">
+        <h1 className="text-xl flex-1">منشور</h1>
+        <button onClick={handleShare} aria-label="مشاركة" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="share" />
         </button>
       </header>
 
-      <main className="flex-1 pb-24">
+      <main className="flex-1 pb-28">
         {/* Author Header */}
         <div className="flex items-center gap-3 p-4">
           <Link href={profileLink} className="shrink-0">
             <img
               src={displayAvatar}
               alt={displayName}
-              className="size-11 rounded-full object-cover border-2 border-primary/20"
+              className="size-11 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
             />
           </Link>
           <div className="flex-1 min-w-0">
@@ -143,8 +144,8 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
               <p className="font-bold text-sm truncate" dir="auto">{displayName}</p>
               {post.company && (
                 <div className="flex items-center gap-1">
-                  <MaterialIcon icon="verified" className="text-primary text-[10px]" filled />
-                  <span className="text-[10px] text-primary font-bold uppercase tracking-wider">علامة تجارية</span>
+                  <BrandIcon name="verified" className="text-primary text-xs" />
+                  <span className="text-xs text-primary font-semibold">علامة تجارية</span>
                 </div>
               )}
             </Link>
@@ -170,27 +171,28 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         </div>
 
         {/* Engagement Bar */}
-        <div className="flex items-center gap-4 px-4 py-3 border-b border-espresso/5">
+        <div className="flex items-center gap-4 px-4 py-3 border-b border-espresso/10">
           <button
             onClick={toggleLike}
             disabled={likeBusy}
+            aria-label={liked ? "إلغاء الإعجاب" : "أعجبني"}
             className="flex items-center gap-1.5 active:scale-95 transition-transform disabled:opacity-60"
           >
             <MaterialIcon
               icon="favorite"
               filled={liked}
-              className={`text-2xl ${liked ? "text-red-500" : "text-espresso/30"}`}
+              className={`text-2xl ${liked ? "text-red-500" : "text-espresso/60"}`}
             />
             <span className="text-sm font-bold tabular-nums">{likeCount}</span>
           </button>
 
-          <button onClick={handleShare} className="flex items-center gap-1.5 active:scale-95 transition-transform">
-            <MaterialIcon icon="send" className="text-2xl text-espresso/30" />
+          <button onClick={handleShare} aria-label="مشاركة" className="flex items-center gap-1.5 active:scale-95 transition-transform">
+            <MaterialIcon icon="send" className="text-2xl text-espresso/60" />
           </button>
 
-          <div className="ml-auto">
-            <span className="text-[10px] text-espresso/40 font-medium">
-              {new Date(post.createdAt).toLocaleDateString()}
+          <div className="ms-auto">
+            <span className="text-xs text-espresso/60">
+              {new Date(post.createdAt).toLocaleDateString("ar")}
             </span>
           </div>
         </div>
@@ -199,7 +201,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         {post.caption && (
           <div className="px-4 py-3">
             <p className="text-sm leading-relaxed" dir="auto">
-              <span className="font-bold mr-1">{displayName}</span>
+              <span dir="auto" className="font-bold me-1">{displayName}</span>
               {post.caption}
             </p>
           </div>

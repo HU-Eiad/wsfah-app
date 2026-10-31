@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { use } from "react";
 import { useRouter } from "next/navigation";
+import BrandIcon from "@/components/BrandIcon";
 import MaterialIcon from "@/components/MaterialIcon";
 import BottomNav from "@/components/BottomNav";
 import CommentSection from "@/components/CommentSection";
@@ -285,16 +286,16 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="bg-background-light font-display text-slate-900 min-h-screen">
+    <div className="bg-background-light text-slate-900 min-h-screen">
       {/* Nav */}
       <nav className="sticky top-0 z-50 flex items-center bg-background-light/80 backdrop-blur-md p-4 justify-between border-b border-primary/10">
         <Link
           href="/"
           className="text-slate-900 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 cursor-pointer"
         >
-          <MaterialIcon icon="arrow_back" />
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-slate-900 text-lg font-bold leading-tight tracking-tight flex-1 text-center">
+        <h2 className="text-slate-900 text-lg font-bold leading-tight flex-1 text-center">
           تفاصيل الوصفة
         </h2>
         <button
@@ -317,19 +318,19 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
         <div
           className="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden aspect-[4/3] relative"
           style={{
-            backgroundImage: `url("${recipe.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuDx0adClnNBdxpDHQhAkOyeuKjNOzDBU4Caybjfn5MlzVSfNiCNO-hsVCL2PIN-tYiHqlFOft3gKVAaTuFIARHvs0l1rxBpfUs3Y8BYF8rS4RywIhyxi4EUu3EAh7bp2Y9WX49L5iX0KDWzOtHAgiRAGdwM9kXnMr8PdEUEEdw6xYa--jHE9aXRqSugT_cjoEErbMkBEEv7TvUfzPLsf3v4-TJlVaSq9jHIV1dO70-1YfsFmVl0CsyeRcL2rnkKtpZkpEyj5xazZUdm"}")`,
+            backgroundImage: `url("${recipe.imageUrl || "/brand/banners/recipe-placeholder.svg"}")`,
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-pine/90 via-pine/30 to-transparent" />
           <div className="relative p-6">
             <div className="flex items-center gap-2 mb-2">
               {recipe.isFeatured && (
-                <span className="bg-primary text-background-dark text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full">
+                <span className="bg-primary text-on-primary text-[11px] font-bold px-2 py-0.5 rounded-full">
                   مميز
                 </span>
               )}
             </div>
-            <h1 dir="auto" className="text-white text-3xl font-extrabold leading-tight tracking-tight">
+            <h1 dir="auto" className="text-paper text-3xl md:text-4xl leading-snug">
               {recipe.title}
             </h1>
           </div>
@@ -342,7 +343,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               {recipe.isVerified && (
                 <div className="flex items-center gap-2 text-primary">
                   <MaterialIcon icon="verified" className="text-sm" />
-                  <p className="text-sm font-bold tracking-wide uppercase">شارة علامة تجارية موثقة</p>
+                  <p className="text-sm font-bold">شارة علامة تجارية موثقة</p>
                 </div>
               )}
               <div className="flex items-center gap-4 text-slate-600 text-sm font-medium">
@@ -351,8 +352,8 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                   <span>{recipe.difficulty}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <MaterialIcon icon="schedule" className="text-base" />
-                  <span>{recipe.brewTime || `${Math.ceil(recipe.brewTimeSeconds / 60)} mins`}</span>
+                  <BrandIcon name="timer" className="text-base" />
+                  <span>{recipe.brewTime || `${Math.ceil(recipe.brewTimeSeconds / 60)} د`}</span>
                 </div>
               </div>
             </div>
@@ -363,7 +364,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 onClick={toggleLike}
                 disabled={likeBusy}
                 className="flex items-center gap-1.5 cursor-pointer rounded-full h-10 px-3 border border-primary/20 hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-60"
-                aria-label={liked ? "Unlike recipe" : "Like recipe"}
+                aria-label={liked ? "إلغاء الإعجاب" : "أعجبني"}
               >
                 <MaterialIcon
                   icon="favorite"
@@ -376,7 +377,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 onClick={toggleSave}
                 disabled={saveBusy}
                 className="flex items-center justify-center cursor-pointer rounded-full size-10 border border-primary/20 hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-60"
-                aria-label={saved ? "Unsave recipe" : "Save recipe"}
+                aria-label={saved ? "إلغاء الحفظ" : "احفظ الوصفة"}
               >
                 <MaterialIcon
                   icon="bookmark"
@@ -387,7 +388,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               <button
                 onClick={() => setShowCollectionModal(true)}
                 className="flex items-center justify-center cursor-pointer rounded-full size-10 border border-primary/20 hover:bg-primary/5 active:scale-95 transition-all"
-                aria-label="Add to collection"
+                aria-label="أضف إلى مجموعة"
               >
                 <MaterialIcon
                   icon="collections_bookmark"
@@ -402,21 +403,21 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
             <div
               className="size-12 rounded-full bg-cover bg-center border-2 border-primary/20 shrink-0"
               style={{
-                backgroundImage: `url("${recipe.author.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(recipe.author.name || "User")}&background=25f459&color=fff&size=64`}")`,
+                backgroundImage: `url("${recipe.author.image || "/brand/banners/avatar-placeholder.svg"}")`,
               }}
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <p dir="auto" className="font-bold text-sm truncate">{recipe.author.name || "مجهول"}</p>
                 {recipe.author.role === "CREATOR" && (
-                  <span className="inline-flex items-center gap-0.5 bg-purple-100 text-purple-700 border border-purple-200 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest shrink-0">
-                    <MaterialIcon icon="verified" className="text-[10px]" filled />
+                  <span className="inline-flex items-center gap-0.5 bg-purple-100 text-purple-700 border border-purple-200 px-1.5 py-0.5 rounded-full text-[11px] font-bold shrink-0">
+                    <MaterialIcon icon="verified" className="text-[11px]" filled />
                     مبدع
                   </span>
                 )}
                 {recipe.brand && (
-                  <span className="inline-flex items-center gap-0.5 bg-amber-100 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest shrink-0">
-                    <MaterialIcon icon="storefront" className="text-[10px]" />
+                  <span className="inline-flex items-center gap-0.5 bg-amber-100 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full text-[11px] font-bold shrink-0">
+                    <MaterialIcon icon="storefront" className="text-[11px]" />
                     علامة تجارية
                   </span>
                 )}
@@ -424,8 +425,8 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               <p className="text-xs text-slate-500 flex items-center gap-1">
                 {recipe.brand?.name || recipe.category}
                 {recipe.author.avgRating > 0 && (
-                  <span className="flex items-center gap-0.5 ml-1">
-                    <MaterialIcon icon="star" className="text-[10px] text-primary" filled />
+                  <span className="flex items-center gap-0.5 ms-1">
+                    <MaterialIcon icon="star" className="text-[11px] text-crema" filled />
                     {recipe.author.avgRating.toFixed(1)}
                   </span>
                 )}
@@ -451,7 +452,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 </p>
               </div>
               <div className="flex items-center gap-1 bg-primary/10 px-3 py-1.5 rounded-full">
-                <MaterialIcon icon="star" className="text-primary text-sm" filled />
+                <MaterialIcon icon="star" className="text-crema text-sm" filled />
                 <span className="text-sm font-bold">{displayRating.toFixed(1)}</span>
               </div>
             </div>
@@ -469,7 +470,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                     icon="star"
                     filled={star <= (hoverRating || userRating || 0)}
                     className={`text-3xl transition-colors ${
-                      star <= (hoverRating || userRating || 0) ? "text-amber-400" : "text-slate-200"
+                      star <= (hoverRating || userRating || 0) ? "text-crema" : "text-espresso/15"
                     }`}
                   />
                 </button>
@@ -545,22 +546,22 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           )}
 
           {/* Servings */}
-          <div className="flex items-center justify-between mb-6 bg-slate-100 p-4 rounded-xl">
+          <div className="flex items-center justify-between bg-oat-milk p-4 rounded-xl">
             <div>
               <p className="text-sm font-bold">عدد الأكواب</p>
-              <p className="text-[10px] text-slate-500">يعدّل كميات المكونات</p>
+              <p className="text-[11px] text-slate-500">يعدّل كميات المكونات</p>
             </div>
             <div className="flex items-center gap-3 bg-background-light p-1 rounded-full border border-primary/20">
               <button
                 onClick={() => setCups((c) => Math.max(1, c - 1))}
-                className="size-8 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-background-dark transition-colors"
+                className="size-8 flex items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-on-primary transition-colors"
               >
                 <MaterialIcon icon="remove" />
               </button>
               <span className="text-base font-bold w-4 text-center">{cups}</span>
               <button
                 onClick={() => setCups((c) => c + 1)}
-                className="size-8 flex items-center justify-center rounded-full bg-primary text-background-dark hover:bg-primary/80 transition-colors"
+                className="size-8 flex items-center justify-center rounded-full bg-primary text-on-primary hover:bg-primary/80 transition-colors"
               >
                 <MaterialIcon icon="add" />
               </button>
@@ -569,29 +570,27 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
 
           {/* Brewing Parameters */}
           {recipe.brewParams && (
-            <section className="bg-primary/5 rounded-xl p-6 border border-primary/10">
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <MaterialIcon icon="settings_input_component" className="text-primary" />
-                معايير التحضير
-              </h3>
-              <div className="grid grid-cols-3 gap-4">
+            <section className="bg-surface rounded-[20px] p-6 border border-espresso/10">
+              <h3 className="font-display text-xl mb-5">معايير التحضير</h3>
+              <dl className="grid grid-cols-3 divide-x divide-espresso/10">
                 {[
-                  { label: "الحرارة", value: recipe.brewParams.temperature },
-                  { label: "النسبة", value: recipe.brewParams.ratio },
-                  { label: "الطحن", value: recipe.brewParams.grindSize },
+                  { icon: "thermometer", label: "الحرارة", value: recipe.brewParams.temperature },
+                  { icon: "scale", label: "النسبة", value: recipe.brewParams.ratio },
+                  { icon: "grind", label: "الطحن", value: recipe.brewParams.grindSize },
                 ].map((p) => (
-                  <div key={p.label} className="flex flex-col items-center p-3 bg-primary/10 rounded-lg border border-primary/20">
-                    <span className="text-[10px] text-primary/70 uppercase font-black mb-1 tracking-widest">{p.label}</span>
-                    <span dir="auto" className="text-base font-bold text-slate-900">{p.value}</span>
+                  <div key={p.label} className="flex flex-col items-center text-center gap-1.5 px-2">
+                    <BrandIcon name={p.icon} className="text-2xl text-primary" />
+                    <dt className="text-xs text-espresso/60">{p.label}</dt>
+                    <dd dir="auto" className="text-base font-bold">{p.value}</dd>
                   </div>
                 ))}
-              </div>
+              </dl>
 
               {/* Timer */}
-              <div className="mt-8 pt-6 border-t border-primary/10">
+              <div className="mt-6 pt-6 border-t border-espresso/10">
                 <div className="flex flex-col items-center">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-2">مؤقت التحضير</p>
-                  <div className="text-5xl font-extrabold tracking-tighter text-slate-900 mb-4 tabular-nums">
+                  <p className="text-xs font-semibold text-espresso/60 mb-2">مؤقت التحضير</p>
+                  <div className="font-display text-5xl text-espresso mb-4 tabular-nums">
                     {formatTime(timer)}
                   </div>
                   <div className="w-full h-2 bg-primary/10 rounded-full overflow-hidden mb-6">
@@ -603,7 +602,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setRunning(!running)}
-                      className="flex items-center gap-2 px-6 py-2.5 bg-primary text-background-dark rounded-full font-bold text-sm shadow-lg shadow-primary/20 active:scale-95 transition-transform"
+                      className="flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary rounded-full font-bold text-sm active:scale-95 transition-transform"
                     >
                       <MaterialIcon icon={running ? "pause" : "play_arrow"} filled className="text-lg" />
                       <span>{running ? "إيقاف" : "ابدأ"}</span>
@@ -626,7 +625,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
             {recipe.steps.length > 0 && (
               <button
                 onClick={() => setShowBrewMode(true)}
-                className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-background-dark font-bold text-sm hover:opacity-90 transition-opacity active:scale-95"
+                className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-on-primary font-bold text-sm hover:opacity-90 transition-opacity active:scale-95"
               >
                 <MaterialIcon icon="play_circle" className="text-xl" filled />
                 ابدأ وضع التحضير
@@ -646,7 +645,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
             <section>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold">المكونات</h3>
-                <span className="text-xs font-bold text-primary uppercase tracking-widest">
+                <span className="text-xs font-bold text-primary">
                   {recipe.ingredients.length} عنصر
                 </span>
               </div>
@@ -664,7 +663,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                         <p className="text-xs font-bold text-slate-700">
                           {(ing.baseAmount * cups).toFixed(ing.baseAmount % 1 === 0 ? 0 : 1)}{ing.unit}
                         </p>
-                        <span dir="auto" className="text-[10px] text-slate-500">{ing.name}</span>
+                        <span dir="auto" className="text-[11px] text-slate-500">{ing.name}</span>
                       </div>
                     </div>
                     <button className="text-primary hover:bg-primary/10 p-2 rounded-full transition-colors">
@@ -687,7 +686,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 {recipe.steps.map((s) => (
                   <div key={s.id} className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="size-8 rounded-full bg-primary text-background-dark flex items-center justify-center font-bold text-sm z-10">
+                      <div className="size-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm z-10">
                         {s.stepNumber}
                       </div>
                       <div className="w-0.5 h-full bg-primary/20 mt-1" />

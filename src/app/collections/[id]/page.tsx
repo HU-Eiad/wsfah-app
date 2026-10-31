@@ -94,7 +94,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
       setShowEditForm(false);
     } catch (error) {
       console.error("Error updating collection:", error);
-      alert("Failed to update collection");
+      alert("تعذّر تحديث المجموعة");
     } finally {
       setEditing(false);
     }
@@ -111,168 +111,176 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
   if (!collection) {
     return (
       <div className="bg-background-light min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <MaterialIcon icon="error_outline" className="text-4xl text-red-400" />
-          <p className="text-sm text-slate-500 mt-2">المجموعة غير موجودة</p>
-          <Link href="/collections" className="text-primary text-sm font-bold mt-3 block">العودة للمجموعات</Link>
+        <div className="text-center px-6">
+          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <p className="text-sm text-espresso/70 mb-4">المجموعة غير موجودة</p>
+          <Link href="/collections" className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">العودة للمجموعات</Link>
         </div>
       </div>
     );
   }
 
+  const inputClass =
+    "w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
+
   return (
-    <div className="bg-background-light font-display text-slate-900 min-h-screen pb-24">
+    <div className="bg-background-light text-espresso min-h-screen pb-28">
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center p-4 justify-between bg-background-light/80 backdrop-blur-md border-b border-primary/10">
-        <Link href="/collections" className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10">
-          <MaterialIcon icon="arrow_back" />
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link href="/collections" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk shrink-0">
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h1 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center truncate">
+        <h1 className="text-xl flex-1 truncate" dir="auto">
           {collection.name}
         </h1>
         {isOwner && (
           <button
             onClick={() => setShowEditForm(!showEditForm)}
-            className="flex items-center justify-center rounded-full size-10 hover:bg-primary/10"
+            aria-label="تعديل المجموعة"
+            className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk shrink-0"
           >
             <MaterialIcon icon="edit" />
           </button>
         )}
       </header>
 
-      {/* Edit Form */}
-      {showEditForm && isOwner && (
-        <div className="p-4 bg-white border-b border-primary/10">
-          <form onSubmit={handleUpdate} className="space-y-4">
-            <div>
-              <label className="block text-sm font-bold mb-2">الاسم</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                maxLength={100}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold mb-2">الوصف (اختياري)</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-                rows={3}
-                maxLength={500}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="isPublic"
-                checked={isPublic}
-                onChange={(e) => setIsPublic(e.target.checked)}
-                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-              />
-              <label htmlFor="isPublic" className="text-sm">
-                جعل المجموعة عامة
-              </label>
-            </div>
-            <div className="flex gap-3">
-              <button
-                type="submit"
-                disabled={editing || !name.trim()}
-                className="flex-1 py-3 bg-primary text-background-dark rounded-lg font-bold text-sm hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {editing ? "جاري الحفظ..." : "حفظ التغييرات"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowEditForm(false)}
-                disabled={editing}
-                className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
-              >
-                إلغاء
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+      <div className="max-w-5xl mx-auto">
+        {/* Edit Form */}
+        {showEditForm && isOwner && (
+          <div className="p-4">
+            <form onSubmit={handleUpdate} className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
+              <div>
+                <label htmlFor="collection-name" className="block text-xs font-semibold text-espresso/70 mb-2">الاسم</label>
+                <input
+                  id="collection-name"
+                  type="text"
+                  dir="auto"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className={inputClass}
+                  maxLength={100}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="collection-description" className="block text-xs font-semibold text-espresso/70 mb-2">الوصف (اختياري)</label>
+                <textarea
+                  id="collection-description"
+                  dir="auto"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className={`${inputClass} leading-relaxed resize-none`}
+                  rows={3}
+                  maxLength={500}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="isPublic"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="size-4 rounded accent-primary"
+                />
+                <label htmlFor="isPublic" className="text-sm">
+                  جعل المجموعة عامة
+                </label>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={editing || !name.trim()}
+                  className="flex-1 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {editing ? "جارٍ الحفظ…" : "حفظ التغييرات"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEditForm(false)}
+                  disabled={editing}
+                  className="border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm hover:border-primary/40 transition-colors disabled:opacity-50"
+                >
+                  إلغاء
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
 
-      {/* Collection Info */}
-      <div className="p-4">
-        {collection.description && (
-          <div className="mb-6">
-            <p className="text-gray-600 dark:text-gray-400" dir="auto">
+        {/* Collection Info */}
+        <div className="p-4">
+          {collection.description && (
+            <p className="text-sm text-espresso/70 leading-relaxed mb-4" dir="auto">
               {collection.description}
             </p>
-          </div>
-        )}
-
-        {/* Public/Private Badge */}
-        <div className="flex items-center gap-2 mb-6">
-          {collection.isPublic ? (
-            <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 border border-green-200 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
-              <MaterialIcon icon="public" className="text-xs" />
-              مجموعة عامة
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 border border-gray-200 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
-              <MaterialIcon icon="lock" className="text-xs" />
-              مجموعة خاصة
-            </span>
           )}
-          <span className="text-sm text-gray-500 dark:text-gray-400">
-            {collection.recipes.length} وصفات
-          </span>
-        </div>
 
-        {/* Recipes Grid */}
-        {collection.recipes.length === 0 ? (
-          <div className="text-center py-16">
-            <MaterialIcon icon="restaurant" className="text-6xl text-gray-300 dark:text-gray-600 mb-4" />
-            <p className="text-gray-500 dark:text-gray-400 mb-2">لا توجد وصفات بعد</p>
-            <p className="text-sm text-gray-400 dark:text-gray-500">
-              أضف وصفات لهذه المجموعة للبدء
-            </p>
+          {/* Public/Private Badge */}
+          <div className="flex items-center gap-2 mb-6">
+            {collection.isPublic ? (
+              <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs font-bold">
+                <MaterialIcon icon="public" className="text-xs" />
+                مجموعة عامة
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 bg-oat-milk text-espresso/70 px-3 py-1.5 rounded-full text-xs font-bold">
+                <MaterialIcon icon="lock" className="text-xs" />
+                مجموعة خاصة
+              </span>
+            )}
+            <span className="text-xs text-espresso/60">
+              {collection.recipes.length} وصفات
+            </span>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {collection.recipes.map(({ recipe }) => (
-              <Link
-                key={recipe.id}
-                href={`/recipe/${recipe.id}`}
-                className="block bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow"
-              >
-                <div
-                  className="aspect-[4/3] bg-cover bg-center"
-                  style={{
-                    backgroundImage: `url('${recipe.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuDx0adClnNBdxpDHQhAkOyeuKjNOzDBU4Caybjfn5MlzVSfNiCNO-hsVCL2PIN-tYiHqlFOft3gKVAaTuFIARHvs0l1rxBpfUs3Y8BYF8rS4RywIhyxi4EUu3EAh7bp2Y9WX49L5iX0KDWzOtHAgiRAGdwM9kXnMr8PdEUEEdw6xYa--jHE9aXRqSugT_cjoEErbMkBEEv7TvUfzPLsf3v4-TJlVaSq9jHIV1dO70-1YfsFmVl0CsyeRcL2rnkKtpZkpEyj5xazZUdm"}')`,
-                  }}
-                />
-                <div className="p-4">
-                  <h3 className="font-bold text-base mb-2 line-clamp-2" dir="auto">
-                    {recipe.title}
-                  </h3>
-                  <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-                    <span>{recipe.category}</span>
-                    <span>•</span>
-                    <span>{recipe.difficulty}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-0.5">
-                      <MaterialIcon icon="star" className="text-[10px] text-amber-400" filled />
-                      {recipe.rating > 0 ? recipe.rating.toFixed(1) : "بدون تقييم"}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-0.5">
-                      <MaterialIcon icon="favorite" className="text-[10px] text-red-400" filled />
-                      {recipe.likes}
-                    </span>
+
+          {/* Recipes Grid */}
+          {collection.recipes.length === 0 ? (
+            <div className="text-center py-12 px-6">
+              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <p className="text-sm text-espresso/70 leading-relaxed">
+                لا توجد وصفات في هذه المجموعة بعد. أضف وصفات إليها للبدء.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6">
+              {collection.recipes.map(({ recipe }) => (
+                <Link
+                  key={recipe.id}
+                  href={`/recipe/${recipe.id}`}
+                  className="flex flex-col gap-3"
+                >
+                  <div className="relative aspect-[4/3] rounded-[20px] overflow-hidden bg-pine">
+                    <img
+                      src={recipe.imageUrl || "/brand/banners/recipe-placeholder.svg"}
+                      alt=""
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+                  <div>
+                    <h3 className="font-bold text-sm leading-snug mb-1 line-clamp-2" dir="auto">
+                      {recipe.title}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-espresso/60">
+                      <span dir="auto">{recipe.category}</span>
+                      <span aria-hidden>•</span>
+                      <span dir="auto">{recipe.difficulty}</span>
+                      <span aria-hidden>•</span>
+                      <span className="flex items-center gap-0.5">
+                        <MaterialIcon icon="star" className="text-[11px] text-crema" filled />
+                        {recipe.rating > 0 ? recipe.rating.toFixed(1) : "بدون تقييم"}
+                      </span>
+                      <span aria-hidden>•</span>
+                      <span className="flex items-center gap-0.5">
+                        <MaterialIcon icon="favorite" className="text-[11px] text-red-500" filled />
+                        {recipe.likes}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <BottomNav />

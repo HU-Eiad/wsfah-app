@@ -27,7 +27,7 @@ export default function AdSlot({
     if (showPlaceholder) {
       return (
         <div className={`flex items-center justify-center py-2 ${className}`}>
-          <span className="text-[10px] text-slate-300 dark:text-slate-700">Ad-free experience</span>
+          <span className="text-[11px] text-espresso/50">تجربة بلا إعلانات</span>
         </div>
       );
     }

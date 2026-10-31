@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
+import MaterialIcon from "@/components/MaterialIcon";
 
 interface EventDetail {
   id: string;
@@ -64,7 +66,7 @@ export default function EventDetailPage() {
   }
 
   function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString(undefined, {
+    return new Date(dateStr).toLocaleDateString("ar", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -76,81 +78,120 @@ export default function EventDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400">جاري التحميل...</p>
+      <div className="min-h-screen bg-background-light flex items-center justify-center" role="status" aria-label="جارٍ التحميل…">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
       </div>
     );
   }
 
   if (!event) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400">الفعالية غير موجودة.</p>
+      <div className="min-h-screen bg-background-light text-espresso flex items-center justify-center p-6">
+        <div className="text-center">
+          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <p className="text-sm text-espresso/70">الفعالية غير موجودة.</p>
+          <Link href="/events" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">
+            كل الفعاليات
+          </Link>
+        </div>
       </div>
     );
   }
 
+  const start = new Date(event.startDate);
+
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
-      <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="min-h-screen bg-background-light text-espresso">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link href="/events" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <MaterialIcon icon="arrow_forward" />
+        </Link>
+        <h1 className="text-xl flex-1">الفعالية</h1>
+      </header>
+
+      <div className="max-w-3xl mx-auto px-4 py-5">
         {event.imageUrl && (
           <img
             src={event.imageUrl}
             alt={event.title}
-            className="w-full h-64 object-cover rounded-lg mb-6"
+            className="w-full h-64 object-cover rounded-[20px] mb-6"
           />
         )}
 
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{event.title}</h1>
+        <div className="flex items-start gap-4">
+          <div className="shrink-0 w-16 rounded-2xl bg-primary/10 text-primary flex flex-col items-center justify-center py-2.5" aria-hidden>
+            <span className="font-display text-3xl leading-none">
+              {start.toLocaleDateString("ar", { day: "numeric" })}
+            </span>
+            <span className="text-xs font-semibold mt-1">
+              {start.toLocaleDateString("ar", { month: "short" })}
+            </span>
+          </div>
+          <h2 dir="auto" className="text-2xl leading-snug flex-1 pt-1">{event.title}</h2>
+        </div>
 
-        <div className="mt-4 space-y-2">
-          <p className="text-[#25f459] font-medium">{formatDate(event.startDate)}</p>
-          {event.endDate && (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              to {formatDate(event.endDate)}
-            </p>
-          )}
+        <div className="mt-5 bg-surface rounded-2xl border border-espresso/10 p-4 space-y-3 text-sm">
+          <div className="flex items-start gap-3">
+            <MaterialIcon icon="schedule" className="text-xl text-primary shrink-0" />
+            <div>
+              <p className="font-semibold">{formatDate(event.startDate)}</p>
+              {event.endDate && (
+                <p className="text-xs text-espresso/60 mt-0.5">
+                  حتى {formatDate(event.endDate)}
+                </p>
+              )}
+            </div>
+          </div>
           {event.location && (
-            <p className="text-gray-600 dark:text-gray-400">{event.location}</p>
+            <div className="flex items-start gap-3">
+              <MaterialIcon icon="location_on" className="text-xl text-primary shrink-0" />
+              <p dir="auto" className="text-espresso/70">{event.location}</p>
+            </div>
           )}
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            بواسطة {event.host.name || "غير معروف"}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {event._count.rsvps} {event._count.rsvps === 1 ? "حاضر" : "حاضرين"}
-          </p>
+          <div className="flex items-start gap-3">
+            <MaterialIcon icon="person" className="text-xl text-primary shrink-0" />
+            <p className="text-espresso/70">
+              بواسطة <span dir="auto" className="font-semibold text-espresso">{event.host.name || "غير معروف"}</span>
+            </p>
+          </div>
+          <div className="flex items-start gap-3">
+            <MaterialIcon icon="group" className="text-xl text-primary shrink-0" />
+            <p className="text-espresso/70">
+              {event._count.rsvps} {event._count.rsvps === 1 ? "حاضر" : "حاضرين"}
+            </p>
+          </div>
         </div>
 
         {event.description && (
-          <div className="mt-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">عن الفعالية</h2>
-            <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+          <section className="mt-6">
+            <h2 className="text-xl mb-3">عن الفعالية</h2>
+            <p dir="auto" className="text-sm text-espresso/70 leading-relaxed whitespace-pre-wrap">
               {event.description}
             </p>
-          </div>
+          </section>
         )}
 
         {/* RSVP buttons */}
-        <div className="mt-6 flex gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <button
             onClick={() => handleRsvp("GOING")}
             disabled={rsvpLoading}
-            className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-5 py-3 rounded-xl text-sm border transition-colors disabled:opacity-50 ${
               event.userRsvp === "GOING"
-                ? "bg-[#25f459] text-gray-900"
-                : "border border-[#25f459] text-[#25f459] hover:bg-[#25f459] hover:text-gray-900"
-            } disabled:opacity-50`}
+                ? "bg-primary text-on-primary border-transparent font-bold hover:bg-primary/90"
+                : "border-espresso/15 font-semibold hover:border-primary/40"
+            }`}
           >
             {event.userRsvp === "GOING" ? "سأحضر" : "سأحضر"}
           </button>
           <button
             onClick={() => handleRsvp("INTERESTED")}
             disabled={rsvpLoading}
-            className={`px-5 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-5 py-3 rounded-xl text-sm border transition-colors disabled:opacity-50 ${
               event.userRsvp === "INTERESTED"
-                ? "bg-yellow-500 text-gray-900"
-                : "border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-gray-900"
-            } disabled:opacity-50`}
+                ? "bg-primary text-on-primary border-transparent font-bold hover:bg-primary/90"
+                : "border-espresso/15 font-semibold hover:border-primary/40"
+            }`}
           >
             مهتم
           </button>
@@ -158,7 +199,7 @@ export default function EventDetailPage() {
             <button
               onClick={() => handleRsvp(event.userRsvp as "GOING" | "INTERESTED")}
               disabled={rsvpLoading}
-              className="px-5 py-2 rounded-lg text-sm font-medium border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50"
+              className="px-5 py-3 rounded-xl text-sm border transition-colors disabled:opacity-50 border-red-600/40 text-red-600 font-semibold hover:bg-red-50"
             >
               إلغاء
             </button>

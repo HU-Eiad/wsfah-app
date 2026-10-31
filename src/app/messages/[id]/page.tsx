@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import MaterialIcon from "@/components/MaterialIcon";
 
 interface MessageData {
   id: string;
@@ -82,24 +83,23 @@ export default function ConversationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 flex flex-col">
+    <div className="min-h-screen bg-background-light text-espresso flex flex-col">
       {/* Header */}
-      <div className="border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center gap-3">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <button
           onClick={() => router.push("/messages")}
-          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+          aria-label="رجوع"
+          className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
+          <MaterialIcon icon="arrow_forward" />
         </button>
-        <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h1 dir="auto" className="text-xl flex-1 truncate">
           {otherUser?.name || "محادثة"}
         </h1>
-      </div>
+      </header>
 
       {/* Messages */}
-      <div ref={containerRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+      <div ref={containerRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
         {messages.map((msg) => {
           const isOwn = msg.sender.id === currentUserId;
           return (
@@ -108,21 +108,21 @@ export default function ConversationPage() {
               className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[75%] rounded-2xl px-4 py-2 ${
+                className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
                   isOwn
-                    ? "bg-[#25f459] text-gray-900"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
+                    ? "bg-primary text-on-primary rounded-ee-md"
+                    : "bg-surface border border-espresso/10 text-espresso rounded-es-md"
                 }`}
               >
                 {!isOwn && (
-                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                  <p dir="auto" className="text-xs font-semibold text-primary mb-1">
                     {msg.sender.name}
                   </p>
                 )}
-                <p className="text-sm whitespace-pre-wrap break-words">{msg.body}</p>
+                <p dir="auto" className="text-sm leading-relaxed whitespace-pre-wrap break-words">{msg.body}</p>
                 <p
-                  className={`text-xs mt-1 ${
-                    isOwn ? "text-gray-700" : "text-gray-400 dark:text-gray-500"
+                  className={`text-[11px] mt-1 ${
+                    isOwn ? "text-on-primary/70" : "text-espresso/60"
                   }`}
                 >
                   {new Date(msg.createdAt).toLocaleTimeString([], {
@@ -140,19 +140,21 @@ export default function ConversationPage() {
       {/* Input */}
       <form
         onSubmit={handleSend}
-        className="border-t border-gray-200 dark:border-gray-800 px-4 py-3 flex gap-2"
+        className="sticky bottom-0 bg-background-light/95 backdrop-blur-md border-t border-espresso/10 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex gap-2"
       >
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="اكتب رسالة..."
-          className="flex-1 rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
+          placeholder="اكتب رسالة…"
+          aria-label="اكتب رسالة"
+          dir="auto"
+          className="flex-1 min-w-0 bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
         <button
           type="submit"
           disabled={!input.trim() || sending}
-          className="bg-[#25f459] text-gray-900 rounded-full px-5 py-2 text-sm font-medium hover:bg-[#1de04d] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="bg-primary text-on-primary rounded-xl px-5 py-3 text-sm font-bold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           إرسال
         </button>

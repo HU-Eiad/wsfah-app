@@ -32,29 +32,30 @@ export default function StoriesBar() {
 
   return (
     <>
-      <div className="flex gap-4 overflow-x-auto px-4 py-3 scrollbar-hide">
+      <div className="flex gap-4 overflow-x-auto px-4 py-3 no-scrollbar">
         {groups.map((group) => (
           <button
             key={group.company.id}
             onClick={() => setActiveStories(group.stories)}
-            className="flex flex-col items-center gap-1 shrink-0"
+            aria-label={`قصص ${group.company.name}`}
+            className="flex flex-col items-center gap-1.5 shrink-0 w-16"
           >
-            <div className="w-[60px] h-[60px] rounded-full p-[2px] bg-gradient-to-tr from-[#25f459] to-[#25f459]/60">
-              <div className="w-full h-full rounded-full bg-white dark:bg-slate-900 p-[2px]">
+            <div className="size-[60px] rounded-full ring-2 ring-primary ring-offset-2 ring-offset-background-light">
+              <div className="w-full h-full rounded-full bg-oat-milk overflow-hidden">
                 {group.company.logo ? (
                   <img
                     src={group.company.logo}
-                    alt={group.company.name}
+                    alt=""
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-sm font-bold text-slate-600 dark:text-slate-300">
+                  <div className="w-full h-full rounded-full flex items-center justify-center font-display text-xl text-forest dark:text-primary" aria-hidden>
                     {group.company.name.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
             </div>
-            <span className="text-xs text-slate-600 dark:text-slate-400 max-w-[64px] truncate">
+            <span dir="auto" className="text-[11px] font-medium text-espresso/70 max-w-full truncate" aria-hidden>
               {group.company.name}
             </span>
           </button>

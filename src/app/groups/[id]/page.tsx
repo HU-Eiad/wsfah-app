@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
+import MaterialIcon from "@/components/MaterialIcon";
 
 interface GroupDetail {
   id: string;
@@ -104,55 +106,68 @@ export default function GroupDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400">جاري التحميل...</p>
+      <div className="min-h-screen bg-background-light flex items-center justify-center" role="status" aria-label="جارٍ التحميل…">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
       </div>
     );
   }
 
   if (!group) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-950 flex items-center justify-center">
-        <p className="text-gray-500 dark:text-gray-400">المجموعة غير موجودة.</p>
+      <div className="min-h-screen bg-background-light text-espresso flex items-center justify-center p-6">
+        <div className="text-center">
+          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <p className="text-sm text-espresso/70">المجموعة غير موجودة.</p>
+          <Link href="/groups" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">
+            كل المجموعات
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
-      <div className="max-w-3xl mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{group.name}</h1>
+    <div className="min-h-screen bg-background-light text-espresso">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link href="/groups" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <MaterialIcon icon="arrow_forward" />
+        </Link>
+        <h1 dir="auto" className="text-xl flex-1 truncate">{group.name}</h1>
+      </header>
+
+      <div className="max-w-3xl mx-auto px-4 py-5">
+        {/* Group info */}
+        <section className="bg-surface rounded-2xl border border-espresso/10 p-4 mb-6">
           {group.description && (
-            <p className="text-gray-600 dark:text-gray-400 mt-2">{group.description}</p>
+            <p dir="auto" className="text-sm text-espresso/70 leading-relaxed">{group.description}</p>
           )}
-          <div className="flex items-center gap-4 mt-3">
-            <span className="text-sm text-gray-500 dark:text-gray-400">
+          <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-espresso/60 ${group.description ? "mt-3" : ""}`}>
+            <span className="flex items-center gap-1">
+              <MaterialIcon icon="group" className="text-sm" />
               {group._count.members} {group._count.members === 1 ? "عضو" : "أعضاء"}
             </span>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              أنشأها {group.creator.name || "غير معروف"}
+            <span>
+              أنشأها <span dir="auto">{group.creator.name || "غير معروف"}</span>
             </span>
           </div>
           <div className="mt-4">
             {isMember ? (
               <button
                 onClick={handleLeave}
-                className="border border-red-500 text-red-500 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-500 hover:text-white transition-colors"
+                className="border border-red-600/40 text-red-600 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-red-50 transition-colors"
               >
                 مغادرة المجموعة
               </button>
             ) : (
               <button
                 onClick={handleJoin}
-                className="bg-[#25f459] text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#1de04d] transition-colors"
+                className="bg-primary text-on-primary px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors"
               >
                 انضم للمجموعة
               </button>
             )}
           </div>
-        </div>
+        </section>
 
         {/* Post composer */}
         {isMember && (
@@ -160,64 +175,72 @@ export default function GroupDetailPage() {
             <textarea
               value={postBody}
               onChange={(e) => setPostBody(e.target.value)}
-              placeholder="اكتب شيئاً للمجموعة..."
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#25f459] resize-none"
+              placeholder="اكتب شيئاً للمجموعة…"
+              aria-label="منشور جديد"
+              dir="auto"
+              className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm leading-relaxed placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
               rows={3}
             />
-            <button
-              type="submit"
-              disabled={!postBody.trim() || posting}
-              className="mt-2 bg-[#25f459] text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#1de04d] disabled:opacity-50 transition-colors"
-            >
-              {posting ? "جاري النشر..." : "نشر"}
-            </button>
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={!postBody.trim() || posting}
+                className="mt-2 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-colors"
+              >
+                {posting ? "جارٍ النشر…" : "نشر"}
+              </button>
+            </div>
           </form>
         )}
 
         {/* Posts */}
+        <h2 className="text-xl mb-4">المنشورات</h2>
         <div className="space-y-4">
           {posts.length === 0 ? (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-              لا توجد منشورات بعد. كن أول من يشارك شيئاً!
-            </p>
+            <div className="text-center py-8">
+              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <p className="text-sm text-espresso/70">
+                لا توجد منشورات بعد. كن أول من يشارك شيئاً!
+              </p>
+            </div>
           ) : (
             posts.map((post) => (
-              <div
+              <article
                 key={post.id}
-                className="border border-gray-200 dark:border-gray-800 rounded-lg p-4"
+                className="bg-surface rounded-2xl border border-espresso/10 p-4"
               >
                 <div className="flex items-center gap-3 mb-3">
                   {post.author.image ? (
                     <img
                       src={post.author.image}
                       alt=""
-                      className="w-8 h-8 rounded-full object-cover"
+                      className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 text-sm font-semibold">
+                    <div className="size-10 rounded-full bg-oat-milk flex items-center justify-center text-forest dark:text-primary font-display text-base" aria-hidden>
                       {post.author.name?.[0]?.toUpperCase() || "?"}
                     </div>
                   )}
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <div className="min-w-0">
+                    <p dir="auto" className="text-sm font-bold truncate">
                       {post.author.name || "غير معروف"}
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500">
-                      {new Date(post.createdAt).toLocaleDateString()}
+                    <p className="text-xs text-espresso/60">
+                      {new Date(post.createdAt).toLocaleDateString("ar")}
                     </p>
                   </div>
                 </div>
-                <p className="text-gray-800 dark:text-gray-200 text-sm whitespace-pre-wrap">
+                <p dir="auto" className="text-sm leading-relaxed whitespace-pre-wrap">
                   {post.body}
                 </p>
                 {post.imageUrl && (
                   <img
                     src={post.imageUrl}
                     alt=""
-                    className="mt-3 rounded-lg max-h-96 object-cover"
+                    className="mt-3 rounded-[20px] max-h-96 w-full object-cover"
                   />
                 )}
-              </div>
+              </article>
             ))
           )}
         </div>

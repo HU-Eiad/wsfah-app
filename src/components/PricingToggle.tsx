@@ -144,22 +144,25 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
     <div>
       {/* Toggle */}
       <div className="flex items-center justify-center gap-3 mb-10">
-        <span className={`text-sm font-bold ${interval === "monthly" ? "opacity-100" : "opacity-40"}`}>
+        <span className={`text-sm font-semibold ${interval === "monthly" ? "text-espresso" : "text-espresso/60"}`}>
           شهري
         </span>
         <button
           onClick={() => setInterval(interval === "monthly" ? "yearly" : "monthly")}
+          role="switch"
+          aria-checked={interval === "yearly"}
+          aria-label="الفوترة السنوية"
           className={`relative w-14 h-7 rounded-full transition-colors ${
             interval === "yearly" ? (isGold ? "bg-brand-gold" : "bg-primary") : "bg-espresso/20"
           }`}
         >
           <div
-            className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-all ${
-              interval === "yearly" ? "left-0.5" : "left-[calc(100%-26px)]"
+            className={`absolute top-0.5 w-6 h-6 bg-surface rounded-full shadow-sm transition-all ${
+              interval === "yearly" ? "end-0.5" : "start-0.5"
             }`}
           />
         </button>
-        <span className={`text-sm font-bold ${interval === "yearly" ? "opacity-100" : "opacity-40"}`}>
+        <span className={`text-sm font-semibold ${interval === "yearly" ? "text-espresso" : "text-espresso/60"}`}>
           سنوي
         </span>
         {interval === "yearly" && (
@@ -179,57 +182,55 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
           const href = typeof plan.href === "string" ? plan.href : plan.href[interval];
           const cta = typeof plan.cta === "string" ? plan.cta : plan.cta[interval];
           const showYearlySaving = interval === "yearly" && plan.yearlyBadge && price !== "0" && price !== "مخصص";
-          const accentColor = isGold ? "brand-gold" : "primary";
 
           return (
             <div
               key={plan.name}
-              className={`rounded-2xl p-8 border transition-all ${
+              className={`relative rounded-2xl p-8 ${
                 plan.highlighted
-                  ? `bg-espresso text-oat-milk border-${accentColor} shadow-2xl scale-[1.02] relative`
-                  : "bg-white border-espresso/5 hover:shadow-lg"
+                  ? "bg-pine text-paper"
+                  : "bg-surface border border-espresso/10"
               }`}
-              style={plan.highlighted ? { borderColor: isGold ? "var(--color-brand-gold, #D4A574)" : undefined } : undefined}
             >
               {plan.highlighted && (
                 <div className={`absolute -top-3 left-1/2 -translate-x-1/2 ${
-                  isGold ? "bg-brand-gold" : "bg-primary"
-                } text-espresso text-[10px] font-extrabold px-4 py-1 rounded-full uppercase tracking-wider shadow-md`}>
+                  isGold ? "bg-brand-gold text-white" : "bg-paper text-pine"
+                } text-[11px] font-bold px-4 py-1 rounded-full shadow-sm whitespace-nowrap`}>
                   {showYearlySaving ? plan.yearlyBadge : plan.badge}
                 </div>
               )}
               <div className="mb-6">
                 <h3 className="text-lg font-bold mb-1">{plan.name}</h3>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-extrabold">{price}</span>
+                  <span className="font-display text-4xl">{price}</span>
                   {price !== "مخصص" && price !== "0" && (
-                    <span className="text-sm font-semibold opacity-50">SAR</span>
+                    <span className={`text-sm font-semibold ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>SAR</span>
                   )}
                   {period && (
-                    <span className={`text-sm font-semibold ${plan.highlighted ? "opacity-60" : "opacity-40"}`}>{period}</span>
+                    <span className={`text-sm font-semibold ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>{period}</span>
                   )}
                 </div>
                 {/* Monthly equivalent for yearly */}
                 {interval === "yearly" && price !== "0" && price !== "مخصص" && (
-                  <p className={`text-xs mt-1 ${plan.highlighted ? "opacity-50" : "opacity-35"}`}>
+                  <p className={`text-xs mt-1 ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>
                     ≈ {(parseFloat(price) / 12).toFixed(2)} SAR /شهرياً
                   </p>
                 )}
-                <p className={`text-sm mt-2 font-medium ${plan.highlighted ? "opacity-70" : "opacity-50"}`}>{plan.desc}</p>
+                <p className={`text-sm mt-2 leading-relaxed ${plan.highlighted ? "text-paper/80" : "text-espresso/70"}`}>{plan.desc}</p>
               </div>
               <ul className="space-y-3 mb-8">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm font-medium">
+                  <li key={f} className="flex items-start gap-2 text-sm">
                     <MaterialIcon
                       icon="check_circle"
                       className={`text-lg flex-shrink-0 ${
                         plan.highlighted
-                          ? isGold ? "text-brand-gold" : "text-primary"
-                          : isGold ? "text-brand-gold/70" : "text-primary/70"
+                          ? "text-leaf"
+                          : isGold ? "text-brand-gold" : "text-primary"
                       }`}
                       filled
                     />
-                    <span className={plan.highlighted ? "opacity-90" : "opacity-60"}>{f}</span>
+                    <span className={plan.highlighted ? "text-paper/90" : "text-espresso/70"}>{f}</span>
                   </li>
                 ))}
               </ul>
@@ -237,12 +238,10 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
                 href={href}
                 className={`block w-full text-center py-3.5 rounded-xl font-bold text-sm transition-colors ${
                   plan.highlighted
-                    ? isGold
-                      ? "bg-brand-gold text-espresso hover:bg-brand-gold/90 shadow-lg"
-                      : "bg-primary text-espresso hover:bg-primary/90 shadow-lg"
+                    ? "bg-paper text-pine hover:bg-leaf"
                     : isGold
-                      ? "bg-espresso/5 text-espresso hover:bg-brand-gold hover:text-espresso"
-                      : "bg-espresso/5 text-espresso hover:bg-primary hover:text-espresso"
+                      ? "border border-brand-gold/40 text-espresso hover:bg-brand-gold hover:text-white hover:border-brand-gold"
+                      : "border border-espresso/15 text-espresso hover:border-primary/40"
                 }`}
               >
                 {cta}

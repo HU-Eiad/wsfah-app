@@ -4,7 +4,6 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import MaterialIcon from "@/components/MaterialIcon";
 import { signupAndLogin } from "./actions";
 
 type Tab = "phone" | "email";
@@ -108,28 +107,29 @@ export default function SignupPage() {
     }
   };
 
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1a0f0a] to-[#2D1B14] flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-background-light text-espresso flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="size-16 bg-[#25f459] rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <MaterialIcon icon="coffee" className="text-3xl text-[#1a0f0a]" />
-          </div>
-          <h1 className="text-2xl font-bold text-white">إنشاء حساب</h1>
-          <p className="text-sm text-white/60 mt-1">انضم إلى مجتمع وصفة</p>
+        {/* Brand mark */}
+        <div className="text-center mb-10">
+          <Link href="/" aria-label="وصفة، الصفحة الرئيسية" className="inline-flex mb-8">
+            <BrandMark />
+          </Link>
+          <h1 className="text-2xl">إنشاء حساب</h1>
+          <p className="text-sm text-espresso/60 mt-2 leading-relaxed">انضم إلى مجتمع وصفة</p>
         </div>
 
         {/* Tabs */}
-        <div className="flex bg-white/10 rounded-xl p-1 mb-6">
+        <div className="flex border-b border-espresso/10 mb-6">
           {(["phone", "email"] as Tab[]).map((t) => (
             <button
               key={t}
               onClick={() => { setTab(t); setError(""); }}
-              className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
+              className={`flex-1 py-3 -mb-px text-sm font-semibold transition-colors ${
                 tab === t
-                  ? "bg-white text-[#2D1B14]"
-                  : "text-white/60 hover:text-white"
+                  ? "text-primary border-b-2 border-primary"
+                  : "text-espresso/60 hover:text-espresso"
               }`}
             >
               {t === "phone" ? "الهاتف" : "البريد الإلكتروني"}
@@ -138,8 +138,8 @@ export default function SignupPage() {
         </div>
 
         {error && (
-          <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-3 mb-4">
-            <p className="text-sm text-red-300 text-center">{error}</p>
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
+            <p className="text-sm text-red-700 text-center">{error}</p>
           </div>
         )}
 
@@ -147,36 +147,39 @@ export default function SignupPage() {
         {tab === "phone" && (
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-medium text-white/60 mb-1.5 block">الاسم</label>
+              <label htmlFor="signup-name" className={labelCls}>الاسم</label>
               <input
+                id="signup-name"
                 dir="auto"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="اسمك"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#25f459]/50"
+                className={inputCls}
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-white/60 mb-1.5 block">رقم الهاتف</label>
+              <label htmlFor="signup-phone" className={labelCls}>رقم الهاتف</label>
               <input
+                id="signup-phone"
                 dir="ltr"
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+966 5XX XXX XXXX"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#25f459]/50"
+                className={`${inputCls} disabled:opacity-60`}
                 disabled={otpSent}
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-white/60 mb-1.5 block">كلمة المرور</label>
+              <label htmlFor="signup-phone-password" className={labelCls}>كلمة المرور</label>
               <input
+                id="signup-phone-password"
                 type="password"
                 value={phonePassword}
                 onChange={(e) => setPhonePassword(e.target.value)}
                 placeholder="٦ أحرف على الأقل"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#25f459]/50"
+                className={inputCls}
               />
             </div>
 
@@ -184,36 +187,37 @@ export default function SignupPage() {
               <button
                 onClick={sendOtp}
                 disabled={loading || !phone || !name || phonePassword.length < 6}
-                className="w-full py-3 rounded-xl bg-[#25f459] text-[#1a0f0a] font-bold text-sm disabled:opacity-50 transition-opacity"
+                className={primaryBtnCls}
               >
-                {loading ? "جارٍ الإرسال..." : "إرسال الرمز"}
+                {loading ? "جارٍ الإرسال…" : "إرسال الرمز"}
               </button>
             ) : (
               <>
                 {testOtp && (
-                  <div className="bg-[#25f459]/10 border border-[#25f459]/30 rounded-xl p-3">
-                    <p className="text-xs text-[#25f459] text-center">
+                  <div className="bg-primary/10 rounded-xl p-3">
+                    <p className="text-xs text-primary text-center">
                       رمز تجريبي: <span className="font-mono font-bold">{testOtp}</span>
                     </p>
                   </div>
                 )}
                 <div>
-                  <label className="text-xs font-medium text-white/60 mb-1.5 block">رمز التحقق</label>
+                  <label htmlFor="signup-otp" className={labelCls}>رمز التحقق</label>
                   <input
+                    id="signup-otp"
                     type="text"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="أدخل الرمز المكون من 6 أرقام"
                     maxLength={6}
-                    className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-sm text-center tracking-[0.5em] font-mono focus:outline-none focus:border-[#25f459]/50"
+                    className={`${inputCls} text-center tracking-[0.5em] font-mono`}
                   />
                 </div>
                 <button
                   onClick={signupWithPhone}
                   disabled={loading || otp.length !== 6}
-                  className="w-full py-3 rounded-xl bg-[#25f459] text-[#1a0f0a] font-bold text-sm disabled:opacity-50 transition-opacity"
+                  className={primaryBtnCls}
                 >
-                  {loading ? "جارٍ إنشاء الحساب..." : "إنشاء حساب"}
+                  {loading ? "جارٍ إنشاء الحساب…" : "إنشاء حساب"}
                 </button>
               </>
             )}
@@ -224,60 +228,63 @@ export default function SignupPage() {
         {tab === "email" && (
           <form onSubmit={signupWithEmail} className="space-y-4">
             <div>
-              <label className="text-xs font-medium text-white/60 mb-1.5 block">الاسم</label>
+              <label htmlFor="signup-email-name" className={labelCls}>الاسم</label>
               <input
+                id="signup-email-name"
                 dir="auto"
                 type="text"
                 value={emailName}
                 onChange={(e) => setEmailName(e.target.value)}
                 placeholder="اسمك"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#25f459]/50"
+                className={inputCls}
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-white/60 mb-1.5 block">البريد الإلكتروني</label>
+              <label htmlFor="signup-email" className={labelCls}>البريد الإلكتروني</label>
               <input
+                id="signup-email"
                 dir="ltr"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#25f459]/50"
+                className={inputCls}
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-white/60 mb-1.5 block">كلمة المرور</label>
+              <label htmlFor="signup-email-password" className={labelCls}>كلمة المرور</label>
               <input
+                id="signup-email-password"
                 type="password"
                 value={emailPassword}
                 onChange={(e) => setEmailPassword(e.target.value)}
                 placeholder="٦ أحرف على الأقل"
-                className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#25f459]/50"
+                className={inputCls}
               />
             </div>
             <button
               type="submit"
               disabled={loading || !email || !emailName || emailPassword.length < 6}
-              className="w-full py-3 rounded-xl bg-[#25f459] text-[#1a0f0a] font-bold text-sm disabled:opacity-50 transition-opacity"
+              className={primaryBtnCls}
             >
-              {loading ? "جارٍ إنشاء الحساب..." : "إنشاء حساب"}
+              {loading ? "جارٍ إنشاء الحساب…" : "إنشاء حساب"}
             </button>
           </form>
         )}
 
         {/* Divider */}
         <div className="flex items-center gap-4 my-6">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs text-white/40">أو</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-espresso/10" />
+          <span className="text-xs text-espresso/50">أو</span>
+          <div className="flex-1 h-px bg-espresso/10" />
         </div>
 
         {/* Google */}
         <button
           onClick={() => signIn("google", { callbackUrl: "/" })}
-          className="w-full py-3 rounded-xl bg-white text-slate-900 font-semibold text-sm flex items-center justify-center gap-3 hover:bg-slate-50 transition-colors"
+          className={googleBtnCls}
         >
-          <svg viewBox="0 0 24 24" className="size-5">
+          <svg viewBox="0 0 24 24" className="size-5" aria-hidden>
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
@@ -287,13 +294,36 @@ export default function SignupPage() {
         </button>
 
         {/* Login link */}
-        <p className="text-center text-sm text-white/50 mt-6">
+        <p className="text-center text-sm text-espresso/60 mt-6">
           لديك حساب بالفعل؟{" "}
-          <Link href="/login" className="text-[#25f459] font-semibold">
+          <Link href="/login" className="text-primary font-semibold">
             تسجيل الدخول
           </Link>
         </p>
       </div>
     </div>
+  );
+}
+
+const labelCls = "text-xs font-semibold text-espresso/70 mb-1.5 block";
+const inputCls =
+  "w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
+const primaryBtnCls =
+  "w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50";
+const googleBtnCls =
+  "w-full py-3 rounded-xl bg-surface border border-espresso/15 font-semibold text-sm flex items-center justify-center gap-3 hover:border-primary/40 transition-colors";
+
+function BrandMark() {
+  return (
+    <span className="flex items-center gap-2.5">
+      <span className="size-10 rounded-xl bg-forest text-paper flex items-center justify-center">
+        <span
+          className="wsfa-icon"
+          style={{ "--icon": "url(/brand/wsfa-mark.svg)", fontSize: 24 } as React.CSSProperties}
+          aria-hidden
+        />
+      </span>
+      <span className="font-display text-2xl font-semibold">وصفة</span>
+    </span>
   );
 }

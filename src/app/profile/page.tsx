@@ -99,33 +99,28 @@ export default async function ProfilePage() {
   const company = user.companies.length > 0 ? user.companies[0] : null;
 
   return (
-    <div className="bg-background-light font-display text-espresso min-h-screen flex flex-col max-w-screen-sm mx-auto w-full">
+    <div className="bg-background-light text-espresso min-h-screen flex flex-col max-w-screen-sm mx-auto w-full">
       {/* Header */}
-      <header className="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-light/80 backdrop-blur-md border-b border-espresso/5">
-        <Link href="/" className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10">
-          <MaterialIcon icon="arrow_back" />
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link href="/" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">الملف الشخصي</h2>
-        <Link href="/settings" className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10">
+        <h1 className="text-xl flex-1">الملف الشخصي</h1>
+        <Link href="/settings" aria-label="الإعدادات" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="settings" />
         </Link>
       </header>
 
-      <main className="flex-1 pb-24">
+      <main className="flex-1 pb-28">
         {/* Profile Header */}
-        <div className="flex p-6 flex-col items-center text-center gap-4">
-          <div className="relative">
-            <div className="bg-primary/20 rounded-full p-1 border-2 border-primary">
-              <div
-                className="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-28 h-28"
-                style={{
-                  backgroundImage: `url("${user.image || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.name || "User") + "&background=25f459&color=fff&size=128"}")`,
-                }}
-              />
-            </div>
-          </div>
+        <div className="flex px-6 pt-8 pb-6 flex-col items-center text-center gap-4">
+          <img
+            src={user.image || "/brand/banners/avatar-placeholder.svg"}
+            alt=""
+            className="size-24 rounded-full object-cover ring-4 ring-surface bg-oat-milk"
+          />
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight">{user.name}</h2>
+            <h2 dir="auto" className="font-display text-2xl">{user.name}</h2>
 
             {/* Role Badge */}
             <div className="flex justify-center">
@@ -140,45 +135,68 @@ export default async function ProfilePage() {
             </div>
 
             {user.bio && (
-              <p className="text-espresso/50 text-sm max-w-xs mx-auto px-4">{user.bio}</p>
+              <p dir="auto" className="text-espresso/70 text-sm leading-relaxed max-w-xs mx-auto px-4">{user.bio}</p>
             )}
           </div>
-          <div className="w-full flex gap-3 mt-2">
-            <Link href="/settings" className="flex-1 bg-primary text-background-dark font-bold py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center">
+
+          {/* Stats */}
+          <div className="w-full flex divide-x divide-espresso/10 bg-surface rounded-2xl border border-espresso/10 py-3">
+            {[
+              { value: String(user.recipes.length), label: "وصفات" },
+              { value: formatCount(user.followers), label: "متابعين" },
+              { value: formatCount(user.following), label: "يتابع" },
+              { value: user.avgRating.toFixed(1), label: "متوسط التقييم", star: true },
+            ].map((s) => (
+              <div key={s.label} className="flex-1 text-center px-2">
+                <div className="flex items-center justify-center gap-1">
+                  <p className="font-display text-xl">{s.value}</p>
+                  {s.star && <MaterialIcon icon="star" className="text-crema text-sm" filled />}
+                </div>
+                <p className="text-xs text-espresso/60 mt-0.5">{s.label}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="w-full flex gap-3">
+            <Link href="/settings" className="flex-1 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center">
               تعديل الملف
             </Link>
-            <ShareButton url={`/profile/${user.id}`} title={`Check out ${user.name}'s profile on WSFA!`} />
+            <ShareButton
+              url={`/profile/${user.id}`}
+              title={`تعرّف على ملف ${user.name} في وصفة`}
+              className="relative border border-espresso/15 rounded-xl px-4 py-3 text-espresso/70 hover:border-primary/40 transition-colors"
+            />
           </div>
         </div>
 
         {/* Role-Specific Quick Actions */}
         {user.role === "CREATOR" && (
           <div className="px-4 pb-4">
-            <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-2xl p-4">
+            <div className="bg-surface border border-espresso/10 rounded-2xl p-4">
               <div className="flex items-center gap-3 mb-3">
-                <div className="size-10 rounded-xl bg-purple-100 dark:bg-purple-800/40 flex items-center justify-center">
-                  <MaterialIcon icon="analytics" className="text-purple-600 dark:text-purple-400 text-xl" />
+                <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <MaterialIcon icon="analytics" className="text-primary text-xl" />
                 </div>
                 <div className="text-start">
-                  <h3 className="font-bold text-sm text-purple-900 dark:text-purple-200">تحليلات الوصفات</h3>
-                  <p className="text-xs text-purple-600 dark:text-purple-400">أداء محتواك</p>
+                  <h3 className="font-bold text-sm">تحليلات الوصفات</h3>
+                  <p className="text-xs text-espresso/60">أداء محتواك</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white rounded-xl p-3 text-center border border-purple-100 dark:border-purple-800">
-                  <p className="text-lg font-bold text-purple-700 dark:text-purple-300">{user.recipes.length}</p>
-                  <p className="text-[10px] text-purple-500 dark:text-purple-400 font-medium">إجمالي الوصفات</p>
+                <div className="bg-oat-milk rounded-xl p-3 text-center">
+                  <p className="font-display text-lg">{user.recipes.length}</p>
+                  <p className="text-[11px] text-espresso/60 font-medium">إجمالي الوصفات</p>
                 </div>
-                <div className="bg-white rounded-xl p-3 text-center border border-purple-100 dark:border-purple-800">
-                  <p className="text-lg font-bold text-purple-700 dark:text-purple-300">{formatCount(totalLikes)}</p>
-                  <p className="text-[10px] text-purple-500 dark:text-purple-400 font-medium">إجمالي الإعجابات</p>
+                <div className="bg-oat-milk rounded-xl p-3 text-center">
+                  <p className="font-display text-lg">{formatCount(totalLikes)}</p>
+                  <p className="text-[11px] text-espresso/60 font-medium">إجمالي الإعجابات</p>
                 </div>
-                <div className="bg-white rounded-xl p-3 text-center border border-purple-100 dark:border-purple-800">
+                <div className="bg-oat-milk rounded-xl p-3 text-center">
                   <div className="flex items-center justify-center gap-0.5">
-                    <p className="text-lg font-bold text-purple-700 dark:text-purple-300">{avgRating.toFixed(1)}</p>
-                    <MaterialIcon icon="star" className="text-xs text-purple-400" filled />
+                    <p className="font-display text-lg">{avgRating.toFixed(1)}</p>
+                    <MaterialIcon icon="star" className="text-xs text-crema" filled />
                   </div>
-                  <p className="text-[10px] text-purple-500 dark:text-purple-400 font-medium">متوسط التقييم</p>
+                  <p className="text-[11px] text-espresso/60 font-medium">متوسط التقييم</p>
                 </div>
               </div>
             </div>
@@ -188,61 +206,40 @@ export default async function ProfilePage() {
         {user.role === "BRAND_ADMIN" && company && (
           <div className="px-4 pb-4">
             <Link href={`/brand/${company.id}`}>
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 flex items-center gap-4 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors">
-                <div className="size-12 rounded-xl bg-amber-100 dark:bg-amber-800/40 flex items-center justify-center shrink-0">
-                  <MaterialIcon icon="storefront" className="text-amber-600 dark:text-amber-400 text-2xl" />
+              <div className="bg-surface border border-espresso/10 rounded-2xl p-4 flex items-center gap-4 hover:border-primary/40 transition-colors">
+                <div className="size-12 rounded-full bg-brand-gold/10 flex items-center justify-center shrink-0">
+                  <MaterialIcon icon="storefront" className="text-brand-gold text-2xl" />
                 </div>
                 <div className="flex-1 min-w-0 text-start">
-                  <h3 className="font-bold text-sm text-amber-900 dark:text-amber-200">إدارة علامتي التجارية</h3>
-                  <p className="text-xs text-amber-600 dark:text-amber-400 truncate">{company.name}</p>
+                  <h3 className="font-bold text-sm">إدارة علامتي التجارية</h3>
+                  <p dir="auto" className="text-xs text-espresso/60 truncate">{company.name}</p>
                 </div>
-                <MaterialIcon icon="arrow_back" className="text-amber-400 text-xl shrink-0" />
+                <MaterialIcon icon="chevron_left" className="text-espresso/50 text-xl shrink-0" />
               </div>
             </Link>
           </div>
         )}
 
-        {/* Stats */}
-        <div className="flex gap-3 px-4 py-2">
-          {[
-            { value: formatCount(user.followers), label: "متابعين" },
-            { value: formatCount(user.following), label: "يتابع" },
-            { value: String(user.recipes.length), label: "وصفات" },
-            { value: user.avgRating.toFixed(1), label: "متوسط التقييم", star: true },
-          ].map((s) => (
-            <div key={s.label} className="flex-1 bg-white rounded-xl border border-slate-200 p-3 text-center">
-              <div className="flex items-center justify-center gap-1">
-                <p className="text-lg font-bold">{s.value}</p>
-                {s.star && <MaterialIcon icon="star" className="text-primary text-xs" filled />}
-              </div>
-              <p className="text-espresso/50 text-[10px] mt-0.5">{s.label}</p>
-            </div>
-          ))}
-        </div>
-
         {/* Badges */}
         {user.badges.length > 0 && (
-          <div className="px-4 py-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">الشارات</h3>
-              <span className="text-primary text-sm font-bold cursor-pointer">عرض الكل</span>
-            </div>
+          <section className="px-4 py-6">
+            <h2 className="text-xl mb-4">الشارات</h2>
             <div className="flex gap-3 overflow-x-auto no-scrollbar">
               {user.badges.map((ub) => (
                 <div key={ub.id} className="flex flex-col items-center gap-2 shrink-0 min-w-[72px]">
-                  <div className="size-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center">
+                  <div className="size-14 rounded-2xl bg-surface border border-espresso/10 flex items-center justify-center">
                     <MaterialIcon
                       icon={ub.badge.icon}
                       className={`text-2xl ${badgeColors[ub.badge.color] || "text-primary"}`}
                     />
                   </div>
-                  <span className="text-[9px] font-bold uppercase tracking-widest opacity-60 text-center">
+                  <span className="text-[11px] font-semibold text-espresso/70 text-center">
                     {ub.badge.name}
                   </span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {/* Tabs + Recipes / Saved / Liked */}

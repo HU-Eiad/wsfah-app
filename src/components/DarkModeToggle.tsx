@@ -28,13 +28,15 @@ export default function DarkModeToggle() {
   // Prevent hydration mismatch - show neutral state until mounted
   if (!mounted) {
     return (
-      <div className="flex items-center justify-between w-full px-4 py-3 rounded-xl border border-slate-200 bg-white">
+      <div className="flex items-center justify-between gap-3 w-full px-4 py-3.5">
         <div className="flex items-center gap-3">
-          <MaterialIcon icon="light_mode" className="text-xl" />
-          <span className="text-sm font-medium">الوضع الداكن</span>
+          <span className="size-9 rounded-full bg-oat-milk flex items-center justify-center text-espresso/70">
+            <MaterialIcon icon="light_mode" className="text-xl" />
+          </span>
+          <span className="text-sm font-semibold">الوضع الداكن</span>
         </div>
-        <div className="w-11 h-6 rounded-full bg-slate-300 relative">
-          <div className="absolute top-0.5 size-5 rounded-full shadow translate-x-0.5 bg-white" />
+        <div className="w-11 h-6 rounded-full bg-oat-milk relative shrink-0">
+          <div className="absolute top-0.5 start-0.5 size-5 rounded-full shadow-sm bg-surface" />
         </div>
       </div>
     );
@@ -43,14 +45,22 @@ export default function DarkModeToggle() {
   return (
     <button
       onClick={toggle}
-      className="flex items-center justify-between w-full px-4 py-3 rounded-xl border border-slate-200 bg-white"
+      role="switch"
+      aria-checked={dark}
+      className="flex items-center justify-between gap-3 w-full px-4 py-3.5 text-start hover:bg-oat-milk/50 transition-colors"
     >
       <div className="flex items-center gap-3">
-        <MaterialIcon icon={dark ? "dark_mode" : "light_mode"} className="text-xl" />
-        <span className="text-sm font-medium">الوضع الداكن</span>
+        <span className="size-9 rounded-full bg-oat-milk flex items-center justify-center text-espresso/70">
+          <MaterialIcon icon={dark ? "dark_mode" : "light_mode"} className="text-xl" />
+        </span>
+        <span className="text-sm font-semibold">الوضع الداكن</span>
       </div>
-      <div className={`w-11 h-6 rounded-full relative transition-colors ${dark ? "bg-primary" : "bg-slate-300"}`}>
-        <div className={`absolute top-0.5 size-5 rounded-full shadow transition-transform ${dark ? "translate-x-5 bg-slate-900" : "translate-x-0.5 bg-white"}`} />
+      <div className={`w-11 h-6 rounded-full relative shrink-0 transition-colors ${dark ? "bg-primary" : "bg-oat-milk"}`}>
+        <div
+          className={`absolute top-0.5 start-0.5 size-5 rounded-full shadow-sm bg-surface transition-transform ${
+            dark ? "translate-x-5 rtl:-translate-x-5" : "translate-x-0"
+          }`}
+        />
       </div>
     </button>
   );

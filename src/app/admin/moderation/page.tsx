@@ -42,20 +42,20 @@ export default function AdminModerationPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-[#F2E8DF] mb-6">الإشراف</h2>
+      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">الإشراف</h2>
 
       {loading ? (
-        <p className="text-[#F2E8DF66]">جاري التحميل...</p>
+        <p className="text-[#eef0e899]">جاري التحميل...</p>
       ) : reports.length === 0 ? (
-        <div className="bg-[#1a2420] border border-[#F2E8DF0d] rounded-2xl p-8 text-center">
-          <p className="text-[#F2E8DF66]">لا توجد بلاغات معلقة.</p>
+        <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-8 text-center">
+          <p className="text-[#eef0e899]">لا توجد بلاغات معلقة.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {reports.map((report) => (
             <div
               key={report.id}
-              className="bg-[#1a2420] border border-[#F2E8DF0d] rounded-2xl p-6"
+              className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -63,24 +63,24 @@ export default function AdminModerationPage() {
                     <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
                       {report.reason}
                     </span>
-                    <span className="text-xs text-[#F2E8DF66]">
+                    <span className="text-xs text-[#eef0e899]">
                       {report.entityType} / {report.entityId}
                     </span>
                   </div>
-                  <p className="text-sm text-[#F2E8DFaa] mb-1">
+                  <p className="text-sm text-[#eef0e8aa] mb-1">
                     أبلغ بواسطة: {report.reporter?.name || report.reporter?.email || "غير معروف"}
                   </p>
                   {report.details && (
-                    <p className="text-sm text-[#F2E8DFcc] mt-2">{report.details}</p>
+                    <p className="text-sm text-[#eef0e8cc] mt-2">{report.details}</p>
                   )}
-                  <p className="text-xs text-[#F2E8DF50] mt-2">
+                  <p className="text-xs text-[#eef0e880] mt-2">
                     {new Date(report.createdAt).toLocaleString()}
                   </p>
                 </div>
-                <div className="flex gap-2 ml-4">
+                <div className="flex gap-2 ms-4">
                   <button
                     onClick={() => handleAction(report.id, "DISMISSED")}
-                    className="px-3 py-1.5 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-[#F2E8DFcc] text-xs font-medium"
+                    className="px-3 py-1.5 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-[#eef0e8cc] text-xs font-medium"
                   >
                     رفض
                   </button>

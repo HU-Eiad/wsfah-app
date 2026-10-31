@@ -2,6 +2,7 @@ import BottomNav from "@/components/BottomNav";
 import MaterialIcon from "@/components/MaterialIcon";
 import AdSlot from "@/components/AdSlot";
 import PromotedBrands from "@/components/PromotedBrands";
+import BrandIcon, { CATEGORY_ICONS } from "@/components/BrandIcon";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
@@ -42,210 +43,185 @@ export default async function HomePage() {
     }),
   ]);
 
-  const userName = currentUser?.name?.split(" ")[0] || "Guest";
-  const userImage = currentUser?.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=25f459&color=fff&size=96`;
+  const userName = currentUser?.name?.split(" ")[0] || "ضيف";
+  const userImage = currentUser?.image || "/brand/banners/avatar-placeholder.svg";
+  const recipePlaceholder = "/brand/banners/recipe-placeholder.svg";
 
-  const categoryIcons: Record<string, string> = {
-    "pour-over": "coffee_maker",
-    "cold-brew": "ac_unit",
-    matcha: "spa",
-    espresso: "bolt",
-    tea: "self_improvement",
-    rituals: "self_improvement",
-  };
 
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "صباح الخير" : hour < 18 ? "مساء الخير" : "مساء الخير";
+  const greeting = hour < 12 ? "صباح الخير" : "مساء الخير";
+
+  const typeLabels: Record<string, string> = {
+    roaster: "محمصة",
+    cafe: "مقهى",
+    tea_brand: "علامة شاي",
+  };
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background-light/80 backdrop-blur-md px-6 pt-6 pb-4">
-        <div className="flex items-center justify-between mb-6">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-6 pt-6 pb-4">
+        <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
-            <Link href={session ? "/profile" : "/login"} className="size-12 rounded-full border-2 border-primary p-0.5 block">
-              <img
-                alt="User Profile"
-                className="w-full h-full rounded-full object-cover"
-                src={userImage}
-              />
+            <Link
+              href={session ? "/profile" : "/login"}
+              aria-label="الملف الشخصي"
+              className="size-12 rounded-full ring-2 ring-primary/40 ring-offset-2 ring-offset-background-light block overflow-hidden"
+            >
+              <img alt="" className="w-full h-full object-cover" src={userImage} />
             </Link>
-            <div>
-              <p className="text-xs uppercase tracking-widest opacity-60 font-semibold">اكتشف</p>
-              <h1 className="text-xl font-bold tracking-tight">{greeting}, {userName}</h1>
-            </div>
+            <h1 className="text-2xl leading-tight">
+              {greeting}، {userName}
+            </h1>
           </div>
-          <Link href="/notifications" className="relative p-2 rounded-full bg-oat-milk">
-            <MaterialIcon icon="notifications" className="text-espresso" />
-            <span className="absolute top-2 right-2 size-2 bg-primary rounded-full"></span>
+          <Link href="/notifications" aria-label="الإشعارات" className="relative size-11 rounded-full bg-oat-milk flex items-center justify-center">
+            <MaterialIcon icon="notifications" className="text-espresso/80" />
+            <span className="absolute top-2.5 end-2.5 size-2 bg-crema rounded-full" aria-hidden></span>
           </Link>
         </div>
 
         {/* Search */}
-        <Link href="/search" className="block">
-          <div className="flex items-center bg-white rounded-2xl px-4 py-3 shadow-sm border border-espresso/5">
-            <MaterialIcon icon="search" className="text-espresso/40 mr-3" />
-            <span className="text-sm text-espresso/30 font-medium flex-1">
-              ابحث عن وصفات، محمصات، أو خلطات شاي
-            </span>
-            <MaterialIcon icon="tune" className="text-espresso/40 ml-2 text-xl" />
-          </div>
+        <Link href="/search" className="flex items-center gap-3 bg-surface rounded-xl px-4 py-3.5 border border-espresso/10">
+          <MaterialIcon icon="search" className="text-espresso/50" />
+          <span className="text-sm text-espresso/55 flex-1">ابحث عن وصفة، محمصة، أو شاي</span>
+          <MaterialIcon icon="tune" className="text-espresso/50 text-xl" />
         </Link>
       </header>
 
       {/* Main */}
-      <main className="flex-1 px-6 pb-24 overflow-y-auto">
-        {/* Promoted Brands */}
+      <main className="flex-1 px-6 pb-28 overflow-y-auto">
         <PromotedBrands placement="HOME_TOP" />
 
-        {/* Weekly Roaster's Pick */}
+        {/* Weekly pick */}
         {featuredRecipe && (
-          <section className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold">اختيار المحمصة الأسبوعي</h2>
-              <Link href="/search" className="text-xs font-bold text-primary uppercase tracking-wider cursor-pointer">عرض الكل</Link>
+          <section className="mb-10">
+            <div className="flex items-baseline justify-between mb-4">
+              <h2 className="text-xl">اختيار الأسبوع</h2>
+              <Link href="/search" className="text-sm font-semibold text-primary">عرض الكل</Link>
             </div>
-            <Link href={`/recipe/${featuredRecipe.slug}`}>
-              <div className="relative group overflow-hidden rounded-2xl bg-espresso text-oat-milk shadow-xl aspect-[4/5] flex flex-col justify-end">
+            <Link href={`/recipe/${featuredRecipe.slug}`} className="block">
+              <article className="relative overflow-hidden rounded-[20px] bg-pine text-paper aspect-[4/5] flex flex-col justify-end">
                 <img
-                  alt={featuredRecipe.title}
-                  className="absolute inset-0 w-full h-full object-cover opacity-80"
-                  src={featuredRecipe.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(featuredRecipe.title)}&background=1a2420&color=25f459&size=800`}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  src={featuredRecipe.imageUrl || recipePlaceholder}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-espresso via-espresso/40 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-pine via-pine/75 to-pine/10"></div>
                 <div className="relative p-6">
-                  <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center gap-3 mb-3 text-sm text-paper/85">
                     {featuredRecipe.isVerified && (
-                      <span className="bg-primary/90 text-espresso text-[10px] font-extrabold px-2 py-1 rounded uppercase tracking-tighter">
-                        علامة تجارية موثقة
+                      <span className="inline-flex items-center gap-1 bg-paper text-pine text-xs font-bold px-2 py-1 rounded-md">
+                        <BrandIcon name="verified" className="text-sm" /> علامة موثقة
                       </span>
                     )}
-                    <div className="flex items-center text-xs font-medium opacity-90">
-                      <MaterialIcon icon="schedule" className="text-sm mr-1" /> {featuredRecipe.brewTime || "10 min"}
-                    </div>
+                    <span className="inline-flex items-center gap-1">
+                      <BrandIcon name="timer" className="text-base" /> {featuredRecipe.brewTime || "١٠ د"}
+                    </span>
                   </div>
-                  <h3 dir="auto" className="text-3xl font-extrabold leading-tight mb-2">{featuredRecipe.title}</h3>
-                  <p className="text-sm opacity-80 mb-6 font-medium tracking-wide">
-                    {featuredRecipe.brand?.name || featuredRecipe.author.name} &bull; {featuredRecipe.category}
+                  <h3 dir="auto" className="font-display text-3xl leading-snug mb-2">{featuredRecipe.title}</h3>
+                  <p className="text-sm text-paper/75 mb-5">
+                    {featuredRecipe.brand?.name || featuredRecipe.author.name}، {featuredRecipe.category}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs bg-oat-milk/20 px-3 py-1.5 rounded-full backdrop-blur-sm border border-oat-milk/10">
-                      {featuredRecipe.difficulty}
-                    </span>
-                    <span className="bg-primary text-espresso px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 shadow-lg">
-                      View Recipe <MaterialIcon icon="arrow_forward" className="text-sm" />
-                    </span>
+                    <span className="text-xs bg-paper/15 px-3 py-1.5 rounded-full">{featuredRecipe.difficulty}</span>
+                    <span className="bg-paper text-pine px-5 py-2.5 rounded-xl font-bold text-sm">افتح الوصفة</span>
                   </div>
                 </div>
-              </div>
+              </article>
             </Link>
           </section>
         )}
 
         {/* Categories */}
-        <section className="mb-8 -mx-6">
-          <div className="px-6 mb-4">
-            <h2 className="text-lg font-bold">الأقسام</h2>
-          </div>
-          <div className="flex overflow-x-auto gap-4 px-6 no-scrollbar">
-            {categories.map((cat, i) => (
-              <Link href={`/search?category=${encodeURIComponent(cat.name)}`} key={cat.id} className="flex flex-col items-center gap-2 shrink-0 group cursor-pointer">
-                <div
-                  className={`size-16 rounded-2xl flex items-center justify-center transition-colors ${
-                    i === 0
-                      ? "bg-primary/10 border border-primary/20 text-primary group-hover:bg-primary group-hover:text-espresso"
-                      : "bg-espresso/5 text-espresso/60 group-hover:bg-primary group-hover:text-espresso"
-                  }`}
-                >
-                  <MaterialIcon icon={categoryIcons[cat.slug] || cat.icon} className="text-3xl" />
+        <section className="mb-10 -mx-6">
+          <h2 className="px-6 mb-4 text-xl">الأقسام</h2>
+          <div className="flex overflow-x-auto gap-3 px-6 no-scrollbar">
+            {categories.map((cat) => (
+              <Link
+                href={`/search?category=${encodeURIComponent(cat.name)}`}
+                key={cat.id}
+                className="flex flex-col items-center gap-2 shrink-0 w-[76px] group"
+              >
+                <div className="size-[68px] rounded-2xl bg-surface border border-espresso/10 text-forest dark:text-primary flex items-center justify-center transition-colors group-hover:bg-primary group-hover:text-on-primary">
+                  {CATEGORY_ICONS[cat.slug] ? (
+                    <BrandIcon name={CATEGORY_ICONS[cat.slug]} className="text-[30px]" />
+                  ) : (
+                    <MaterialIcon icon={cat.icon} className="text-3xl" />
+                  )}
                 </div>
-                <span className="text-[11px] font-bold uppercase tracking-widest opacity-60">{cat.name}</span>
+                <span className="text-xs font-medium text-espresso/75 text-center">{cat.name}</span>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* Featured Roasters */}
+        {/* Featured roasters */}
         {roasters.length > 0 && (
-          <section className="mb-8 -mx-6">
-            <div className="px-6 mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold">محمصات مميزة</h2>
-              <Link href="/roasters" className="text-xs font-bold text-primary uppercase tracking-wider">عرض الكل</Link>
+          <section className="mb-10 -mx-6">
+            <div className="px-6 mb-4 flex items-baseline justify-between">
+              <h2 className="text-xl">محامص مميزة</h2>
+              <Link href="/roasters" className="text-sm font-semibold text-primary">عرض الكل</Link>
             </div>
             <div className="flex overflow-x-auto gap-4 px-6 no-scrollbar">
-              {roasters.map((r) => {
-                const typeLabel = r.type === "roaster" ? "محمصة" : r.type === "cafe" ? "مقهى" : r.type === "tea_brand" ? "علامة شاي" : "معدات";
-                return (
-                  <Link href={`/brand/${r.id}`} key={r.id} className="flex flex-col items-center gap-2 shrink-0 group cursor-pointer">
-                    <div className="size-16 rounded-full border-2 border-primary/30 p-0.5 group-hover:border-primary transition-colors">
-                      <img
-                        src={r.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.name)}&background=25f459&color=fff&size=64`}
-                        alt={r.name}
-                        className="w-full h-full rounded-full object-cover"
-                      />
-                    </div>
-                    <div className="text-center">
-                      <span className="text-[11px] font-bold block max-w-[72px] truncate" dir="auto">{r.name}</span>
-                      <span className="text-[9px] text-primary font-semibold uppercase tracking-wider">{typeLabel}</span>
-                    </div>
-                  </Link>
-                );
-              })}
+              {roasters.map((r) => (
+                <Link href={`/brand/${r.id}`} key={r.id} className="flex flex-col items-center gap-2 shrink-0 w-[76px] group">
+                  <div className="size-16 rounded-full ring-1 ring-espresso/10 group-hover:ring-2 group-hover:ring-primary overflow-hidden bg-oat-milk transition-shadow">
+                    {r.logo ? (
+                      <img src={r.logo} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="w-full h-full flex items-center justify-center font-display text-2xl text-forest dark:text-primary">
+                        {r.name.charAt(0)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-center w-full">
+                    <span className="text-xs font-semibold block truncate" dir="auto">{r.name}</span>
+                    <span className="text-[11px] text-espresso/60">{typeLabels[r.type] || "معدات"}</span>
+                  </div>
+                </Link>
+              ))}
             </div>
           </section>
         )}
 
-        {/* Ad Banner */}
         <AdSlot slot="home-mid" format="horizontal" />
 
-        {/* Trending Now */}
+        {/* Trending */}
         <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold">رائج الآن</h2>
-            <div className="flex gap-2">
-              <button className="size-8 rounded-full bg-white shadow-sm border border-espresso/5 flex items-center justify-center">
-                <MaterialIcon icon="grid_view" className="text-sm" />
-              </button>
-              <button className="size-8 rounded-full bg-white shadow-sm border border-espresso/5 flex items-center justify-center opacity-40">
-                <MaterialIcon icon="view_agenda" className="text-sm" />
-              </button>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+          <h2 className="text-xl mb-4">رائج الآن</h2>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-6">
             {trendingRecipes.map((item) => (
               <Link href={`/recipe/${item.slug}`} key={item.id} className="flex flex-col gap-3">
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-md">
+                <div className="relative aspect-[3/4] rounded-[20px] overflow-hidden bg-pine">
                   <img
-                    alt={item.title}
+                    alt=""
                     className="absolute inset-0 w-full h-full object-cover"
-                    src={item.imageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.title)}&background=1a2420&color=25f459&size=600`}
+                    src={item.imageUrl || recipePlaceholder}
                   />
-                  <div className="absolute top-3 left-3 flex gap-1">
+                  <span
+                    className={`absolute top-3 start-3 text-[11px] font-bold px-2 py-1 rounded-md text-white flex items-center gap-1 ${
+                      item.brand ? "bg-brand-gold" : "bg-community-teal"
+                    }`}
+                  >
                     {item.brand ? (
-                      <div className="bg-brand-gold text-[8px] font-black px-2 py-0.5 rounded text-white shadow-sm flex items-center gap-0.5">
-                        <MaterialIcon icon="verified" className="text-[10px]" /> علامة تجارية
-                      </div>
-                    ) : (
-                      <div className="bg-community-teal text-[8px] font-black px-2 py-0.5 rounded text-white shadow-sm flex items-center gap-0.5">
-                        <MaterialIcon icon="group" className="text-[10px]" /> مجتمعي
-                      </div>
-                    )}
-                  </div>
-                  <button className="absolute top-3 right-3 size-8 rounded-full bg-black/20 backdrop-blur-md text-white flex items-center justify-center">
-                    <MaterialIcon icon="favorite" className="text-sm" />
-                  </button>
-                </div>
-                <div>
-                  <h4 dir="auto" className="font-bold text-sm leading-tight mb-1">{item.title}</h4>
-                  <p className="text-[10px] opacity-60 font-semibold tracking-wide flex items-center gap-1 uppercase">
-                    {item.brand?.name || item.author.name} &bull;{" "}
-                    {item.brand ? (
-                      <span className="text-brand-gold">اختيار ذهبي</span>
+                      <>
+                        <BrandIcon name="verified" className="text-xs" /> علامة تجارية
+                      </>
                     ) : (
                       <>
-                        {item.rating.toFixed(1)} <MaterialIcon icon="star" className="text-[10px] text-primary" />
+                        <MaterialIcon icon="group" className="text-xs" /> مجتمعي
                       </>
                     )}
+                  </span>
+                </div>
+                <div>
+                  <h3 dir="auto" className="font-bold text-sm leading-snug mb-1">{item.title}</h3>
+                  <p className="text-xs text-espresso/60 flex items-center gap-1">
+                    <span className="truncate" dir="auto">{item.brand?.name || item.author.name}</span>
+                    <span className="flex items-center gap-0.5 shrink-0">
+                      <MaterialIcon icon="star" filled className="text-xs text-crema" />
+                      {item.rating.toFixed(1)}
+                    </span>
                   </p>
                 </div>
               </Link>

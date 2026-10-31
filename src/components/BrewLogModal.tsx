@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import MaterialIcon from "./MaterialIcon";
+import BrandIcon from "./BrandIcon";
 
 const FLAVOR_OPTIONS = [
   "فاكهي", "توت", "حمضيات", "استوائي",
@@ -26,7 +27,7 @@ interface BrewLogModalProps {
 }
 
 export default function BrewLogModal({ recipeId, recipeName, defaultParams, onClose, onSaved }: BrewLogModalProps) {
-  const [title, setTitle] = useState(recipeName ? `Brewed: ${recipeName}` : "My Brew");
+  const [title, setTitle] = useState(recipeName ? `تحضير: ${recipeName}` : "تحضيري");
   const [notes, setNotes] = useState("");
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -83,30 +84,34 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
     }
   };
 
+  const inputClass =
+    "w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
+  const labelClass = "flex items-center gap-1.5 text-xs font-semibold text-espresso/70 mb-2";
+
   return (
-    <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center sm:p-4">
+      <div className="bg-surface text-espresso rounded-t-3xl sm:rounded-2xl shadow-sm w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10 rounded-t-2xl">
-          <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">سجّل تحضيرك</h3>
-            {recipeName && <p className="text-sm text-gray-500">{recipeName}</p>}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10 sticky top-0 bg-surface z-10">
+          <div className="min-w-0">
+            <h3 className="font-display text-xl">سجّل تحضيرك</h3>
+            {recipeName && <p dir="auto" className="text-sm text-espresso/60 truncate">{recipeName}</p>}
           </div>
-          <button onClick={onClose} className="size-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center">
+          <button onClick={onClose} aria-label="إغلاق" className="size-10 rounded-full hover:bg-oat-milk flex items-center justify-center shrink-0">
             <MaterialIcon icon="close" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200 dark:border-gray-700">
+        <div className="flex border-b border-espresso/10">
           {(["brew", "taste"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`flex-1 py-3 text-sm font-bold transition-colors ${
+              className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${
                 tab === t
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-primary border-primary"
+                  : "text-espresso/60 border-transparent hover:text-espresso"
               }`}
             >
               {t === "brew" ? "تفاصيل التحضير" : "ملاحظات التذوق"}
@@ -114,18 +119,18 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
           ))}
         </div>
 
-        <div className="p-5 space-y-4">
+        <div className="p-5 space-y-5">
           {tab === "brew" ? (
             <>
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">العنوان</label>
-                <input value={title} onChange={(e) => setTitle(e.target.value)} className="w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white" />
+                <label htmlFor="brewlog-title" className={labelClass}>العنوان</label>
+                <input id="brewlog-title" dir="auto" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
               </div>
 
               {/* Rating */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">التقييم</label>
+                <p className={labelClass}>التقييم</p>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((v) => (
                     <button
@@ -133,12 +138,13 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
                       onClick={() => setRating(v)}
                       onMouseEnter={() => setHoverRating(v)}
                       onMouseLeave={() => setHoverRating(0)}
+                      aria-label={`${v} من 5`}
                       className="p-1"
                     >
                       <MaterialIcon
                         icon="star"
                         filled={v <= (hoverRating || rating)}
-                        className={`text-2xl ${v <= (hoverRating || rating) ? "text-amber-400" : "text-gray-300"}`}
+                        className={`text-2xl ${v <= (hoverRating || rating) ? "text-crema" : "text-espresso/15"}`}
                       />
                     </button>
                   ))}
@@ -148,27 +154,42 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
               {/* Brew Params Grid */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">القهوة (جم)</label>
-                  <input type="number" value={coffeeGrams} onChange={(e) => setCoffeeGrams(e.target.value)} placeholder="18" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm" />
+                  <label htmlFor="brewlog-coffee" className={labelClass}>
+                    <BrandIcon name="bean" className="text-base text-primary" />
+                    القهوة (جم)
+                  </label>
+                  <input id="brewlog-coffee" type="number" value={coffeeGrams} onChange={(e) => setCoffeeGrams(e.target.value)} placeholder="18" className={inputClass} />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">الماء (مل)</label>
-                  <input type="number" value={waterMl} onChange={(e) => setWaterMl(e.target.value)} placeholder="300" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm" />
+                  <label htmlFor="brewlog-water" className={labelClass}>
+                    <BrandIcon name="drop" className="text-base text-primary" />
+                    الماء (مل)
+                  </label>
+                  <input id="brewlog-water" type="number" value={waterMl} onChange={(e) => setWaterMl(e.target.value)} placeholder="300" className={inputClass} />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">الحرارة (°م)</label>
-                  <input type="number" value={waterTemp} onChange={(e) => setWaterTemp(e.target.value)} placeholder="93" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm" />
+                  <label htmlFor="brewlog-temp" className={labelClass}>
+                    <BrandIcon name="thermometer" className="text-base text-primary" />
+                    الحرارة (°م)
+                  </label>
+                  <input id="brewlog-temp" type="number" value={waterTemp} onChange={(e) => setWaterTemp(e.target.value)} placeholder="93" className={inputClass} />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">وقت التحضير (ثانية)</label>
-                  <input type="number" value={brewTime} onChange={(e) => setBrewTime(e.target.value)} placeholder="240" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm" />
+                  <label htmlFor="brewlog-time" className={labelClass}>
+                    <BrandIcon name="timer" className="text-base text-primary" />
+                    وقت التحضير (ثانية)
+                  </label>
+                  <input id="brewlog-time" type="number" value={brewTime} onChange={(e) => setBrewTime(e.target.value)} placeholder="240" className={inputClass} />
                 </div>
               </div>
 
               {/* Grind Size */}
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">حجم الطحن</label>
-                <select value={grindSize} onChange={(e) => setGrindSize(e.target.value)} className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm">
+                <label htmlFor="brewlog-grind" className={labelClass}>
+                  <BrandIcon name="grind" className="text-base text-primary" />
+                  حجم الطحن
+                </label>
+                <select id="brewlog-grind" value={grindSize} onChange={(e) => setGrindSize(e.target.value)} className={inputClass}>
                   <option value="">اختر...</option>
                   {GRIND_SIZES.map((g) => <option key={g} value={g}>{g}</option>)}
                 </select>
@@ -176,8 +197,8 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
 
               {/* Notes */}
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">ملاحظات</label>
-                <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="كيف كانت النتيجة؟ أي تعديلات للمرة القادمة؟" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm resize-none" />
+                <label htmlFor="brewlog-notes" className={labelClass}>ملاحظات</label>
+                <textarea id="brewlog-notes" dir="auto" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="كيف كانت النتيجة؟ أي تعديلات للمرة القادمة؟" className={`${inputClass} leading-relaxed resize-none`} />
               </div>
             </>
           ) : (
@@ -191,8 +212,8 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
                 ].map((s) => (
                   <div key={s.label}>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="text-sm font-bold text-gray-700 dark:text-gray-300">{s.label}</label>
-                      <span className="text-xs font-mono text-primary font-bold">{s.value.toFixed(1)}</span>
+                      <label className="text-sm font-semibold">{s.label}</label>
+                      <span className="text-sm font-bold text-primary tabular-nums">{s.value.toFixed(1)}</span>
                     </div>
                     <input
                       type="range"
@@ -201,9 +222,10 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
                       step="0.5"
                       value={s.value}
                       onChange={(e) => s.set(parseFloat(e.target.value))}
+                      aria-label={s.label}
                       className="w-full accent-primary"
                     />
-                    <div className="flex justify-between text-[10px] text-gray-400 mt-0.5">
+                    <div className="flex justify-between text-[11px] text-espresso/60 mt-0.5">
                       <span>{s.low}</span>
                       <span>{s.high}</span>
                     </div>
@@ -213,16 +235,16 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
 
               {/* Flavor Tags */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">نكهات</label>
+                <p className="text-sm font-semibold mb-3">نكهات</p>
                 <div className="flex flex-wrap gap-2">
                   {FLAVOR_OPTIONS.map((f) => (
                     <button
                       key={f}
                       onClick={() => toggleFlavor(f)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                      className={`rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
                         selectedFlavors.includes(f)
-                          ? "bg-primary text-background-dark border-primary"
-                          : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-300 dark:border-gray-600 hover:border-primary"
+                          ? "bg-primary text-on-primary"
+                          : "bg-surface border border-espresso/10 text-espresso/70 hover:border-primary/40"
                       }`}
                     >
                       {f}
@@ -237,10 +259,10 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
           <button
             onClick={handleSave}
             disabled={saving || !title}
-            className="w-full py-3.5 bg-primary text-background-dark rounded-xl font-bold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {saving ? (
-              <div className="size-5 border-2 border-background-dark border-t-transparent rounded-full animate-spin" />
+              <div className="size-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
                 <MaterialIcon icon="save" className="text-lg" />

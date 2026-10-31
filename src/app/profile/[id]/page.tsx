@@ -39,10 +39,10 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   if (!user) {
     return (
       <div className="bg-background-light min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <MaterialIcon icon="person_off" className="text-4xl text-slate-400" />
-          <p className="text-sm text-slate-500 mt-2">المستخدم غير موجود</p>
-          <Link href="/" className="text-primary text-sm font-bold mt-3 block">الرئيسية</Link>
+        <div className="text-center px-6">
+          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <p className="text-sm text-espresso/70 mb-4">المستخدم غير موجود</p>
+          <Link href="/" className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">الرئيسية</Link>
         </div>
       </div>
     );
@@ -71,30 +71,24 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   const company = user.companies.length > 0 ? user.companies[0] : null;
 
   return (
-    <div className="bg-background-light font-display text-slate-900 min-h-screen flex flex-col">
-      <header className="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-light/80 backdrop-blur-md border-b border-primary/10">
-        <Link href="/" className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10">
-          <MaterialIcon icon="arrow_back" />
+    <div className="bg-background-light text-espresso min-h-screen flex flex-col max-w-screen-sm mx-auto w-full">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link href="/" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">الملف الشخصي</h2>
-        <div className="size-10" />
+        <h1 className="text-xl flex-1">الملف الشخصي</h1>
       </header>
 
-      <main className="flex-1 pb-24">
+      <main className="flex-1 pb-28">
         {/* Profile Header */}
-        <div className="flex p-6 flex-col items-center text-center gap-4">
-          <div className="relative">
-            <div className="bg-primary/20 rounded-full p-1 border-2 border-primary">
-              <div
-                className="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-28 h-28"
-                style={{
-                  backgroundImage: `url("${user.image || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.name || "User") + "&background=25f459&color=fff&size=128"}")`,
-                }}
-              />
-            </div>
-          </div>
+        <div className="flex px-6 pt-8 pb-6 flex-col items-center text-center gap-4">
+          <img
+            src={user.image || "/brand/banners/avatar-placeholder.svg"}
+            alt=""
+            className="size-24 rounded-full object-cover ring-4 ring-surface bg-oat-milk"
+          />
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight" dir="auto">{user.name}</h2>
+            <h2 className="font-display text-2xl" dir="auto">{user.name}</h2>
             <div className="flex justify-center">
               <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${currentRoleBadge.color}`}>
                 {currentRoleBadge.icon && <MaterialIcon icon={currentRoleBadge.icon} className="text-sm" filled />}
@@ -102,12 +96,44 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               </span>
             </div>
             {user.bio && (
-              <p className="text-slate-600 text-sm max-w-xs mx-auto px-4" dir="auto">{user.bio}</p>
+              <p className="text-espresso/70 text-sm leading-relaxed max-w-xs mx-auto px-4" dir="auto">{user.bio}</p>
             )}
           </div>
-          <div className="w-full flex gap-3 mt-2">
+
+          {/* Stats */}
+          <div className="w-full flex divide-x divide-espresso/10 bg-surface rounded-2xl border border-espresso/10 py-3">
+            <div className="flex-1 text-center px-2">
+              <p className="font-display text-xl">{user.recipes.length}</p>
+              <p className="text-xs text-espresso/60 mt-0.5">وصفات</p>
+            </div>
+            {showFollowers && (
+              <>
+                <div className="flex-1 text-center px-2">
+                  <p className="font-display text-xl">{formatCount(user.followers)}</p>
+                  <p className="text-xs text-espresso/60 mt-0.5">متابعين</p>
+                </div>
+                <div className="flex-1 text-center px-2">
+                  <p className="font-display text-xl">{formatCount(user.following)}</p>
+                  <p className="text-xs text-espresso/60 mt-0.5">يتابع</p>
+                </div>
+              </>
+            )}
+            <div className="flex-1 text-center px-2">
+              <div className="flex items-center justify-center gap-1">
+                <p className="font-display text-xl">{user.avgRating.toFixed(1)}</p>
+                <MaterialIcon icon="star" className="text-crema text-sm" filled />
+              </div>
+              <p className="text-xs text-espresso/60 mt-0.5">متوسط التقييم</p>
+            </div>
+          </div>
+
+          <div className="w-full flex gap-3">
             <FollowButton userId={user.id} className="flex-1" />
-            <ShareButton url={`/profile/${user.id}`} title={`Check out ${user.name}'s profile on WSFA!`} />
+            <ShareButton
+              url={`/profile/${user.id}`}
+              title={`تعرّف على ملف ${user.name} في وصفة`}
+              className="relative border border-espresso/15 rounded-xl px-4 py-3 text-espresso/70 hover:border-primary/40 transition-colors"
+            />
           </div>
         </div>
 
@@ -115,96 +141,69 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
         {company && (
           <div className="px-4 pb-4">
             <Link href={`/brand/${company.id}`}>
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-4 hover:bg-amber-100 transition-colors">
-                <div className="size-12 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                  <MaterialIcon icon="storefront" className="text-amber-600 text-2xl" />
+              <div className="bg-surface border border-espresso/10 rounded-2xl p-4 flex items-center gap-4 hover:border-primary/40 transition-colors">
+                <div className="size-12 rounded-full bg-brand-gold/10 flex items-center justify-center shrink-0">
+                  <MaterialIcon icon="storefront" className="text-brand-gold text-2xl" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-sm text-amber-900" dir="auto">{company.name}</h3>
-                  <p className="text-xs text-amber-600">عرض العلامة التجارية</p>
+                  <h3 className="font-bold text-sm" dir="auto">{company.name}</h3>
+                  <p className="text-xs text-espresso/60">عرض العلامة التجارية</p>
                 </div>
-                <MaterialIcon icon="arrow_forward" className="text-amber-400 text-xl shrink-0" />
+                <MaterialIcon icon="chevron_left" className="text-espresso/50 text-xl shrink-0" />
               </div>
             </Link>
           </div>
         )}
 
-        {/* Stats */}
-        <div className="flex gap-3 px-4 py-2">
-          {showFollowers && (
-            <>
-              <div className="flex-1 bg-white rounded-xl border border-slate-200 p-3 text-center">
-                <p className="text-lg font-bold">{formatCount(user.followers)}</p>
-                <p className="text-slate-500 text-[10px] mt-0.5">متابعين</p>
-              </div>
-              <div className="flex-1 bg-white rounded-xl border border-slate-200 p-3 text-center">
-                <p className="text-lg font-bold">{formatCount(user.following)}</p>
-                <p className="text-slate-500 text-[10px] mt-0.5">يتابع</p>
-              </div>
-            </>
-          )}
-          <div className="flex-1 bg-white rounded-xl border border-slate-200 p-3 text-center">
-            <p className="text-lg font-bold">{user.recipes.length}</p>
-            <p className="text-slate-500 text-[10px] mt-0.5">وصفات</p>
-          </div>
-          <div className="flex-1 bg-white rounded-xl border border-slate-200 p-3 text-center">
-            <div className="flex items-center justify-center gap-1">
-              <p className="text-lg font-bold">{user.avgRating.toFixed(1)}</p>
-              <MaterialIcon icon="star" className="text-primary text-xs" filled />
-            </div>
-            <p className="text-slate-500 text-[10px] mt-0.5">متوسط التقييم</p>
-          </div>
-        </div>
-
         {/* Badges */}
         {user.badges.length > 0 && (
-          <div className="px-4 py-6">
-            <h3 className="text-lg font-bold mb-4">الشارات</h3>
+          <section className="px-4 py-6">
+            <h2 className="text-xl mb-4">الشارات</h2>
             <div className="flex gap-3 overflow-x-auto no-scrollbar">
               {user.badges.map((ub) => (
                 <div key={ub.id} className="flex flex-col items-center gap-2 shrink-0 min-w-[72px]">
-                  <div className="size-14 rounded-2xl bg-white border border-slate-200 flex items-center justify-center">
+                  <div className="size-14 rounded-2xl bg-surface border border-espresso/10 flex items-center justify-center">
                     <MaterialIcon
                       icon={ub.badge.icon}
                       className={`text-2xl ${badgeColors[ub.badge.color] || "text-primary"}`}
                     />
                   </div>
-                  <span className="text-[9px] font-bold uppercase tracking-widest opacity-60 text-center">
+                  <span className="text-[11px] font-semibold text-espresso/70 text-center">
                     {ub.badge.name}
                   </span>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
         {/* Recipes */}
         {user.recipes.length > 0 && (
-          <div className="px-4 py-4">
-            <h3 className="text-lg font-bold mb-4">الوصفات</h3>
-            <div className="grid grid-cols-2 gap-3">
+          <section className="px-4 py-4">
+            <h2 className="text-xl mb-4">الوصفات</h2>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6">
               {user.recipes.map((r) => (
-                <Link href={`/recipe/${r.id}`} key={r.id} className="flex flex-col gap-2">
-                  <div className="aspect-[3/4] rounded-xl bg-slate-100 overflow-hidden relative">
+                <Link href={`/recipe/${r.id}`} key={r.id} className="flex flex-col gap-3">
+                  <div className="aspect-[3/4] rounded-[20px] bg-pine overflow-hidden relative">
                     <img
-                      className="w-full h-full object-cover"
-                      src={r.imageUrl || "https://via.placeholder.com/300x400"}
-                      alt={r.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      src={r.imageUrl || "/brand/banners/recipe-placeholder.svg"}
+                      alt=""
                     />
                   </div>
                   <div>
-                    <h4 className="font-bold text-sm leading-tight" dir="auto">{r.title}</h4>
-                    <p className="text-[10px] opacity-60 font-semibold flex items-center gap-1">
+                    <h3 className="font-bold text-sm leading-snug mb-1" dir="auto">{r.title}</h3>
+                    <p className="text-xs text-espresso/60 flex items-center gap-1">
                       {r.likes} إعجاب
                       {r.rating > 0 && (
-                        <> &bull; {r.rating.toFixed(1)} <MaterialIcon icon="star" className="text-[10px] text-primary" /></>
+                        <> &bull; {r.rating.toFixed(1)} <MaterialIcon icon="star" filled className="text-xs text-crema" /></>
                       )}
                     </p>
                   </div>
                 </Link>
               ))}
             </div>
-          </div>
+          </section>
         )}
       </main>
 

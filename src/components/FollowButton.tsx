@@ -40,13 +40,13 @@ export default function FollowButton({ userId, className = "" }: FollowButtonPro
     <button
       onClick={handleToggle}
       disabled={loading}
-      className={`font-bold py-3 rounded-xl transition-all disabled:opacity-50 ${
+      className={`py-3 rounded-xl text-sm border transition-colors disabled:opacity-50 ${
         isFollowing
-          ? "bg-slate-100 text-slate-600 border border-slate-200"
-          : "bg-primary text-background-dark hover:opacity-90"
+          ? "border-espresso/15 text-espresso font-semibold hover:border-primary/40"
+          : "bg-primary text-on-primary border-transparent font-bold hover:bg-primary/90"
       } ${className}`}
     >
-      {loading ? "..." : isFollowing ? "متابَع" : "متابعة"}
+      {loading ? "…" : isFollowing ? "متابَع" : "متابعة"}
     </button>
   );
 }

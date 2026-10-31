@@ -5,6 +5,7 @@ import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
 import BottomNav from "@/components/BottomNav";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import BrandIcon from "@/components/BrandIcon";
 import { logout } from "@/app/actions";
 
 interface UserData {
@@ -175,41 +176,47 @@ export default function SettingsPage() {
 
   if (!user) return null;
 
-  const avatarUrl =
-    user.image ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || "User")}&background=25f459&color=fff&size=128`;
+  const avatarUrl = user.image || "/brand/banners/avatar-placeholder.svg";
+
+  const inputClass =
+    "w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
+  const labelClass = "text-xs font-semibold text-espresso/70 mb-2 block";
+  const segClass = (active: boolean) =>
+    `flex-1 text-xs font-semibold py-2 rounded-full transition-colors ${
+      active ? "bg-primary text-on-primary" : "bg-oat-milk text-espresso/70"
+    }`;
 
   return (
-    <div className="bg-background-light font-display text-espresso min-h-screen flex flex-col">
+    <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-light/80 backdrop-blur-md border-b border-primary/10">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link
           href="/profile"
-          className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10"
+          aria-label="رجوع"
+          className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk"
         >
-          <MaterialIcon icon="arrow_back" />
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">
-          الإعدادات
-        </h2>
-        <div className="size-10" />
+        <h1 className="text-xl flex-1">الإعدادات</h1>
       </header>
 
-      <main className="flex-1 pb-24 px-4">
+      <main className="flex-1 pb-28 px-4 max-w-screen-sm mx-auto w-full">
         {/* Avatar + Role */}
-        <div className="flex flex-col items-center pt-6 pb-4 gap-3">
+        <div className="flex flex-col items-center pt-8 pb-6 gap-3">
           <div className="relative">
-            <div className="bg-primary/20 rounded-full p-1 border-2 border-primary">
-              <div
-                className="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-24 h-24"
-                style={{ backgroundImage: `url("${avatarUrl}")` }}
-              />
-            </div>
-            <label className="absolute bottom-0 right-0 size-8 rounded-full bg-primary text-white flex items-center justify-center cursor-pointer shadow-lg hover:bg-primary/80 transition-colors">
+            <img
+              src={avatarUrl}
+              alt=""
+              className="size-24 rounded-full object-cover ring-4 ring-surface bg-oat-milk"
+            />
+            <label
+              aria-label="تغيير الصورة"
+              className="absolute bottom-0 end-0 size-9 rounded-full bg-primary text-on-primary flex items-center justify-center cursor-pointer ring-4 ring-background-light hover:bg-primary/90 transition-colors"
+            >
               {uploadingAvatar ? (
-                <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="size-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />
               ) : (
-                <MaterialIcon icon="photo_camera" className="text-sm" />
+                <MaterialIcon icon="photo_camera" className="text-base" />
               )}
               <input
                 type="file"
@@ -220,8 +227,8 @@ export default function SettingsPage() {
               />
             </label>
           </div>
-          <span className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">
-            <MaterialIcon icon="verified" className="text-sm" filled />
+          <span className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">
+            <BrandIcon name="verified" className="text-sm" />
             {roleBadgeLabel(user.role)}
           </span>
         </div>
@@ -240,107 +247,117 @@ export default function SettingsPage() {
         )}
 
         {/* Profile Fields */}
-        <section className="mb-6">
-          <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 mb-2 block">
-            الاسم
-          </label>
-          <input
-            dir="auto"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="اسمك"
-            className="w-full px-4 py-3 rounded-xl bg-white border border-espresso/10 text-sm font-medium outline-none focus:border-primary"
-          />
-        </section>
+        <section className="mb-8">
+          <h2 className="text-xl mb-4">الحساب</h2>
+          <div className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
+            <div>
+              <label htmlFor="settings-name" className={labelClass}>
+                الاسم
+              </label>
+              <input
+                id="settings-name"
+                dir="auto"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="اسمك"
+                className={inputClass}
+              />
+            </div>
 
-        <section className="mb-6">
-          <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 mb-2 block">
-            النبذة
-          </label>
-          <textarea
-            dir="auto"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            placeholder="أخبرنا عن نفسك..."
-            rows={3}
-            className="w-full px-4 py-3 rounded-xl bg-white border border-espresso/10 text-sm font-medium outline-none focus:border-primary resize-none"
-          />
-        </section>
+            <div>
+              <label htmlFor="settings-bio" className={labelClass}>
+                النبذة
+              </label>
+              <textarea
+                id="settings-bio"
+                dir="auto"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="أخبرنا عن نفسك..."
+                rows={3}
+                className={`${inputClass} leading-relaxed resize-none`}
+              />
+            </div>
 
-        <section className="mb-6">
-          <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 mb-2 block">
-            البريد الإلكتروني
-          </label>
-          <input
-            dir="ltr"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full px-4 py-3 rounded-xl bg-white border border-espresso/10 text-sm font-medium outline-none focus:border-primary"
-          />
-        </section>
+            <div>
+              <label htmlFor="settings-email" className={labelClass}>
+                البريد الإلكتروني
+              </label>
+              <input
+                id="settings-email"
+                dir="ltr"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className={`${inputClass} text-end`}
+              />
+            </div>
 
-        <section className="mb-6">
-          <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 mb-2 block">
-            الهاتف
-          </label>
-          <input
-            dir="ltr"
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="+1 234 567 890"
-            className="w-full px-4 py-3 rounded-xl bg-white border border-espresso/10 text-sm font-medium outline-none focus:border-primary"
-          />
+            <div>
+              <label htmlFor="settings-phone" className={labelClass}>
+                الهاتف
+              </label>
+              <input
+                id="settings-phone"
+                dir="ltr"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+1 234 567 890"
+                className={`${inputClass} text-end`}
+              />
+            </div>
+          </div>
         </section>
 
         {/* Password Section */}
-        <div className="border-t border-espresso/10 pt-6 mb-6">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-espresso/60 mb-4 block">
-            تغيير كلمة المرور
-          </h3>
+        <section className="mb-6">
+          <h2 className="text-xl mb-4">تغيير كلمة المرور</h2>
+          <div className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
+            <div>
+              <label htmlFor="settings-current-password" className={labelClass}>
+                كلمة المرور الحالية
+              </label>
+              <input
+                id="settings-current-password"
+                dir="auto"
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="أدخل كلمة المرور الحالية"
+                className={inputClass}
+              />
+            </div>
 
-          <section className="mb-4">
-            <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 mb-2 block">
-              كلمة المرور الحالية
-            </label>
-            <input
-              dir="auto"
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="أدخل كلمة المرور الحالية"
-              className="w-full px-4 py-3 rounded-xl bg-white border border-espresso/10 text-sm font-medium outline-none focus:border-primary"
-            />
-          </section>
-
-          <section className="mb-4">
-            <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 mb-2 block">
-              كلمة المرور الجديدة
-            </label>
-            <input
-              dir="auto"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="أدخل كلمة المرور الجديدة"
-              className="w-full px-4 py-3 rounded-xl bg-white border border-espresso/10 text-sm font-medium outline-none focus:border-primary"
-            />
-          </section>
-        </div>
+            <div>
+              <label htmlFor="settings-new-password" className={labelClass}>
+                كلمة المرور الجديدة
+              </label>
+              <input
+                id="settings-new-password"
+                dir="auto"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="أدخل كلمة المرور الجديدة"
+                className={inputClass}
+              />
+            </div>
+          </div>
+        </section>
 
         {/* Save Button */}
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full bg-primary text-espresso font-bold py-3.5 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2 mb-4"
+          className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 mb-8"
         >
           {saving ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-espresso border-t-transparent" />
-              جاري الحفظ...
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-on-primary border-t-transparent" />
+              جارٍ الحفظ…
             </>
           ) : (
             <>
@@ -351,17 +368,21 @@ export default function SettingsPage() {
         </button>
 
         {/* Privacy Settings */}
-        <div className="border-t border-espresso/10 pt-6 mb-6">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-espresso/60 mb-4 flex items-center gap-2">
-            <MaterialIcon icon="lock" className="text-sm" />
-            الخصوصية
-          </h3>
+        <section className="mb-8">
+          <h2 className="text-xl mb-4">الخصوصية</h2>
 
-          <div className="space-y-4">
+          <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10 mb-4">
             {/* Who sees followers */}
-            <div className="bg-white rounded-xl border border-espresso/10 p-4">
-              <p className="text-sm font-bold mb-1">من يستطيع رؤية متابعيني</p>
-              <p className="text-xs text-espresso/50 mb-3">تحكم بمن يرى قائمة متابعيك</p>
+            <div className="p-4">
+              <div className="flex items-start gap-3 mb-3">
+                <span className="size-9 rounded-full bg-oat-milk flex items-center justify-center text-espresso/70 shrink-0">
+                  <MaterialIcon icon="group" className="text-xl" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold">من يستطيع رؤية متابعيني</p>
+                  <p className="text-xs text-espresso/60 leading-relaxed">تحكم بمن يرى قائمة متابعيك</p>
+                </div>
+              </div>
               <div className="flex gap-2">
                 {[
                   { value: "everyone", label: "الجميع" },
@@ -371,11 +392,7 @@ export default function SettingsPage() {
                   <button
                     key={opt.value}
                     onClick={() => setPrivacy((p) => ({ ...p, privacyFollowers: opt.value }))}
-                    className={`flex-1 text-xs font-bold py-2 rounded-lg transition-colors ${
-                      privacy.privacyFollowers === opt.value
-                        ? "bg-primary text-espresso"
-                        : "bg-slate-50 text-espresso/50 border border-espresso/10"
-                    }`}
+                    className={segClass(privacy.privacyFollowers === opt.value)}
                   >
                     {opt.label}
                   </button>
@@ -384,9 +401,16 @@ export default function SettingsPage() {
             </div>
 
             {/* Liked recipes visibility */}
-            <div className="bg-white rounded-xl border border-espresso/10 p-4">
-              <p className="text-sm font-bold mb-1">الوصفات المعجب بها</p>
-              <p className="text-xs text-espresso/50 mb-3">اعرض وصفاتك المعجب بها في ملفك الشخصي</p>
+            <div className="p-4">
+              <div className="flex items-start gap-3 mb-3">
+                <span className="size-9 rounded-full bg-oat-milk flex items-center justify-center text-espresso/70 shrink-0">
+                  <MaterialIcon icon="favorite" className="text-xl" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold">الوصفات المعجب بها</p>
+                  <p className="text-xs text-espresso/60 leading-relaxed">اعرض وصفاتك المعجب بها في ملفك الشخصي</p>
+                </div>
+              </div>
               <div className="flex gap-2">
                 {[
                   { value: "public", label: "عام" },
@@ -395,11 +419,7 @@ export default function SettingsPage() {
                   <button
                     key={opt.value}
                     onClick={() => setPrivacy((p) => ({ ...p, privacyLikes: opt.value }))}
-                    className={`flex-1 text-xs font-bold py-2 rounded-lg transition-colors ${
-                      privacy.privacyLikes === opt.value
-                        ? "bg-primary text-espresso"
-                        : "bg-slate-50 text-espresso/50 border border-espresso/10"
-                    }`}
+                    className={segClass(privacy.privacyLikes === opt.value)}
                   >
                     {opt.label}
                   </button>
@@ -408,9 +428,16 @@ export default function SettingsPage() {
             </div>
 
             {/* Saved recipes visibility */}
-            <div className="bg-white rounded-xl border border-espresso/10 p-4">
-              <p className="text-sm font-bold mb-1">الوصفات المحفوظة</p>
-              <p className="text-xs text-espresso/50 mb-3">اعرض وصفاتك المحفوظة في ملفك الشخصي</p>
+            <div className="p-4">
+              <div className="flex items-start gap-3 mb-3">
+                <span className="size-9 rounded-full bg-oat-milk flex items-center justify-center text-espresso/70 shrink-0">
+                  <MaterialIcon icon="bookmark" className="text-xl" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold">الوصفات المحفوظة</p>
+                  <p className="text-xs text-espresso/60 leading-relaxed">اعرض وصفاتك المحفوظة في ملفك الشخصي</p>
+                </div>
+              </div>
               <div className="flex gap-2">
                 {[
                   { value: "public", label: "عام" },
@@ -419,79 +446,82 @@ export default function SettingsPage() {
                   <button
                     key={opt.value}
                     onClick={() => setPrivacy((p) => ({ ...p, privacySaved: opt.value }))}
-                    className={`flex-1 text-xs font-bold py-2 rounded-lg transition-colors ${
-                      privacy.privacySaved === opt.value
-                        ? "bg-primary text-espresso"
-                        : "bg-slate-50 text-espresso/50 border border-espresso/10"
-                    }`}
+                    className={segClass(privacy.privacySaved === opt.value)}
                   >
                     {opt.label}
                   </button>
                 ))}
               </div>
             </div>
+          </div>
 
-            {/* Save privacy */}
-            <button
-              onClick={async () => {
-                setPrivacySaving(true);
-                try {
-                  const res = await fetch("/api/privacy", {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(privacy),
-                  });
-                  if (res.ok) {
-                    setMessage({ type: "success", text: "تم حفظ إعدادات الخصوصية!" });
-                  }
-                } catch {
-                  setMessage({ type: "error", text: "فشل حفظ إعدادات الخصوصية." });
-                } finally {
-                  setPrivacySaving(false);
+          {/* Save privacy */}
+          <button
+            onClick={async () => {
+              setPrivacySaving(true);
+              try {
+                const res = await fetch("/api/privacy", {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(privacy),
+                });
+                if (res.ok) {
+                  setMessage({ type: "success", text: "تم حفظ إعدادات الخصوصية!" });
                 }
-              }}
-              disabled={privacySaving}
-              className="w-full bg-espresso/5 text-espresso font-bold py-3 rounded-xl hover:bg-espresso/10 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              } catch {
+                setMessage({ type: "error", text: "فشل حفظ إعدادات الخصوصية." });
+              } finally {
+                setPrivacySaving(false);
+              }
+            }}
+            disabled={privacySaving}
+            className="w-full border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm hover:border-primary/40 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            <MaterialIcon icon="shield" className="text-lg" />
+            {privacySaving ? "جارٍ الحفظ…" : "حفظ إعدادات الخصوصية"}
+          </button>
+        </section>
+
+        {/* Appearance & account links */}
+        <section className="mb-6">
+          <h2 className="text-xl mb-4">التطبيق</h2>
+          <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10 overflow-hidden">
+            <DarkModeToggle />
+
+            <Link
+              href="/profile"
+              className="flex items-center gap-3 px-4 py-3.5 hover:bg-oat-milk/50 transition-colors"
             >
-              <MaterialIcon icon="shield" className="text-lg" />
-              {privacySaving ? "جاري الحفظ..." : "حفظ إعدادات الخصوصية"}
+              <span className="size-9 rounded-full bg-oat-milk flex items-center justify-center text-espresso/70">
+                <MaterialIcon icon="person" className="text-xl" />
+              </span>
+              <span className="text-sm font-semibold flex-1">عرض الملف الشخصي</span>
+              <MaterialIcon icon="chevron_left" className="text-espresso/50" />
+            </Link>
+
+            <Link
+              href="/pricing"
+              className="flex items-center gap-3 px-4 py-3.5 hover:bg-oat-milk/50 transition-colors"
+            >
+              <span className="size-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                <MaterialIcon icon="workspace_premium" className="text-xl" />
+              </span>
+              <span className="text-sm font-semibold flex-1">إدارة الاشتراك</span>
+              <MaterialIcon icon="chevron_left" className="text-espresso/50" />
+            </Link>
+
+            {/* Sign Out */}
+            <button
+              onClick={() => logout()}
+              className="w-full flex items-center gap-3 px-4 py-3.5 text-start text-red-600 hover:bg-red-50 transition-colors"
+            >
+              <span className="size-9 rounded-full bg-red-50 flex items-center justify-center">
+                <MaterialIcon icon="logout" className="text-xl" />
+              </span>
+              <span className="text-sm font-semibold flex-1">تسجيل الخروج</span>
             </button>
           </div>
-        </div>
-
-        {/* Appearance */}
-        <div className="mb-6">
-          <h3 className="text-xs font-bold uppercase tracking-widest text-espresso/60 mb-3 block">
-            المظهر
-          </h3>
-          <DarkModeToggle />
-        </div>
-
-        {/* Profile link */}
-        <Link
-          href="/profile"
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-50 text-slate-700 font-bold text-sm hover:bg-slate-100 transition-colors mb-4 border border-slate-200"
-        >
-          <MaterialIcon icon="person" className="text-lg" />
-          عرض الملف الشخصي
-        </Link>
-
-        <Link
-          href="/pricing"
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary/10 text-primary font-bold text-sm hover:bg-primary/20 transition-colors mb-4 border border-primary/20"
-        >
-          <MaterialIcon icon="workspace_premium" className="text-lg" />
-          إدارة الاشتراك
-        </Link>
-
-        {/* Sign Out */}
-        <button
-          onClick={() => logout()}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100 transition-colors"
-        >
-          <MaterialIcon icon="logout" className="text-lg" />
-          تسجيل الخروج
-        </button>
+        </section>
       </main>
 
       <BottomNav />

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import BrandIcon from "@/components/BrandIcon";
 import BottomNav from "@/components/BottomNav";
 import BrewMethodPicker from "@/components/BrewMethodPicker";
 import UpgradeModal from "@/components/UpgradeModal";
@@ -30,14 +31,24 @@ const GRIND_SIZES = [
   "Coarse",
 ] as const;
 
+// Display labels only; the stored values stay the English keys above.
+const GRIND_LABELS: Record<string, string> = {
+  "Extra Fine": "ناعم جداً",
+  Fine: "ناعم",
+  "Medium-Fine": "متوسط إلى ناعم",
+  Medium: "متوسط",
+  "Medium-Coarse": "متوسط إلى خشن",
+  Coarse: "خشن",
+};
+
 const INGREDIENT_UNITS: { value: IngredientUnit; label: string }[] = [
-  { value: "g", label: "g" },
-  { value: "ml", label: "ml" },
+  { value: "g", label: "غ" },
+  { value: "ml", label: "مل" },
   { value: "oz", label: "oz" },
-  { value: "tsp", label: "tsp" },
-  { value: "tbsp", label: "tbsp" },
-  { value: "cups", label: "cups" },
-  { value: "whole", label: "whole" },
+  { value: "tsp", label: "ملعقة ص" },
+  { value: "tbsp", label: "ملعقة ك" },
+  { value: "cups", label: "كوب" },
+  { value: "whole", label: "حبة" },
 ];
 
 function formatBrewTime(seconds: number): string {
@@ -174,7 +185,7 @@ export default function CreatePage() {
 
   const handlePublish = async () => {
     if (!recipeName || !category) {
-      setError("Recipe name and category are required");
+      setError("Ø§Ø³Ù Ø§ÙÙØµÙØ© ÙØ§ÙÙØ³Ù ÙØ·ÙÙØ¨Ø§Ù");
       return;
     }
 
@@ -227,7 +238,7 @@ export default function CreatePage() {
           setShowUpgradeModal(true);
           return;
         }
-        throw new Error(data.error || "Failed to publish");
+        throw new Error(data.error || "ØªØ¹Ø°ÙØ± ÙØ´Ø± Ø§ÙÙØµÙØ©Ø Ø­Ø§ÙÙ ÙØ±Ø© Ø£Ø®Ø±Ù");
       }
 
       setPublished(true);
@@ -235,7 +246,7 @@ export default function CreatePage() {
         router.push("/profile");
       }, 1500);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : "Ø­Ø¯Ø« Ø®Ø·Ø£ ØºÙØ± ÙØªÙÙØ¹Ø Ø­Ø§ÙÙ ÙØ±Ø© Ø£Ø®Ø±Ù");
     } finally {
       setPublishing(false);
     }
@@ -243,45 +254,49 @@ export default function CreatePage() {
 
   // Shared style tokens
   const inputClass =
-    "w-full bg-white rounded-xl px-4 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary transition-colors";
+    "w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors";
   const labelClass =
-    "text-xs font-bold uppercase tracking-widest text-espresso/60 mb-2 block";
+    "text-sm font-semibold text-espresso/80 mb-1.5 block";
+  const sectionClass = "bg-surface rounded-2xl border border-espresso/10 p-4";
+  const paramInputClass =
+    "w-full bg-transparent text-sm font-medium outline-none placeholder:text-espresso/50";
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background-light/80 backdrop-blur-md px-6 pt-6 pb-4 flex items-center justify-between border-b border-espresso/5">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link
           href="/"
-          className="size-10 rounded-full flex items-center justify-center hover:bg-primary/10"
+          aria-label="إغلاق"
+          className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk"
         >
           <MaterialIcon icon="close" />
         </Link>
-        <h1 className="text-lg font-bold">إنشاء وصفة</h1>
+        <h1 className="text-xl flex-1">إنشاء وصفة</h1>
         <button
           onClick={handlePublish}
           disabled={publishing}
-          className="text-primary font-bold text-sm active:scale-95 transition-transform disabled:opacity-50"
+          className="bg-primary text-on-primary rounded-xl px-4 py-2 font-bold text-sm hover:bg-primary/90 active:scale-95 transition-colors disabled:opacity-50"
         >
-          {publishing ? "..." : "نشر"}
+          {publishing ? "…" : "نشر"}
         </button>
       </header>
 
       {/* Success banner */}
       {published && (
-        <div className="mx-6 mt-4 bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3">
+        <div className="mx-4 mt-4 bg-primary/10 rounded-xl p-4 flex items-center gap-3">
           <MaterialIcon icon="check_circle" className="text-primary text-xl" />
-          <p className="text-sm font-medium text-primary">
-            تم نشر الوصفة بنجاح!
+          <p className="text-sm font-semibold text-primary">
+            تم نشر الوصفة بنجاح.
           </p>
         </div>
       )}
 
       {/* Error banner */}
       {error && (
-        <div className="mx-6 mt-4 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
-          <MaterialIcon icon="error" className="text-red-500 text-xl" />
-          <p className="text-sm font-medium text-red-600">{error}</p>
+        <div className="mx-4 mt-4 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+          <MaterialIcon icon="error" className="text-red-600 text-xl" />
+          <p className="text-sm font-medium text-red-700">{error}</p>
         </div>
       )}
 
@@ -291,7 +306,7 @@ export default function CreatePage() {
         onClose={() => setShowUpgradeModal(false)}
       />
 
-      <main className="flex-1 px-6 py-6 pb-28 space-y-6">
+      <main className="flex-1 px-4 py-6 pb-28 space-y-4">
         {/* Photo Upload */}
         <input
           ref={fileInputRef}
@@ -302,15 +317,15 @@ export default function CreatePage() {
         />
         <div
           onClick={() => fileInputRef.current?.click()}
-          className="aspect-video rounded-2xl border-2 border-dashed border-espresso/20 flex flex-col items-center justify-center gap-3 bg-white cursor-pointer hover:border-primary/40 transition-colors overflow-hidden relative"
+          className="aspect-video rounded-[20px] border-2 border-dashed border-espresso/15 flex flex-col items-center justify-center gap-3 bg-surface cursor-pointer hover:border-primary/40 transition-colors overflow-hidden relative"
         >
           {uploading ? (
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
           ) : imageUrl ? (
             <>
-              <img src={imageUrl} alt="Recipe" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={imageUrl} alt="صورة الوصفة" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <div className="bg-white/90 rounded-full p-3">
+                <div className="bg-surface/90 rounded-full p-3">
                   <MaterialIcon icon="edit" className="text-xl text-espresso" />
                 </div>
               </div>
@@ -322,148 +337,148 @@ export default function CreatePage() {
               </div>
               <div className="text-center">
                 <p className="text-sm font-bold">إضافة صورة غلاف</p>
-                <p className="text-xs text-espresso/40 mt-1">انقر للرفع</p>
+                <p className="text-xs text-espresso/60 mt-1">انقر للرفع</p>
               </div>
             </>
           )}
         </div>
 
-        {/* Recipe Name */}
-        <div>
-          <label className={labelClass}>اسم الوصفة</label>
-          <input
-            dir="auto"
-            value={recipeName}
-            onChange={(e) => setRecipeName(e.target.value)}
-            className={inputClass}
-            placeholder="مثال: قهوة الصباح بالترشيح"
-          />
-        </div>
+        {/* ──────────────────────────────────────────────────────────── */}
+        {/*  BASIC INFO                                                 */}
+        {/* ──────────────────────────────────────────────────────────── */}
+        <section className={`${sectionClass} space-y-4`}>
+          <h2 className="text-xl">عن الوصفة</h2>
 
-        {/* Publish As Toggle - BRAND_ADMIN only */}
-        {userRole === "BRAND_ADMIN" && userBrand && (
-          <div className="bg-white rounded-2xl border border-espresso/10 overflow-hidden">
-            <div className="px-4 py-3 flex items-center gap-3 border-b border-espresso/5">
-              <div className="size-9 rounded-full bg-amber-50 flex items-center justify-center">
-                <MaterialIcon icon="storefront" className="text-lg text-amber-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold uppercase tracking-widest text-espresso/60">
-                  النشر باسم
-                </p>
-              </div>
-            </div>
-            <div className="p-2 grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => setPublishAsBrand(false)}
-                className={`flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                  !publishAsBrand
-                    ? "bg-primary/10 border-2 border-primary text-espresso"
-                    : "bg-transparent border-2 border-transparent text-espresso/50 hover:bg-espresso/5"
-                }`}
-              >
-                <MaterialIcon
-                  icon="group"
-                  className={`text-lg ${!publishAsBrand ? "text-primary" : "text-espresso/30"}`}
-                />
-                <span dir="auto">وصفة مجتمعية</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPublishAsBrand(true)}
-                className={`flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                  publishAsBrand
-                    ? "bg-amber-50 border-2 border-amber-500 text-espresso"
-                    : "bg-transparent border-2 border-transparent text-espresso/50 hover:bg-espresso/5"
-                }`}
-              >
-                <MaterialIcon
-                  icon="verified"
-                  className={`text-lg ${publishAsBrand ? "text-amber-500" : "text-espresso/30"}`}
-                />
-                <span dir="auto" className="truncate">{userBrand.name}</span>
-              </button>
-            </div>
-            {publishAsBrand && (
-              <div className="mx-4 mb-3 px-3 py-2 bg-amber-50 rounded-lg flex items-center gap-2">
-                <MaterialIcon icon="info" className="text-sm text-amber-600" />
-                <p className="text-xs text-amber-700" dir="auto">
-                  سيتم نشر هذه الوصفة تحت <strong>{userBrand.name}</strong> كوصفة رسمية للعلامة التجارية.
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Category & Difficulty */}
-        <div className="grid grid-cols-2 gap-4">
+          {/* Recipe Name */}
           <div>
-            <label className={labelClass}>القسم</label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className={`${inputClass} appearance-none`}
-            >
-              <option value="">Select...</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.name}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+            <label htmlFor="create-name" className={labelClass}>اسم الوصفة</label>
+            <input
+              id="create-name"
+              dir="auto"
+              value={recipeName}
+              onChange={(e) => setRecipeName(e.target.value)}
+              className={inputClass}
+              placeholder="مثال: قهوة الصباح بالترشيح"
+            />
           </div>
+
+          {/* Publish As Toggle - BRAND_ADMIN only */}
+          {userRole === "BRAND_ADMIN" && userBrand && (
+            <div>
+              <p className={labelClass}>النشر باسم</p>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPublishAsBrand(false)}
+                  className={`flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-semibold border transition-colors ${
+                    !publishAsBrand
+                      ? "bg-primary/10 border-primary text-espresso"
+                      : "bg-oat-milk border-transparent text-espresso/60 hover:text-espresso"
+                  }`}
+                >
+                  <MaterialIcon
+                    icon="group"
+                    className={`text-lg ${!publishAsBrand ? "text-primary" : "text-espresso/50"}`}
+                  />
+                  <span dir="auto">وصفة مجتمعية</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPublishAsBrand(true)}
+                  className={`flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-semibold border transition-colors ${
+                    publishAsBrand
+                      ? "bg-brand-gold/10 border-brand-gold text-espresso"
+                      : "bg-oat-milk border-transparent text-espresso/60 hover:text-espresso"
+                  }`}
+                >
+                  <BrandIcon
+                    name="verified"
+                    className={`text-lg ${publishAsBrand ? "text-brand-gold" : "text-espresso/50"}`}
+                  />
+                  <span dir="auto" className="truncate">{userBrand.name}</span>
+                </button>
+              </div>
+              {publishAsBrand && (
+                <div className="mt-2 px-3 py-2 bg-oat-milk rounded-xl flex items-center gap-2">
+                  <MaterialIcon icon="info" className="text-sm text-brand-gold" />
+                  <p className="text-xs text-espresso/70 leading-relaxed" dir="auto">
+                    سيتم نشر هذه الوصفة تحت <strong>{userBrand.name}</strong> كوصفة رسمية للعلامة التجارية.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Category & Difficulty */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="create-category" className={labelClass}>القسم</label>
+              <select
+                id="create-category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className={`${inputClass} appearance-none`}
+              >
+                <option value="">اختر…</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="create-difficulty" className={labelClass}>الصعوبة</label>
+              <select
+                id="create-difficulty"
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value)}
+                className={`${inputClass} appearance-none`}
+              >
+                <option value="Beginner">مبتدئ</option>
+                <option value="Intermediate">متوسط</option>
+                <option value="Advanced">متقدم</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Brew Time */}
           <div>
-            <label className={labelClass}>الصعوبة</label>
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              className={`${inputClass} appearance-none`}
-            >
-              <option value="Beginner">مبتدئ</option>
-              <option value="Intermediate">متوسط</option>
-              <option value="Advanced">متقدم</option>
-            </select>
+            <label htmlFor="create-brew-time" className={labelClass}>وقت التحضير</label>
+            <input
+              id="create-brew-time"
+              dir="auto"
+              value={brewTime}
+              onChange={(e) => setBrewTime(e.target.value)}
+              className={inputClass}
+              placeholder="مثال: ١٠ دقائق"
+            />
           </div>
-        </div>
 
-        {/* Brew Time */}
-        <div>
-          <label className={labelClass}>وقت التحضير</label>
-          <input
-            dir="auto"
-            value={brewTime}
-            onChange={(e) => setBrewTime(e.target.value)}
-            className={inputClass}
-            placeholder="مثال: ١٠ دقائق"
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className={labelClass}>الوصف</label>
-          <textarea
-            dir="auto"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={3}
-            className={`${inputClass} resize-none`}
-            placeholder="أخبرنا قصة وصفتك..."
-          />
-        </div>
+          {/* Description */}
+          <div>
+            <label htmlFor="create-description" className={labelClass}>الوصف</label>
+            <textarea
+              id="create-description"
+              dir="auto"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              className={`${inputClass} resize-none leading-relaxed`}
+              placeholder="أخبرنا قصة وصفتك…"
+            />
+          </div>
+        </section>
 
         {/* ──────────────────────────────────────────────────────────── */}
         {/*  BREWING PARAMETERS SECTION                                 */}
         {/* ──────────────────────────────────────────────────────────── */}
-        <div className="space-y-4">
+        <section className={sectionClass}>
           {/* Section heading */}
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded-full bg-primary/10 flex items-center justify-center">
-              <MaterialIcon icon="tune" className="text-lg text-primary" />
-            </div>
+          <div className="flex items-start gap-3 mb-4">
             <div className="flex-1">
-              <h2 className="text-sm font-bold">معايير التحضير</h2>
-              <p className="text-xs text-espresso/40">
+              <h2 className="text-xl">معايير التحضير</h2>
+              <p className="text-xs text-espresso/60 mt-1">
                 اضبط معايير تحضيرك للكوب المثالي
               </p>
             </div>
@@ -477,73 +492,67 @@ export default function CreatePage() {
             />
           </div>
 
-          {/* Parameter cards in a bordered container */}
-          <div className="bg-white rounded-2xl border border-espresso/10 divide-y divide-espresso/5 overflow-hidden">
+          {/* Parameter rows */}
+          <div className="rounded-xl border border-espresso/10 divide-y divide-espresso/10 overflow-hidden">
             {/* Temperature */}
-            <div className="flex items-center gap-4 px-4 py-3.5">
-              <div className="size-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-                <MaterialIcon
-                  icon="thermostat"
-                  className="text-xl text-red-400"
-                />
+            <div className="flex items-center gap-4 px-4 py-3">
+              <div className="size-10 rounded-xl bg-oat-milk text-primary flex items-center justify-center shrink-0">
+                <BrandIcon name="thermometer" className="text-xl" />
               </div>
               <div className="flex-1 min-w-0">
-                <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 block mb-1">
+                <label htmlFor="create-temp" className="text-xs font-semibold text-espresso/60 block mb-1">
                   الحرارة
                 </label>
                 <input
+                  id="create-temp"
                   inputMode="numeric"
                   value={temperature}
                   onChange={(e) => setTemperature(e.target.value)}
-                  className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-espresso/30"
+                  className={paramInputClass}
                   placeholder="مثال: ٩٣"
                 />
               </div>
             </div>
 
             {/* Coffee-to-Water Ratio */}
-            <div className="flex items-center gap-4 px-4 py-3.5">
-              <div className="size-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                <MaterialIcon
-                  icon="balance"
-                  className="text-xl text-blue-400"
-                />
+            <div className="flex items-center gap-4 px-4 py-3">
+              <div className="size-10 rounded-xl bg-oat-milk text-primary flex items-center justify-center shrink-0">
+                <BrandIcon name="scale" className="text-xl" />
               </div>
               <div className="flex-1 min-w-0">
-                <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 block mb-1">
+                <label htmlFor="create-ratio" className="text-xs font-semibold text-espresso/60 block mb-1">
                   نسبة القهوة إلى الماء
                 </label>
                 <input
+                  id="create-ratio"
                   dir="ltr"
                   value={ratio}
                   onChange={(e) => setRatio(e.target.value)}
-                  className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-espresso/30"
+                  className={`${paramInputClass} text-end`}
                   placeholder="مثال: ١:١٥"
                 />
               </div>
             </div>
 
             {/* Grind Size */}
-            <div className="flex items-center gap-4 px-4 py-3.5">
-              <div className="size-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-                <MaterialIcon
-                  icon="grain"
-                  className="text-xl text-amber-500"
-                />
+            <div className="flex items-center gap-4 px-4 py-3">
+              <div className="size-10 rounded-xl bg-oat-milk text-primary flex items-center justify-center shrink-0">
+                <BrandIcon name="grind" className="text-xl" />
               </div>
               <div className="flex-1 min-w-0">
-                <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 block mb-1">
+                <label htmlFor="create-grind" className="text-xs font-semibold text-espresso/60 block mb-1">
                   حجم الطحن
                 </label>
                 <select
+                  id="create-grind"
                   value={grindSize}
                   onChange={(e) => setGrindSize(e.target.value)}
-                  className="w-full bg-transparent text-sm font-medium outline-none appearance-none placeholder:text-espresso/30"
+                  className={`${paramInputClass} appearance-none`}
                 >
-                  <option value="">اختر حجم الطحن...</option>
+                  <option value="">اختر حجم الطحن…</option>
                   {GRIND_SIZES.map((size) => (
                     <option key={size} value={size}>
-                      {size}
+                      {GRIND_LABELS[size] || size}
                     </option>
                   ))}
                 </select>
@@ -551,19 +560,17 @@ export default function CreatePage() {
             </div>
 
             {/* Brew Timer */}
-            <div className="flex items-center gap-4 px-4 py-3.5">
-              <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <MaterialIcon
-                  icon="timer"
-                  className="text-xl text-primary"
-                />
+            <div className="flex items-center gap-4 px-4 py-3">
+              <div className="size-10 rounded-xl bg-oat-milk text-primary flex items-center justify-center shrink-0">
+                <BrandIcon name="timer" className="text-xl" />
               </div>
               <div className="flex-1 min-w-0">
-                <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 block mb-1">
-                  مؤقت التحضير
+                <label htmlFor="create-timer" className="text-xs font-semibold text-espresso/60 block mb-1">
+                  مؤقت التحضير (بالثواني)
                 </label>
                 <div className="flex items-center gap-3">
                   <input
+                    id="create-timer"
                     type="number"
                     min={0}
                     value={brewTimeSec}
@@ -572,11 +579,11 @@ export default function CreatePage() {
                         e.target.value === "" ? "" : Number(e.target.value)
                       )
                     }
-                    className="flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-espresso/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    className={`flex-1 ${paramInputClass} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
                     placeholder="مثال: ٢٤٠"
                   />
                   {typeof brewTimeSec === "number" && brewTimeSec > 0 && (
-                    <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg whitespace-nowrap">
+                    <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full whitespace-nowrap tabular-nums" dir="ltr">
                       {formatBrewTime(brewTimeSec)}
                     </span>
                   )}
@@ -584,50 +591,51 @@ export default function CreatePage() {
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* ──────────────────────────────────────────────────────────── */}
         {/*  INGREDIENTS                                                */}
         {/* ──────────────────────────────────────────────────────────── */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <label className="text-xs font-bold uppercase tracking-widest text-espresso/60">
-              المكونات
-            </label>
+        <section className={sectionClass}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl">المكونات</h2>
             <button
               onClick={addIngredient}
-              className="text-primary text-xs font-bold flex items-center gap-1"
+              className="text-primary text-sm font-semibold flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors"
             >
-              <MaterialIcon icon="add" className="text-sm" /> إضافة
+              <MaterialIcon icon="add" className="text-base" /> إضافة
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {ingredients.map((ing, idx) => (
-              <div key={idx} className="flex gap-2 items-center">
+              <div key={idx} className="flex gap-2 items-center bg-oat-milk rounded-xl p-2">
                 <input
                   dir="auto"
+                  aria-label={`اسم المكوّن ${idx + 1}`}
                   value={ing.name}
                   onChange={(e) =>
                     updateIngredient(idx, "name", e.target.value)
                   }
-                  className="flex-1 bg-white rounded-xl px-4 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary"
+                  className="flex-1 min-w-0 bg-surface rounded-xl px-3 py-2.5 border border-espresso/10 text-sm placeholder:text-espresso/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   placeholder="المكوّن"
                 />
                 <input
                   inputMode="decimal"
+                  aria-label={`كمية المكوّن ${idx + 1}`}
                   value={ing.amount}
                   onChange={(e) =>
                     updateIngredient(idx, "amount", e.target.value)
                   }
-                  className="w-20 bg-white rounded-xl px-3 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary"
+                  className="w-20 bg-surface rounded-xl px-3 py-2.5 border border-espresso/10 text-sm placeholder:text-espresso/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   placeholder="الكمية"
                 />
                 <select
+                  aria-label={`وحدة المكوّن ${idx + 1}`}
                   value={ing.unit}
                   onChange={(e) =>
                     updateIngredient(idx, "unit", e.target.value)
                   }
-                  className="w-20 bg-white rounded-xl px-2 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary appearance-none text-center"
+                  className="w-20 bg-surface rounded-xl px-2 py-2.5 border border-espresso/10 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 appearance-none text-center"
                 >
                   {INGREDIENT_UNITS.map((u) => (
                     <option key={u.value} value={u.value}>
@@ -638,7 +646,8 @@ export default function CreatePage() {
                 {ingredients.length > 1 && (
                   <button
                     onClick={() => removeIngredient(idx)}
-                    className="text-red-400 hover:text-red-600"
+                    aria-label="حذف المكوّن"
+                    className="size-9 shrink-0 rounded-full flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors"
                   >
                     <MaterialIcon icon="delete" className="text-lg" />
                   </button>
@@ -646,41 +655,41 @@ export default function CreatePage() {
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* ──────────────────────────────────────────────────────────── */}
         {/*  STEPS                                                      */}
         {/* ──────────────────────────────────────────────────────────── */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <label className="text-xs font-bold uppercase tracking-widest text-espresso/60">
-              الخطوات
-            </label>
+        <section className={sectionClass}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl">الخطوات</h2>
             <button
               onClick={addStep}
-              className="text-primary text-xs font-bold flex items-center gap-1"
+              className="text-primary text-sm font-semibold flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors"
             >
-              <MaterialIcon icon="add" className="text-sm" /> إضافة خطوة
+              <MaterialIcon icon="add" className="text-base" /> إضافة خطوة
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {steps.map((step, idx) => (
-              <div key={idx} className="flex gap-3 items-start">
-                <div className="size-8 rounded-full bg-primary text-espresso flex items-center justify-center font-bold text-sm shrink-0 mt-2.5">
+              <div key={idx} className="flex gap-3 items-start bg-oat-milk rounded-xl p-3">
+                <div className="size-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm shrink-0 mt-1.5">
                   {idx + 1}
                 </div>
                 <textarea
                   dir="auto"
+                  aria-label={`الخطوة ${idx + 1}`}
                   value={step}
                   onChange={(e) => updateStep(idx, e.target.value)}
                   rows={2}
-                  className="flex-1 bg-white rounded-xl px-4 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary resize-none"
-                  placeholder={`تعليمات الخطوة ${idx + 1}...`}
+                  className="flex-1 min-w-0 bg-surface rounded-xl px-3 py-2.5 border border-espresso/10 text-sm leading-relaxed placeholder:text-espresso/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
+                  placeholder={`تعليمات الخطوة ${idx + 1}…`}
                 />
                 {steps.length > 1 && (
                   <button
                     onClick={() => removeStep(idx)}
-                    className="text-red-400 hover:text-red-600 mt-2.5"
+                    aria-label="حذف الخطوة"
+                    className="size-9 shrink-0 rounded-full flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors mt-1"
                   >
                     <MaterialIcon icon="delete" className="text-lg" />
                   </button>
@@ -688,13 +697,13 @@ export default function CreatePage() {
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Verified Creator Badge */}
         {userRole === "CREATOR" && (
           <div className="flex items-center justify-center gap-2 py-2">
-            <MaterialIcon icon="verified" className="text-primary text-lg" />
-            <span className="text-xs font-bold text-primary uppercase tracking-wider">
+            <BrandIcon name="verified" className="text-primary text-lg" />
+            <span className="text-xs font-bold text-primary">
               النشر كمبدع موثق
             </span>
           </div>
@@ -703,8 +712,8 @@ export default function CreatePage() {
         {/* Brand publish indicator */}
         {publishAsBrand && userBrand && (
           <div className="flex items-center justify-center gap-2 py-2">
-            <MaterialIcon icon="storefront" className="text-amber-600 text-lg" />
-            <span className="text-xs font-bold text-amber-600 uppercase tracking-wider" dir="auto">
+            <MaterialIcon icon="storefront" className="text-brand-gold text-lg" />
+            <span className="text-xs font-bold text-brand-gold" dir="auto">
               النشر تحت {userBrand.name}
             </span>
           </div>
@@ -714,14 +723,14 @@ export default function CreatePage() {
         <button
           onClick={handlePublish}
           disabled={publishing}
-          className={`w-full font-bold py-4 rounded-xl text-sm active:scale-[0.98] transition-transform shadow-lg disabled:opacity-50 ${
+          className={`w-full font-bold py-4 rounded-xl text-sm active:scale-[0.98] transition-colors disabled:opacity-50 ${
             publishAsBrand && userBrand
-              ? "bg-amber-500 text-white shadow-amber-500/20"
-              : "bg-primary text-espresso shadow-primary/20"
+              ? "bg-brand-gold text-white hover:bg-brand-gold/90"
+              : "bg-primary text-on-primary hover:bg-primary/90"
           }`}
         >
           {publishing
-            ? "جارٍ النشر..."
+            ? "جارٍ النشر…"
             : publishAsBrand && userBrand
               ? `نشر باسم ${userBrand.name}`
               : "نشر الوصفة"}

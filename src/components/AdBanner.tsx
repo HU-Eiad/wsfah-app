@@ -6,7 +6,7 @@ interface AdBannerProps {
   slot: string; // Google AdSense ad slot ID
   format?: "auto" | "horizontal" | "vertical" | "rectangle";
   className?: string;
-  label?: string; // e.g. "Sponsored"
+  label?: string; // e.g. "إعلان"
 }
 
 declare global {
@@ -19,7 +19,7 @@ export default function AdBanner({
   slot,
   format = "auto",
   className = "",
-  label = "Sponsored",
+  label = "إعلان",
 }: AdBannerProps) {
   const adRef = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
@@ -35,8 +35,8 @@ export default function AdBanner({
   }, []);
 
   return (
-    <div className={`ad-container ${className}`}>
-      <p className="text-[10px] text-slate-400 dark:text-slate-600 text-center mb-1 uppercase tracking-widest font-bold">
+    <div className={`ad-container bg-surface border border-espresso/10 rounded-2xl p-3 ${className}`}>
+      <p className="text-[11px] text-espresso/60 mb-2 font-semibold">
         {label}
       </p>
       <ins

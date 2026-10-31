@@ -21,11 +21,11 @@ const NOTIFICATION_ICON_MAP: Record<
   { icon: string; color: string; bg: string }
 > = {
   LIKE: { icon: "favorite", color: "text-red-500", bg: "bg-red-50" },
-  SAVE: { icon: "bookmark", color: "text-blue-500", bg: "bg-blue-50" },
-  FOLLOW: { icon: "person_add", color: "text-green-600", bg: "bg-green-50" },
-  BADGE: { icon: "military_tech", color: "text-amber-500", bg: "bg-amber-50" },
-  CHALLENGE: { icon: "emoji_events", color: "text-purple-500", bg: "bg-purple-50" },
-  SYSTEM: { icon: "info", color: "text-slate-500", bg: "bg-slate-100" },
+  SAVE: { icon: "bookmark", color: "text-primary", bg: "bg-primary/10" },
+  FOLLOW: { icon: "person_add", color: "text-primary", bg: "bg-primary/10" },
+  BADGE: { icon: "military_tech", color: "text-crema", bg: "bg-crema/10" },
+  CHALLENGE: { icon: "emoji_events", color: "text-crema", bg: "bg-crema/10" },
+  SYSTEM: { icon: "info", color: "text-espresso/70", bg: "bg-oat-milk" },
 };
 
 function relativeTime(dateString: string): string {
@@ -33,22 +33,22 @@ function relativeTime(dateString: string): string {
   const then = new Date(dateString).getTime();
   const diffSeconds = Math.floor((now - then) / 1000);
 
-  if (diffSeconds < 60) return `${diffSeconds}s ago`;
+  if (diffSeconds < 60) return `منذ ${diffSeconds} ث`;
 
   const diffMinutes = Math.floor(diffSeconds / 60);
-  if (diffMinutes < 60) return `${diffMinutes}m ago`;
+  if (diffMinutes < 60) return `منذ ${diffMinutes} د`;
 
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffHours < 24) return `منذ ${diffHours} س`;
 
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 30) return `${diffDays}d ago`;
+  if (diffDays < 30) return `منذ ${diffDays} ي`;
 
   const diffMonths = Math.floor(diffDays / 30);
-  if (diffMonths < 12) return `${diffMonths}mo ago`;
+  if (diffMonths < 12) return `منذ ${diffMonths} شهر`;
 
   const diffYears = Math.floor(diffMonths / 12);
-  return `${diffYears}y ago`;
+  return `منذ ${diffYears} سنة`;
 }
 
 export default function NotificationsPage() {
@@ -122,65 +122,62 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="bg-background-light font-display text-espresso min-h-screen flex flex-col">
+    <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-light/80 backdrop-blur-md border-b border-primary/10">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link
           href="/"
-          className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10"
+          aria-label="رجوع"
+          className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk"
         >
-          <MaterialIcon icon="arrow_back" />
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">
+        <h1 className="text-xl flex-1 flex items-center">
           الإشعارات
           {unreadCount > 0 && (
-            <span className="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold bg-primary text-espresso rounded-full">
+            <span className="ms-2 inline-flex items-center justify-center min-w-6 px-2 py-0.5 text-xs font-bold font-sans bg-primary text-on-primary rounded-full">
               {unreadCount}
             </span>
           )}
-        </h2>
-        <div className="w-10" />
+        </h1>
       </header>
 
       {/* Mark all as read */}
       {unreadCount > 0 && (
-        <div className="px-4 pt-3 pb-1 flex justify-end">
+        <div className="px-4 pt-3 pb-1 flex justify-end max-w-screen-sm mx-auto w-full">
           <button
             onClick={handleMarkAllRead}
             disabled={markingAllRead}
-            className="text-sm font-bold text-primary hover:text-primary/80 transition-colors disabled:opacity-50 flex items-center gap-1"
+            className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors disabled:opacity-50 flex items-center gap-1"
           >
             <MaterialIcon icon="done_all" className="text-base" />
-            {markingAllRead ? "جاري التحديد..." : "تحديد الكل كمقروء"}
+            {markingAllRead ? "جارٍ التحديد…" : "تحديد الكل كمقروء"}
           </button>
         </div>
       )}
 
       {/* Content */}
-      <main className="flex-1 pb-28">
+      <main className="flex-1 pb-28 max-w-screen-sm mx-auto w-full">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-slate-500 font-medium">جاري تحميل الإشعارات...</p>
+            <p className="text-sm text-espresso/60 font-medium">جارٍ تحميل الإشعارات…</p>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4 px-8">
-            <div className="size-20 rounded-full bg-primary/10 flex items-center justify-center">
-              <MaterialIcon icon="notifications_none" className="text-4xl text-primary" />
-            </div>
-            <h3 className="text-lg font-bold text-espresso">لا توجد إشعارات بعد</h3>
-            <p className="text-sm text-slate-500 text-center leading-relaxed">
-              عندما يعجب أحد بوصفتك، أو يتابعك، أو تحصل على شارة، ستراها هنا.
+          <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
+            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <p className="text-sm text-espresso/70 leading-relaxed mb-5">
+              لا توجد إشعارات بعد. عندما يعجب أحد بوصفتك، أو يتابعك، أو تحصل على شارة، ستراها هنا.
             </p>
             <Link
               href="/"
-              className="mt-2 bg-primary text-espresso font-bold text-sm px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
+              className="bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
             >
               استكشف الوصفات
             </Link>
           </div>
         ) : (
-          <ul className="divide-y divide-slate-200/60">
+          <ul className="divide-y divide-espresso/10">
             {notifications.map((notif) => {
               const meta = NOTIFICATION_ICON_MAP[notif.type];
 
@@ -188,10 +185,10 @@ export default function NotificationsPage() {
                 <li key={notif.id}>
                   <button
                     onClick={() => handleNotificationClick(notif)}
-                    className={`w-full text-left flex items-start gap-3 px-4 py-4 transition-colors hover:bg-white/60 ${
+                    className={`w-full text-start flex items-start gap-3 px-4 py-4 transition-colors ${
                       !notif.isRead
-                        ? "border-l-[3px] border-l-primary bg-primary/[0.04]"
-                        : "border-l-[3px] border-l-transparent"
+                        ? "bg-primary/5 hover:bg-primary/10"
+                        : "hover:bg-oat-milk/50"
                     }`}
                   >
                     {/* Icon */}
@@ -209,24 +206,25 @@ export default function NotificationsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <p
+                          dir="auto"
                           className={`text-sm leading-snug ${
                             !notif.isRead ? "font-bold" : "font-semibold"
                           }`}
                         >
                           {notif.title}
                         </p>
-                        <span className="text-[11px] text-slate-400 font-medium shrink-0 mt-0.5">
+                        <span className="text-[11px] text-espresso/60 font-medium shrink-0 mt-0.5">
                           {relativeTime(notif.createdAt)}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 mt-0.5 leading-relaxed line-clamp-2">
+                      <p dir="auto" className="text-xs text-espresso/70 mt-0.5 leading-relaxed line-clamp-2">
                         {notif.body}
                       </p>
                     </div>
 
                     {/* Unread dot */}
                     {!notif.isRead && (
-                      <div className="size-2 rounded-full bg-primary shrink-0 mt-2" />
+                      <div className="size-2 rounded-full bg-crema shrink-0 mt-2" aria-hidden />
                     )}
                   </button>
                 </li>

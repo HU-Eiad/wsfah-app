@@ -2,6 +2,8 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import MaterialIcon from "@/components/MaterialIcon";
+import BrandIcon from "@/components/BrandIcon";
 
 interface RecipeOption {
   id: string;
@@ -10,7 +12,7 @@ interface RecipeOption {
 
 export default function NewBrewLogPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center"><p className="text-gray-500">Loading...</p></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background-light flex items-center justify-center"><p className="text-sm text-espresso/60">جارٍ التحميل…</p></div>}>
       <NewBrewLogInner />
     </Suspense>
   );
@@ -72,204 +74,226 @@ function NewBrewLogInner() {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || "Failed to save brew log");
+        setError(data.error || "تعذّر حفظ سجل التحضير");
         return;
       }
 
       router.push("/journal");
     } catch {
-      setError("Failed to save brew log");
+      setError("تعذّر حفظ سجل التحضير");
     } finally {
       setSubmitting(false);
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-          سجّل تحضيراً
-        </h1>
+  const inputClass =
+    "w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
+  const labelClass = "flex items-center gap-1.5 text-xs font-semibold text-espresso/70 mb-2";
 
+  return (
+    <div className="min-h-screen bg-background-light text-espresso">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <h1 className="text-xl flex-1">سجّل تحضيراً</h1>
+      </header>
+
+      <div className="max-w-2xl mx-auto px-4 py-6">
         {error && (
-          <div className="mb-6 p-3 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm">
+          <div className="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm font-medium">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              العنوان *
-            </label>
-            <input
-              type="text"
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Morning Pour Over"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
-            />
-          </div>
+          <div className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
+            {/* Title */}
+            <div>
+              <label htmlFor="log-title" className={labelClass}>
+                العنوان *
+              </label>
+              <input
+                id="log-title"
+                type="text"
+                dir="auto"
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="ترشيح الصباح"
+                className={inputClass}
+              />
+            </div>
 
-          {/* Recipe */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              الوصفة
-            </label>
-            <select
-              value={recipeId}
-              onChange={(e) => setRecipeId(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
-            >
-              <option value="">بدون وصفة</option>
-              {recipes.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.title}
-                </option>
-              ))}
-            </select>
-          </div>
+            {/* Recipe */}
+            <div>
+              <label htmlFor="log-recipe" className={labelClass}>
+                الوصفة
+              </label>
+              <select
+                id="log-recipe"
+                value={recipeId}
+                onChange={(e) => setRecipeId(e.target.value)}
+                className={inputClass}
+              >
+                <option value="">بدون وصفة</option>
+                {recipes.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.title}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* Notes */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              الملاحظات
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={4}
-              placeholder="كيف كان الطعم؟ هل تريد تعديل شيء؟"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
-            />
-          </div>
+            {/* Notes */}
+            <div>
+              <label htmlFor="log-notes" className={labelClass}>
+                الملاحظات
+              </label>
+              <textarea
+                id="log-notes"
+                dir="auto"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                rows={4}
+                placeholder="كيف كان الطعم؟ هل تريد تعديل شيء؟"
+                className={`${inputClass} leading-relaxed resize-none`}
+              />
+            </div>
 
-          {/* Rating */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              التقييم
-            </label>
-            <div className="flex gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  type="button"
-                  onClick={() => setRating(star === rating ? 0 : star)}
-                  className="focus:outline-none"
-                >
-                  <svg
-                    className={`w-8 h-8 ${
-                      star <= rating
-                        ? "text-yellow-400"
-                        : "text-gray-300 dark:text-gray-600"
-                    } hover:text-yellow-400 transition-colors`}
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+            {/* Rating */}
+            <div>
+              <p className={labelClass}>التقييم</p>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setRating(star === rating ? 0 : star)}
+                    aria-label={`${star} من 5`}
+                    className="p-0.5"
                   >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                </button>
-              ))}
+                    <MaterialIcon
+                      icon="star"
+                      filled
+                      className={`text-3xl transition-colors ${
+                        star <= rating ? "text-crema" : "text-espresso/15 hover:text-crema/60"
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Brew Parameters Grid */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                حجم الطحن
-              </label>
-              <input
-                type="text"
-                value={grindSize}
-                onChange={(e) => setGrindSize(e.target.value)}
-                placeholder="Medium-fine"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
-              />
+          <section>
+            <h2 className="text-xl mb-4">متغيرات التحضير</h2>
+            <div className="bg-surface rounded-2xl border border-espresso/10 p-4 grid grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="log-grind" className={labelClass}>
+                  <BrandIcon name="grind" className="text-base text-primary" />
+                  حجم الطحن
+                </label>
+                <input
+                  id="log-grind"
+                  type="text"
+                  dir="auto"
+                  value={grindSize}
+                  onChange={(e) => setGrindSize(e.target.value)}
+                  placeholder="متوسط ناعم"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="log-temp" className={labelClass}>
+                  <BrandIcon name="thermometer" className="text-base text-primary" />
+                  حرارة الماء (&deg;C)
+                </label>
+                <input
+                  id="log-temp"
+                  type="number"
+                  value={waterTemp}
+                  onChange={(e) => setWaterTemp(e.target.value)}
+                  placeholder="96"
+                  min={0}
+                  max={120}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="log-time" className={labelClass}>
+                  <BrandIcon name="timer" className="text-base text-primary" />
+                  وقت التحضير (ثواني)
+                </label>
+                <input
+                  id="log-time"
+                  type="number"
+                  value={brewTime}
+                  onChange={(e) => setBrewTime(e.target.value)}
+                  placeholder="240"
+                  min={1}
+                  max={86400}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="log-coffee" className={labelClass}>
+                  <BrandIcon name="bean" className="text-base text-primary" />
+                  القهوة (غرام)
+                </label>
+                <input
+                  id="log-coffee"
+                  type="number"
+                  value={coffeeGrams}
+                  onChange={(e) => setCoffeeGrams(e.target.value)}
+                  placeholder="18"
+                  min={0}
+                  step={0.1}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="log-water" className={labelClass}>
+                  <BrandIcon name="drop" className="text-base text-primary" />
+                  الماء (مل)
+                </label>
+                <input
+                  id="log-water"
+                  type="number"
+                  value={waterMl}
+                  onChange={(e) => setWaterMl(e.target.value)}
+                  placeholder="300"
+                  min={0}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="log-date" className={labelClass}>
+                  <MaterialIcon icon="calendar_today" className="text-base text-primary" />
+                  التاريخ
+                </label>
+                <input
+                  id="log-date"
+                  type="date"
+                  value={brewDate}
+                  onChange={(e) => setBrewDate(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                حرارة الماء (&deg;C)
-              </label>
-              <input
-                type="number"
-                value={waterTemp}
-                onChange={(e) => setWaterTemp(e.target.value)}
-                placeholder="96"
-                min={0}
-                max={120}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                وقت التحضير (ثواني)
-              </label>
-              <input
-                type="number"
-                value={brewTime}
-                onChange={(e) => setBrewTime(e.target.value)}
-                placeholder="240"
-                min={1}
-                max={86400}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                القهوة (غرام)
-              </label>
-              <input
-                type="number"
-                value={coffeeGrams}
-                onChange={(e) => setCoffeeGrams(e.target.value)}
-                placeholder="18"
-                min={0}
-                step={0.1}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                الماء (مل)
-              </label>
-              <input
-                type="number"
-                value={waterMl}
-                onChange={(e) => setWaterMl(e.target.value)}
-                placeholder="300"
-                min={0}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                التاريخ
-              </label>
-              <input
-                type="date"
-                value={brewDate}
-                onChange={(e) => setBrewDate(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#25f459] focus:border-transparent"
-              />
-            </div>
-          </div>
+          </section>
 
           {/* Submit */}
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 py-3 bg-[#25f459] text-gray-900 font-semibold rounded-lg hover:bg-[#25f459]/90 transition-colors disabled:opacity-50"
+              className="flex-1 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
-              {submitting ? "جاري الحفظ..." : "حفظ سجل التحضير"}
+              {submitting ? "جارٍ الحفظ…" : "حفظ سجل التحضير"}
             </button>
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm hover:border-primary/40 transition-colors"
             >
               إلغاء
             </button>

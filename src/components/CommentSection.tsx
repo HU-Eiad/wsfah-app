@@ -168,39 +168,25 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
     return (
       <div
         key={comment.id}
-        className={`${isReply ? "ml-12 mt-3" : "mt-4"} bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm`}
+        className={isReply ? "ms-12 mt-3" : "mt-4"}
       >
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0">
-            {comment.author.image ? (
-              <img
-                src={comment.author.image}
-                alt={comment.author.name || "User"}
-                className="w-10 h-10 rounded-full object-cover"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                <span className="text-gray-500 dark:text-gray-400 text-sm">
-                  {comment.author.name?.charAt(0) || "?"}
-                </span>
-              </div>
-            )}
+            <img
+              src={comment.author.image || "/brand/banners/avatar-placeholder.svg"}
+              alt=""
+              className="size-10 rounded-full object-cover bg-oat-milk"
+            />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="font-semibold text-gray-900 dark:text-white truncate">
-                {comment.author.name || "مجهول"}
-              </span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                {formatDate(comment.createdAt)}
-              </span>
-            </div>
             {isEditing ? (
-              <div className="mt-2">
+              <div>
                 <textarea
+                  aria-label="تعديل التعليق"
+                  dir="auto"
                   value={editBody}
                   onChange={(e) => setEditBody(e.target.value)}
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm resize-none placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   rows={3}
                   disabled={submitting}
                 />
@@ -208,7 +194,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                   <button
                     onClick={() => handleEdit(comment.id)}
                     disabled={submitting || !editBody.trim()}
-                    className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 disabled:opacity-50"
+                    className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
                   >
                     حفظ
                   </button>
@@ -218,24 +204,34 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                       setEditBody("");
                     }}
                     disabled={submitting}
-                    className="px-3 py-1 bg-gray-300 dark:bg-gray-600 text-gray-900 dark:text-white rounded-md text-sm hover:bg-gray-400 dark:hover:bg-gray-500 disabled:opacity-50"
+                    className="px-4 py-2 border border-espresso/15 rounded-xl text-sm font-semibold hover:border-primary/40 transition-colors disabled:opacity-50"
                   >
                     إلغاء
                   </button>
                 </div>
               </div>
             ) : (
-              <p className="text-gray-700 dark:text-gray-300 break-words">{comment.body}</p>
+              <div className="bg-oat-milk rounded-2xl px-4 py-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <span dir="auto" className="font-semibold text-sm truncate">
+                    {comment.author.name || "مجهول"}
+                  </span>
+                  <span className="text-[11px] text-espresso/60 shrink-0">
+                    {formatDate(comment.createdAt)}
+                  </span>
+                </div>
+                <p dir="auto" className="text-sm text-espresso/80 leading-relaxed break-words">{comment.body}</p>
+              </div>
             )}
             {!isEditing && (
-              <div className="flex gap-3 mt-2">
+              <div className="flex gap-4 mt-1.5 ps-2">
                 {!isReply && (
                   <button
                     onClick={() => {
                       setReplyingTo(comment.id);
                       setNewComment("");
                     }}
-                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 dark:hover:text-green-400"
+                    className="text-xs font-semibold text-espresso/60 hover:text-primary transition-colors"
                   >
                     رد
                   </button>
@@ -247,13 +243,13 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                         setEditingId(comment.id);
                         setEditBody(comment.body);
                       }}
-                      className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+                      className="text-xs font-semibold text-espresso/60 hover:text-primary transition-colors"
                     >
                       تعديل
                     </button>
                     <button
                       onClick={() => handleDelete(comment.id)}
-                      className="text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                      className="text-xs font-semibold text-espresso/60 hover:text-red-600 transition-colors"
                     >
                       حذف
                     </button>
@@ -274,7 +270,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
 
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+      <h2 className="text-xl mb-4">
         التعليقات ({comments.reduce((acc, c) => acc + 1 + c.replies.length, 0)})
       </h2>
 
@@ -282,30 +278,24 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
         <form onSubmit={handleSubmit} className="mb-6">
           <div className="flex gap-3">
             <div className="flex-shrink-0">
-              {session.user.image ? (
-                <img
-                  src={session.user.image}
-                  alt={session.user.name || "User"}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                  <span className="text-gray-500 dark:text-gray-400 text-sm">
-                    {session.user.name?.charAt(0) || "?"}
-                  </span>
-                </div>
-              )}
+              <img
+                src={session.user.image || "/brand/banners/avatar-placeholder.svg"}
+                alt=""
+                className="size-10 rounded-full object-cover bg-oat-milk"
+              />
             </div>
             <div className="flex-1">
               <textarea
+                aria-label={replyingTo ? "اكتب رداً" : "اكتب تعليقاً"}
+                dir="auto"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder={
                   replyingTo
-                    ? "اكتب رداً..."
-                    : "اكتب تعليقاً..."
+                    ? "اكتب رداً…"
+                    : "اكتب تعليقاً…"
                 }
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm resize-none placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                 rows={3}
                 disabled={submitting}
               />
@@ -317,7 +307,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                       setReplyingTo(null);
                       setNewComment("");
                     }}
-                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                    className="text-sm text-espresso/60 hover:text-espresso transition-colors"
                   >
                     إلغاء الرد
                   </button>
@@ -325,9 +315,9 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                 <button
                   type="submit"
                   disabled={submitting || !newComment.trim()}
-                  className="ml-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="ms-auto bg-primary text-on-primary rounded-xl px-5 py-2.5 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {submitting ? "جارٍ النشر..." : "نشر التعليق"}
+                  {submitting ? "جارٍ النشر…" : "نشر التعليق"}
                 </button>
               </div>
             </div>
@@ -336,9 +326,9 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
       )}
 
       {!session?.user && (
-        <p className="text-gray-500 dark:text-gray-400 mb-4">
+        <p className="text-sm text-espresso/70 mb-4">
           يرجى{" "}
-          <a href="/login" className="text-green-600 dark:text-green-400 hover:underline">
+          <a href="/login" className="text-primary font-semibold hover:underline">
             تسجيل الدخول
           </a>{" "}
           لكتابة تعليق.
@@ -349,20 +339,24 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
         {comments.map((comment) => renderComment(comment))}
       </div>
 
-      {loading && <p className="text-center text-gray-500 dark:text-gray-400 mt-4">جارٍ التحميل...</p>}
+      {loading && (
+        <div className="flex justify-center mt-4">
+          <div className="size-6 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-label="جارٍ التحميل…" />
+        </div>
+      )}
 
       {nextCursor && !loading && (
         <button
           onClick={() => fetchComments(nextCursor!)}
-          className="mt-4 w-full py-2 text-center text-green-600 dark:text-green-400 hover:underline"
+          className="mt-4 w-full py-3 text-center text-sm font-semibold text-primary hover:underline"
         >
           تحميل المزيد من التعليقات
         </button>
       )}
 
       {!loading && comments.length === 0 && (
-        <p className="text-center text-gray-500 dark:text-gray-400 py-8">
-          لا توجد تعليقات بعد. كن أول من يعلق!
+        <p className="text-center text-sm text-espresso/60 py-8">
+          لا توجد تعليقات بعد. كن أول من يعلّق.
         </p>
       )}
     </div>

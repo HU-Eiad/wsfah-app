@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import MaterialIcon from "./MaterialIcon";
+import BrandIcon from "./BrandIcon";
 
 const navItems = [
-  { href: "/home", icon: "home", label: "الرئيسية" },
-  { href: "/search", icon: "search", label: "البحث" },
-  { href: "/create", icon: "add", label: "إنشاء", isFab: true },
-  { href: "/rewards", icon: "workspace_premium", label: "المكافآت" },
-  { href: "/explore", icon: "explore", label: "استكشف" },
+  { href: "/home", icon: "nav-home", label: "الرئيسية" },
+  { href: "/search", icon: "nav-search", label: "البحث" },
+  { href: "/create", icon: "nav-create", label: "إنشاء", isFab: true },
+  { href: "/rewards", icon: "nav-rewards", label: "المكافآت" },
+  { href: "/explore", icon: "nav-explore", label: "استكشف" },
 ];
 
 export default function BottomNav() {
@@ -21,30 +21,34 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-espresso/5 px-6 pt-3 pb-8 flex items-center justify-around z-40">
+    <nav className="fixed bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-lg border-t border-espresso/10 px-4 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] flex items-end justify-around z-40">
       {navItems.map((item) => {
+        const active = isActive(item.href);
+
         if (item.isFab) {
           return (
-            <Link key={item.href} href={item.href} className="relative -mt-12">
-              <div className="size-16 rounded-full bg-primary text-espresso shadow-xl shadow-primary/20 flex items-center justify-center active:scale-90 transition-transform">
-                <MaterialIcon icon={item.icon} className="text-3xl font-bold" />
-              </div>
-              <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold uppercase tracking-widest text-primary">
-                {item.label}
+            <Link key={item.href} href={item.href} className="flex flex-col items-center gap-1 -mt-7">
+              <span className="size-14 rounded-2xl bg-primary text-on-primary shadow-[0_10px_24px_-10px_rgba(20,53,36,0.7)] flex items-center justify-center active:scale-95 transition-transform">
+                <BrandIcon name={item.icon} className="text-[28px]" />
               </span>
+              <span className="text-[11px] font-semibold text-espresso/70">{item.label}</span>
             </Link>
           );
         }
 
-        const active = isActive(item.href);
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`flex flex-col items-center gap-1 ${active ? "text-primary" : "text-espresso/40"}`}
+            aria-current={active ? "page" : undefined}
+            className={`relative flex flex-col items-center gap-1 min-w-14 pt-2 ${active ? "text-primary" : "text-espresso/55"}`}
           >
-            <MaterialIcon icon={item.icon} filled={active} className="text-2xl" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">{item.label}</span>
+            <span
+              className={`absolute top-0 h-0.5 w-6 rounded-full bg-primary transition-opacity ${active ? "opacity-100" : "opacity-0"}`}
+              aria-hidden
+            />
+            <BrandIcon name={item.icon} className="text-2xl" />
+            <span className={`text-[11px] ${active ? "font-bold" : "font-medium"}`}>{item.label}</span>
           </Link>
         );
       })}

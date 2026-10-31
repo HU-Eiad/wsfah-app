@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import MaterialIcon from "@/components/MaterialIcon";
 
 interface Story {
   id: string;
@@ -83,16 +84,16 @@ export default function StoryViewer({ stories, onClose }: StoryViewerProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+    <div className="fixed inset-0 z-50 bg-black text-paper flex flex-col" role="dialog" aria-modal="true" aria-label="القصص">
       {/* Progress bars */}
-      <div className="flex gap-1 px-3 pt-3 pb-2">
+      <div className="flex gap-1 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2">
         {stories.map((s, i) => (
           <div
             key={s.id}
-            className="h-[3px] flex-1 rounded-full bg-white/30 overflow-hidden"
+            className="h-[3px] flex-1 rounded-full bg-paper/30 overflow-hidden"
           >
             <div
-              className="h-full bg-white rounded-full transition-all"
+              className="h-full bg-paper rounded-full transition-all"
               style={{
                 width:
                   i < index
@@ -113,24 +114,24 @@ export default function StoryViewer({ stories, onClose }: StoryViewerProps) {
           {current.company.logo ? (
             <img
               src={current.company.logo}
-              alt={current.company.name}
-              className="w-8 h-8 rounded-full object-cover"
+              alt=""
+              className="size-9 rounded-full object-cover ring-1 ring-paper/20"
             />
           ) : (
-            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">
+            <div className="size-9 rounded-full bg-paper/15 flex items-center justify-center font-display text-base text-paper" aria-hidden>
               {current.company.name.charAt(0).toUpperCase()}
             </div>
           )}
-          <span className="text-white text-sm font-semibold">
+          <span dir="auto" className="text-paper text-sm font-semibold">
             {current.company.name}
           </span>
         </div>
         <button
           onClick={onClose}
-          className="text-white text-2xl leading-none p-2 hover:opacity-70 transition-opacity"
+          className="size-10 rounded-full flex items-center justify-center text-paper hover:bg-paper/15 transition-colors"
           aria-label="إغلاق"
         >
-          &times;
+          <MaterialIcon icon="close" />
         </button>
       </div>
 
@@ -156,8 +157,8 @@ export default function StoryViewer({ stories, onClose }: StoryViewerProps) {
 
         {/* Caption */}
         {current.caption && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
-            <p className="text-white text-sm">{current.caption}</p>
+          <div className="absolute bottom-0 inset-x-0 p-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] bg-gradient-to-t from-black/75 to-transparent">
+            <p dir="auto" className="text-paper text-sm leading-relaxed">{current.caption}</p>
           </div>
         )}
       </div>

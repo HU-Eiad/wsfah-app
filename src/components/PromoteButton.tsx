@@ -62,11 +62,11 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
         setResult("conflict");
       } else {
         const data = await res.json();
-        setErrorMsg(data.error || "Failed to submit");
+        setErrorMsg(data.error || "تعذّر إرسال الطلب");
         setResult("error");
       }
     } catch {
-      setErrorMsg("Network error");
+      setErrorMsg("خطأ في الشبكة");
       setResult("error");
     } finally {
       setSubmitting(false);
@@ -77,24 +77,25 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
     <>
       <button
         onClick={() => setOpen(true)}
-        className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-3 rounded-xl flex items-center gap-2 font-bold text-sm hover:from-amber-600 hover:to-orange-600 transition-all active:scale-95 shadow-lg shadow-amber-500/20"
+        className="border border-espresso/15 px-4 py-3 rounded-xl flex items-center gap-2 font-semibold text-sm hover:border-primary/40 transition-colors active:scale-95"
       >
-        <MaterialIcon icon="campaign" className="text-lg" />
+        <MaterialIcon icon="campaign" className="text-lg text-primary" />
         ترويج
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto">
+        <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-surface rounded-t-3xl sm:rounded-2xl shadow-sm w-full max-w-md max-h-[85vh] overflow-y-auto">
             {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-5 border-b border-espresso/10">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">طلب ترويج</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">{companyName}</p>
+                <h3 className="font-display text-xl">طلب ترويج</h3>
+                <p className="text-sm text-espresso/60" dir="auto">{companyName}</p>
               </div>
               <button
                 onClick={() => { setOpen(false); setResult(null); }}
-                className="size-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center"
+                aria-label="إغلاق"
+                className="size-10 rounded-full hover:bg-oat-milk flex items-center justify-center"
               >
                 <MaterialIcon icon="close" />
               </button>
@@ -103,7 +104,7 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
             <div className="p-5 space-y-5">
               {/* Placement */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">
+                <label className="block text-sm font-semibold mb-3">
                   أين تريد الترويج؟
                 </label>
                 <div className="space-y-2">
@@ -115,23 +116,23 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
                     <button
                       key={opt.value}
                       onClick={() => { setPlacement(opt.value); setSelectedPricing(null); }}
-                      className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
+                      className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-colors text-start ${
                         placement === opt.value
-                          ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20"
-                          : "border-gray-200 dark:border-gray-600 hover:border-gray-300"
+                          ? "border-primary bg-primary/10"
+                          : "border-espresso/10 hover:border-primary/40"
                       }`}
                     >
-                      <div className={`size-10 rounded-lg flex items-center justify-center ${
-                        placement === opt.value ? "bg-amber-500 text-white" : "bg-gray-100 dark:bg-gray-700 text-gray-500"
+                      <div className={`size-10 rounded-xl flex items-center justify-center ${
+                        placement === opt.value ? "bg-primary text-on-primary" : "bg-oat-milk text-espresso/60"
                       }`}>
                         <MaterialIcon icon={opt.icon} />
                       </div>
                       <div>
-                        <p className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">{opt.desc}</p>
+                        <p className="font-semibold text-sm">{opt.label}</p>
+                        <p className="text-xs text-espresso/60">{opt.desc}</p>
                       </div>
                       {placement === opt.value && (
-                        <MaterialIcon icon="check_circle" filled className="text-amber-500 ml-auto" />
+                        <MaterialIcon icon="check_circle" filled className="text-primary ms-auto" />
                       )}
                     </button>
                   ))}
@@ -141,7 +142,7 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
               {/* Pricing Plans */}
               {filteredPricing.length > 0 && (
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">
+                  <label className="block text-sm font-semibold mb-3">
                     اختر باقة
                   </label>
                   <div className="space-y-2">
@@ -151,27 +152,27 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
                         <button
                           key={p.id}
                           onClick={() => setSelectedPricing(p.id)}
-                          className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all text-left ${
+                          className={`w-full flex items-center justify-between p-4 rounded-xl border transition-colors text-start ${
                             selectedPricing === p.id
-                              ? "border-amber-500 bg-amber-50 dark:bg-amber-900/20"
-                              : "border-gray-200 dark:border-gray-600 hover:border-gray-300"
+                              ? "border-primary bg-primary/10"
+                              : "border-espresso/10 hover:border-primary/40"
                           }`}
                         >
                           <div>
-                            <p className="font-semibold text-sm text-gray-900 dark:text-white">{p.name}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{p.duration} يوم</p>
+                            <p className="font-semibold text-sm" dir="auto">{p.name}</p>
+                            <p className="text-xs text-espresso/60">{p.duration} يوم</p>
                           </div>
-                          <div className="text-right">
+                          <div className="text-end">
                             {p.discount > 0 ? (
                               <>
-                                <p className="text-xs text-gray-400 line-through">${p.price.toFixed(2)}</p>
-                                <p className="font-bold text-amber-600 dark:text-amber-400">${final.toFixed(2)}</p>
-                                <span className="text-[10px] bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-1.5 py-0.5 rounded-full font-bold">
-                                  -{p.discount}% خصم
+                                <p className="text-xs text-espresso/50 line-through tabular-nums">${p.price.toFixed(2)}</p>
+                                <p className="font-bold text-primary tabular-nums">${final.toFixed(2)}</p>
+                                <span className="text-[11px] bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-1.5 py-0.5 rounded-full font-bold">
+                                  خصم {p.discount}%
                                 </span>
                               </>
                             ) : (
-                              <p className="font-bold text-gray-900 dark:text-white">${p.price.toFixed(2)}</p>
+                              <p className="font-bold tabular-nums">${p.price.toFixed(2)}</p>
                             )}
                           </div>
                         </button>
@@ -183,31 +184,33 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
 
               {/* Message */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                <label htmlFor="promote-message" className="block text-sm font-semibold mb-2">
                   رسالة للمشرف (اختياري)
                 </label>
                 <textarea
+                  id="promote-message"
+                  dir="auto"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="أخبرنا عن أهداف ترويجك..."
+                  placeholder="أخبرنا عن أهداف ترويجك…"
                   maxLength={500}
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm resize-none placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               </div>
 
               {/* Price Summary */}
               {selectedPlan && finalPrice !== null && (
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+                <div className="bg-oat-milk rounded-xl p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-bold text-gray-900 dark:text-white">{selectedPlan.name}</p>
-                      <p className="text-xs text-gray-500">{selectedPlan.duration} يوم ترويج</p>
+                      <p className="text-sm font-bold" dir="auto">{selectedPlan.name}</p>
+                      <p className="text-xs text-espresso/60">{selectedPlan.duration} يوم ترويج</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xl font-extrabold text-amber-600 dark:text-amber-400">${finalPrice.toFixed(2)}</p>
+                    <div className="text-end">
+                      <p className="font-display text-2xl text-primary tabular-nums">${finalPrice.toFixed(2)}</p>
                       {selectedPlan.discount > 0 && (
-                        <p className="text-xs text-green-600">توفر ${(selectedPlan.price - finalPrice).toFixed(2)}</p>
+                        <p className="text-xs text-green-700 dark:text-green-400">توفر ${(selectedPlan.price - finalPrice).toFixed(2)}</p>
                       )}
                     </div>
                   </div>
@@ -215,11 +218,11 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
               )}
 
               {/* Info */}
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+              <div className="bg-surface border border-espresso/10 rounded-xl p-4">
                 <div className="flex items-start gap-2">
-                  <MaterialIcon icon="info" className="text-amber-600 dark:text-amber-400 mt-0.5" />
-                  <div className="text-xs text-amber-700 dark:text-amber-400">
-                    <p className="font-bold mb-1">كيف تعمل؟</p>
+                  <MaterialIcon icon="info" className="text-primary mt-0.5" />
+                  <div className="text-xs text-espresso/70 leading-relaxed">
+                    <p className="font-bold text-espresso mb-1">كيف تعمل؟</p>
                     <ul className="space-y-1 list-disc list-inside">
                       <li>سيتم مراجعة طلبك من قبل المشرف</li>
                       <li>بعد الموافقة، ستظهر علامتك التجارية في قسم الترويج</li>
@@ -231,20 +234,20 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
 
               {/* Result Messages */}
               {result === "success" && (
-                <div className="flex items-center gap-2 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl text-green-700 dark:text-green-300 text-sm font-medium">
-                  <MaterialIcon icon="check_circle" filled className="text-green-500" />
-                  تم إرسال الطلب! سيتم مراجعته قريباً.
+                <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 dark:border-green-800 rounded-xl text-green-700 dark:text-green-300 text-sm font-medium">
+                  <MaterialIcon icon="check_circle" filled className="text-green-600" />
+                  تم إرسال الطلب، سيتم مراجعته قريباً.
                 </div>
               )}
               {result === "conflict" && (
-                <div className="flex items-center gap-2 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl text-yellow-700 dark:text-yellow-300 text-sm font-medium">
-                  <MaterialIcon icon="warning" className="text-yellow-500" />
+                <div className="flex items-center gap-2 p-4 bg-amber-50 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-700 dark:text-amber-300 text-sm font-medium">
+                  <MaterialIcon icon="warning" className="text-amber-600" />
                   لديك طلب ترويج قيد المراجعة بالفعل.
                 </div>
               )}
               {result === "error" && (
-                <div className="flex items-center gap-2 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 text-sm font-medium">
-                  <MaterialIcon icon="error" className="text-red-500" />
+                <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 text-sm font-medium">
+                  <MaterialIcon icon="error" className="text-red-600" />
                   {errorMsg}
                 </div>
               )}
@@ -253,10 +256,10 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
               <button
                 onClick={handleSubmit}
                 disabled={submitting || result === "success"}
-                className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold text-sm hover:from-amber-600 hover:to-orange-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-primary text-on-primary rounded-xl font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submitting ? (
-                  <div className="size-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="size-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
                     <MaterialIcon icon="send" className="text-lg" />

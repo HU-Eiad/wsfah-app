@@ -27,17 +27,17 @@ export default function AdminSidebar() {
     <>
       {/* Mobile header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"
-        style={{ backgroundColor: "#1a1410", borderBottom: "1px solid rgba(37, 244, 89, 0.1)" }}>
+        style={{ backgroundColor: "#16261d", borderBottom: "1px solid rgba(143, 191, 154, 0.1)" }}>
         <button onClick={() => setOpen(!open)} className="p-2 rounded-xl hover:bg-white/10 transition-colors">
-          <span className="material-symbols-outlined" style={{ color: "#F2E8DF" }}>
+          <span className="material-symbols-outlined" style={{ color: "#eef0e8" }}>
             {open ? "close" : "menu"}
           </span>
         </button>
-        <h1 className="text-lg font-extrabold" style={{ color: "#F2E8DF" }}>
-          وصفة <span style={{ color: "#25f459" }}>الإدارة</span>
+        <h1 className="text-lg" style={{ color: "#eef0e8" }}>
+          وصفة <span style={{ color: "#8fbf9a" }}>الإدارة</span>
         </h1>
         <Link href="/home" className="p-2 rounded-xl hover:bg-white/10 transition-colors">
-          <span className="material-symbols-outlined" style={{ color: "#F2E8DF" }}>home</span>
+          <span className="material-symbols-outlined" style={{ color: "#eef0e8" }}>home</span>
         </Link>
       </div>
 
@@ -51,19 +51,19 @@ export default function AdminSidebar() {
         className={`fixed left-0 top-0 w-64 h-screen flex flex-col z-50 transition-transform lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
-        style={{ backgroundColor: "#1a1410" }}
+        style={{ backgroundColor: "#16261d" }}
       >
         {/* Logo */}
-        <div className="p-6" style={{ borderBottom: "1px solid rgba(37, 244, 89, 0.08)" }}>
+        <div className="p-6" style={{ borderBottom: "1px solid rgba(143, 191, 154, 0.08)" }}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "rgba(37, 244, 89, 0.15)" }}>
-              <span className="material-symbols-outlined text-xl" style={{ color: "#25f459" }}>coffee</span>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "rgba(143, 191, 154, 0.15)" }}>
+              <span className="material-symbols-outlined text-xl" style={{ color: "#8fbf9a" }}>coffee</span>
             </div>
             <div>
-              <h1 className="text-lg font-extrabold" style={{ color: "#F2E8DF" }}>
-                وصفة <span style={{ color: "#25f459" }}>الإدارة</span>
+              <h1 className="text-lg" style={{ color: "#eef0e8" }}>
+                وصفة <span style={{ color: "#8fbf9a" }}>الإدارة</span>
               </h1>
-              <p className="text-[9px] uppercase tracking-[3px]" style={{ color: "rgba(242, 232, 223, 0.3)" }}>Admin Panel</p>
+              <p className="text-[11px]" style={{ color: "rgba(238, 240, 232, 0.55)" }}>لوحة الإدارة</p>
             </div>
           </div>
         </div>
@@ -82,14 +82,14 @@ export default function AdminSidebar() {
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
                 style={isActive ? {
-                  backgroundColor: "rgba(37, 244, 89, 0.12)",
-                  color: "#25f459",
-                  boxShadow: "0 0 20px rgba(37, 244, 89, 0.05)",
+                  backgroundColor: "rgba(143, 191, 154, 0.12)",
+                  color: "#8fbf9a",
+                  boxShadow: "0 0 20px rgba(143, 191, 154, 0.05)",
                 } : {
-                  color: "rgba(242, 232, 223, 0.5)",
+                  color: "rgba(238, 240, 232, 0.5)",
                 }}
               >
-                <span className="material-symbols-outlined text-xl" style={isActive ? { color: "#25f459" } : {}}>
+                <span className="material-symbols-outlined text-xl" style={isActive ? { color: "#8fbf9a" } : {}}>
                   {item.icon}
                 </span>
                 {item.label}
@@ -99,11 +99,11 @@ export default function AdminSidebar() {
         </nav>
 
         {/* Footer */}
-        <div className="p-3" style={{ borderTop: "1px solid rgba(37, 244, 89, 0.08)" }}>
+        <div className="p-3" style={{ borderTop: "1px solid rgba(143, 191, 154, 0.08)" }}>
           <Link
             href="/home"
             className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all"
-            style={{ color: "rgba(242, 232, 223, 0.3)" }}
+            style={{ color: "rgba(238, 240, 232, 0.5)" }}
           >
             <span className="material-symbols-outlined text-xl">arrow_back</span>
             العودة للتطبيق

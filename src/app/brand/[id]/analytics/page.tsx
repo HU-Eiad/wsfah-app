@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
+import Link from "next/link";
+import MaterialIcon from "@/components/MaterialIcon";
 
 interface Analytics {
   totalViews: number;
@@ -24,7 +26,7 @@ export default function BrandAnalyticsPage({
       .then(async (res) => {
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
-          throw new Error(body.error || "Failed to load analytics");
+          throw new Error(body.error || "تعذّر تحميل التحليلات");
         }
         return res.json();
       })
@@ -33,22 +35,36 @@ export default function BrandAnalyticsPage({
       .finally(() => setLoading(false));
   }, [id]);
 
+  const header = (
+    <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+      <Link href={`/brand/${id}`} aria-label="رجوع" className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <MaterialIcon icon="arrow_forward" />
+      </Link>
+      <h1 className="text-xl flex-1">تحليلات العلامة التجارية</h1>
+    </header>
+  );
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <p className="text-gray-500 dark:text-gray-400">جاري تحميل التحليلات...</p>
+      <div className="bg-background-light text-espresso min-h-screen">
+        {header}
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-label="جارٍ تحميل التحليلات…" />
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-2">
-            الوصول مرفوض
-          </h2>
-          <p className="text-gray-500 dark:text-gray-400">{error}</p>
+      <div className="bg-background-light text-espresso min-h-screen">
+        {header}
+        <div className="flex items-center justify-center min-h-[60vh] px-4">
+          <div className="bg-surface rounded-2xl border border-espresso/10 p-6 text-center max-w-sm w-full">
+            <MaterialIcon icon="lock" className="text-3xl text-red-600 mb-2" />
+            <h2 className="text-xl mb-2">الوصول مرفوض</h2>
+            <p className="text-sm text-espresso/70 leading-relaxed">{error}</p>
+          </div>
         </div>
       </div>
     );
@@ -59,88 +75,82 @@ export default function BrandAnalyticsPage({
   const maxPageCount = Math.max(...data.viewsByPage.map((v) => v.count), 1);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-8">
-        تحليلات العلامة التجارية
-      </h1>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-            إجمالي المشاهدات
-          </p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {data.totalViews.toLocaleString()}
-          </p>
+    <div className="bg-background-light text-espresso min-h-screen">
+      {header}
+      <main className="max-w-4xl mx-auto px-4 py-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="bg-surface rounded-2xl p-4 border border-espresso/10">
+            <p className="text-sm text-espresso/60 mb-1">
+              إجمالي المشاهدات
+            </p>
+            <p className="font-display text-3xl tabular-nums">
+              {data.totalViews.toLocaleString()}
+            </p>
+          </div>
+          <div className="bg-surface rounded-2xl p-4 border border-espresso/10">
+            <p className="text-sm text-espresso/60 mb-1">
+              الزوار الفريدون
+            </p>
+            <p className="font-display text-3xl tabular-nums">
+              {data.uniqueVisitors.toLocaleString()}
+            </p>
+          </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-            الزوار الفريدون
-          </p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
-            {data.uniqueVisitors.toLocaleString()}
-          </p>
-        </div>
-      </div>
 
-      {/* Views by Page - Bar Chart */}
-      {data.viewsByPage.length > 0 && (
-        <div className="mb-10">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            المشاهدات حسب الصفحة
-          </h2>
-          <div className="space-y-3">
-            {data.viewsByPage
-              .sort((a, b) => b.count - a.count)
-              .map((item) => (
-                <div key={item.page}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-700 dark:text-gray-300">
-                      {item.page}
-                    </span>
-                    <span className="text-gray-500 dark:text-gray-400 font-medium">
-                      {item.count.toLocaleString()}
-                    </span>
+        {/* Views by Page - Bar Chart */}
+        {data.viewsByPage.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-xl mb-4">المشاهدات حسب الصفحة</h2>
+            <div className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
+              {data.viewsByPage
+                .sort((a, b) => b.count - a.count)
+                .map((item) => (
+                  <div key={item.page}>
+                    <div className="flex justify-between text-sm mb-1.5">
+                      <span className="text-espresso/80" dir="auto">
+                        {item.page}
+                      </span>
+                      <span className="text-espresso/60 font-semibold tabular-nums">
+                        {item.count.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="w-full bg-oat-milk rounded-full h-2.5 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{
+                          width: `${(item.count / maxPageCount) * 100}%`,
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4">
-                    <div
-                      className="h-4 rounded-full transition-all"
-                      style={{
-                        width: `${(item.count / maxPageCount) * 100}%`,
-                        backgroundColor: "#25f459",
-                      }}
-                    />
-                  </div>
+                ))}
+            </div>
+          </section>
+        )}
+
+        {/* Recent Views per Day */}
+        {data.recentViews.length > 0 && (
+          <section>
+            <h2 className="text-xl mb-4">المشاهدات الأخيرة (آخر 30 يوم)</h2>
+            <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10">
+              {data.recentViews.map((item) => (
+                <div
+                  key={item.date}
+                  className="flex justify-between px-4 py-3 text-sm"
+                >
+                  <span className="text-espresso/70 tabular-nums" dir="ltr">
+                    {item.date}
+                  </span>
+                  <span className="font-semibold">
+                    <span className="tabular-nums">{item.count.toLocaleString()}</span> مشاهدة
+                  </span>
                 </div>
               ))}
-          </div>
-        </div>
-      )}
-
-      {/* Recent Views per Day */}
-      {data.recentViews.length > 0 && (
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            المشاهدات الأخيرة (آخر 30 يوم)
-          </h2>
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 divide-y divide-gray-200 dark:divide-gray-700">
-            {data.recentViews.map((item) => (
-              <div
-                key={item.date}
-                className="flex justify-between px-4 py-3 text-sm"
-              >
-                <span className="text-gray-700 dark:text-gray-300">
-                  {item.date}
-                </span>
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {item.count.toLocaleString()} مشاهدة
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          </section>
+        )}
+      </main>
     </div>
   );
 }

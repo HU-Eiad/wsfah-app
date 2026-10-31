@@ -163,45 +163,48 @@ function PricingPage() {
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
-      <header className="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-light/80 backdrop-blur-md border-b border-primary/10">
-        <Link href="/home" className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10">
-          <MaterialIcon icon="arrow_back" />
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link
+          href="/home"
+          aria-label="رجوع"
+          className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk"
+        >
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">الأسعار</h2>
-        <div className="size-10" />
+        <h1 className="text-xl flex-1">الأسعار</h1>
       </header>
 
-      <main className="flex-1 px-4 pb-24 pt-6 max-w-2xl mx-auto w-full">
+      <main className="flex-1 px-4 pb-28 pt-6 max-w-2xl mx-auto w-full">
         {/* Success/Cancel banner */}
         {status === "success" && (
           <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6 text-center">
-            <MaterialIcon icon="check_circle" className="text-green-600 text-3xl mb-2" />
-            <p className="text-green-800 font-bold">تم الاشتراك بنجاح!</p>
-            <p className="text-green-600 text-sm mt-1">شكراً لك، تم تفعيل اشتراكك</p>
+            <MaterialIcon icon="check_circle" className="text-green-700 text-3xl mb-2" />
+            <p className="text-green-800 font-bold">تم الاشتراك بنجاح</p>
+            <p className="text-green-700 text-sm mt-1">شكراً لك، تم تفعيل اشتراكك</p>
           </div>
         )}
         {status === "cancelled" && (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 text-center">
-            <MaterialIcon icon="info" className="text-amber-600 text-3xl mb-2" />
+            <MaterialIcon icon="info" className="text-amber-700 text-3xl mb-2" />
             <p className="text-amber-800 font-bold">تم إلغاء عملية الدفع</p>
-            <p className="text-amber-600 text-sm mt-1">يمكنك المحاولة مرة أخرى في أي وقت</p>
+            <p className="text-amber-700 text-sm mt-1">يمكنك المحاولة مرة أخرى في أي وقت</p>
           </div>
         )}
 
         {/* Tab switch - users/roasters */}
-        <div className="flex bg-espresso/5 rounded-xl p-1 mb-4">
+        <div className="flex border-b border-espresso/10 mb-6">
           <button
             onClick={() => setTab("users")}
-            className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
-              tab === "users" ? "bg-white shadow-sm text-espresso" : "text-espresso/50"
+            className={`flex-1 py-3 -mb-px text-sm font-semibold transition-colors ${
+              tab === "users" ? "text-primary border-b-2 border-primary" : "text-espresso/60 hover:text-espresso"
             }`}
           >
             للمستخدمين
           </button>
           <button
             onClick={() => setTab("roasters")}
-            className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
-              tab === "roasters" ? "bg-white shadow-sm text-espresso" : "text-espresso/50"
+            className={`flex-1 py-3 -mb-px text-sm font-semibold transition-colors ${
+              tab === "roasters" ? "text-primary border-b-2 border-primary" : "text-espresso/60 hover:text-espresso"
             }`}
           >
             للمحمصات والعلامات
@@ -210,26 +213,29 @@ function PricingPage() {
 
         {/* Interval toggle - monthly/yearly */}
         <div className="flex items-center justify-center gap-3 mb-6">
-          <span className={`text-sm font-bold ${interval === "monthly" ? "text-espresso" : "text-espresso/40"}`}>
+          <span className={`text-sm font-semibold ${interval === "monthly" ? "text-espresso" : "text-espresso/60"}`}>
             شهري
           </span>
           <button
             onClick={() => setInterval(interval === "monthly" ? "yearly" : "monthly")}
+            role="switch"
+            aria-checked={interval === "yearly"}
+            aria-label="الفوترة السنوية"
             className={`relative w-14 h-7 rounded-full transition-colors ${
               interval === "yearly" ? "bg-primary" : "bg-espresso/20"
             }`}
           >
             <div
-              className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-all ${
-                interval === "yearly" ? "left-0.5" : "left-[calc(100%-26px)]"
+              className={`absolute top-0.5 w-6 h-6 bg-surface rounded-full shadow-sm transition-all ${
+                interval === "yearly" ? "end-0.5" : "start-0.5"
               }`}
             />
           </button>
-          <span className={`text-sm font-bold ${interval === "yearly" ? "text-espresso" : "text-espresso/40"}`}>
+          <span className={`text-sm font-semibold ${interval === "yearly" ? "text-espresso" : "text-espresso/60"}`}>
             سنوي
           </span>
           {interval === "yearly" && (
-            <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">
               وفّر ١٧%
             </span>
           )}
@@ -247,22 +253,30 @@ function PricingPage() {
             return (
               <div
                 key={slug}
-                className={`rounded-2xl border-2 p-5 transition-all ${
+                className={`rounded-2xl p-5 ${
                   plan.highlighted
-                    ? "border-primary bg-primary/5 shadow-lg"
-                    : "border-espresso/10 bg-white"
+                    ? "bg-pine text-paper"
+                    : "bg-surface border border-espresso/10"
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-bold">{plan.name}</h3>
                   <div className="flex gap-2">
                     {showYearlySaving && (
-                      <span className="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">
+                      <span
+                        className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                          plan.highlighted ? "bg-paper text-pine" : "bg-green-100 text-green-700"
+                        }`}
+                      >
                         {plan.yearlyBadge}
                       </span>
                     )}
                     {plan.badge && !showYearlySaving && (
-                      <span className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full">
+                      <span
+                        className={`text-xs font-bold px-3 py-1 rounded-full ${
+                          plan.highlighted ? "bg-paper text-pine" : "bg-primary/10 text-primary"
+                        }`}
+                      >
                         {plan.badge}
                       </span>
                     )}
@@ -270,20 +284,20 @@ function PricingPage() {
                 </div>
 
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="text-3xl font-extrabold">{price}</span>
+                  <span className="font-display text-3xl">{price}</span>
                   {plan.currency && (
-                    <span className="text-sm text-espresso/50 font-medium">
+                    <span className={`text-sm font-medium ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>
                       {plan.currency}
                     </span>
                   )}
                   {period && (
-                    <span className="text-sm text-espresso/40">{period}</span>
+                    <span className={`text-sm ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>{period}</span>
                   )}
                 </div>
 
                 {/* Show monthly equivalent for yearly */}
                 {interval === "yearly" && slug !== "free" && slug !== "enterprise" && plan.currency && (
-                  <p className="text-xs text-espresso/40 -mt-3 mb-4">
+                  <p className={`text-xs -mt-3 mb-4 ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>
                     ≈ {(parseFloat(price) / 12).toFixed(2)} {plan.currency} /شهرياً
                   </p>
                 )}
@@ -294,22 +308,26 @@ function PricingPage() {
                       <MaterialIcon
                         icon="check_circle"
                         className={`text-base ${
-                          plan.highlighted ? "text-primary" : "text-espresso/30"
+                          plan.highlighted ? "text-leaf" : "text-primary"
                         }`}
                       />
-                      <span>{f}</span>
+                      <span className={plan.highlighted ? "text-paper/90" : "text-espresso/70"}>{f}</span>
                     </li>
                   ))}
                 </ul>
 
                 {isCurrent && slug === userTier ? (
-                  <div className="w-full py-3 text-center rounded-xl bg-espresso/5 text-espresso/50 font-bold text-sm">
+                  <div
+                    className={`w-full py-3 text-center rounded-xl font-semibold text-sm ${
+                      plan.highlighted ? "bg-paper/10 text-paper/80" : "bg-oat-milk text-espresso/60"
+                    }`}
+                  >
                     خطتك الحالية
                   </div>
                 ) : slug === "free" ? (
                   <Link
                     href="/signup"
-                    className="block w-full py-3 text-center rounded-xl bg-espresso/10 text-espresso font-bold text-sm hover:bg-espresso/15 transition-colors"
+                    className="block w-full py-3 text-center rounded-xl border border-espresso/15 font-semibold text-sm hover:border-primary/40 transition-colors"
                   >
                     ابدأ مجاناً
                   </Link>
@@ -319,12 +337,12 @@ function PricingPage() {
                     disabled={loading === slug}
                     className={`w-full py-3 text-center rounded-xl font-bold text-sm transition-colors ${
                       plan.highlighted
-                        ? "bg-primary text-white hover:bg-primary/90"
-                        : "bg-espresso text-white hover:bg-espresso/90"
+                        ? "bg-paper text-pine hover:bg-leaf"
+                        : "bg-primary text-on-primary hover:bg-primary/90"
                     } disabled:opacity-50`}
                   >
                     {loading === slug
-                      ? "جارٍ التحويل..."
+                      ? "جارٍ التحويل…"
                       : slug === "enterprise"
                       ? "تواصل مع المبيعات"
                       : "اشترك الآن"}
@@ -336,14 +354,14 @@ function PricingPage() {
         </div>
 
         {/* Payment info */}
-        <div className="mt-8 text-center text-xs text-espresso/40 space-y-1">
+        <div className="mt-8 text-center text-xs text-espresso/60 space-y-1">
           <p>الدفع آمن عبر StreamPay</p>
           <p>يمكنك إلغاء اشتراكك في أي وقت</p>
-          <div className="flex items-center justify-center gap-3 mt-3">
-            <span className="bg-espresso/5 px-3 py-1.5 rounded-lg font-medium">VISA</span>
-            <span className="bg-espresso/5 px-3 py-1.5 rounded-lg font-medium">Mastercard</span>
-            <span className="bg-espresso/5 px-3 py-1.5 rounded-lg font-medium">مدى</span>
-            <span className="bg-espresso/5 px-3 py-1.5 rounded-lg font-medium">Apple Pay</span>
+          <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
+            <span className="bg-oat-milk px-3 py-1.5 rounded-lg font-medium">VISA</span>
+            <span className="bg-oat-milk px-3 py-1.5 rounded-lg font-medium">Mastercard</span>
+            <span className="bg-oat-milk px-3 py-1.5 rounded-lg font-medium">مدى</span>
+            <span className="bg-oat-milk px-3 py-1.5 rounded-lg font-medium">Apple Pay</span>
           </div>
         </div>
       </main>

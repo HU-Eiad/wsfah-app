@@ -1,5 +1,5 @@
-const CACHE_NAME = "wsfa-v1";
-const APP_SHELL = ["/", "/offline"];
+const CACHE_NAME = "wsfa-v2";
+const APP_SHELL = ["/", "/offline", "/brand/wsfa-mark.svg", "/brand/banners/empty-state.svg"];
 
 // Install: cache app shell
 self.addEventListener("install", (event) => {

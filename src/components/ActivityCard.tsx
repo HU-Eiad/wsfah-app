@@ -42,7 +42,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
 
   const renderActivity = () => {
     const userName = activity.user.name || "شخص ما";
-    const userAvatar = activity.user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=25f459&color=fff&size=64`;
+    const userAvatar = activity.user.image || "/brand/banners/avatar-placeholder.svg";
 
     switch (activity.type) {
       case "RECIPE_CREATE":
@@ -50,23 +50,23 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           <div className="flex items-start gap-3">
             <Link
               href={`/recipe/${activity.entityId}`}
-              className="flex-shrink-0"
+              className="shrink-0"
             >
               <img
                 src={userAvatar}
                 alt={userName}
-                className="size-10 rounded-full object-cover border-2 border-primary/20"
+                className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
               />
             </Link>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-bold text-gray-900 dark:text-white">{userName}</span>
+              <p className="text-sm text-espresso/70 leading-relaxed">
+                <span dir="auto" className="font-bold text-espresso">{userName}</span>
                 {" "}
                 أنشأ وصفة جديدة
               </p>
               <Link
                 href={`/recipe/${activity.entityId}`}
-                className="text-sm text-primary hover:underline"
+                className="inline-block mt-1 text-sm font-semibold text-primary hover:underline"
               >
                 عرض الوصفة
               </Link>
@@ -80,17 +80,17 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           <div className="flex items-start gap-3">
             <Link
               href={`/recipe/${activity.entityId}`}
-              className="flex-shrink-0"
+              className="shrink-0"
             >
               <img
                 src={userAvatar}
                 alt={userName}
-                className="size-10 rounded-full object-cover border-2 border-primary/20"
+                className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
               />
             </Link>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-bold text-gray-900 dark:text-white">{userName}</span>
+              <p className="text-sm text-espresso/70 leading-relaxed">
+                <span dir="auto" className="font-bold text-espresso">{userName}</span>
                 {" "}
                 {activity.type === "LIKE" ? "أعجب بـ" : "حفظ"}
                 {" "}
@@ -98,7 +98,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               </p>
               <Link
                 href={`/recipe/${activity.entityId}`}
-                className="text-sm text-primary hover:underline"
+                className="inline-block mt-1 text-sm font-semibold text-primary hover:underline"
               >
                 عرض الوصفة
               </Link>
@@ -111,23 +111,24 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           <div className="flex items-start gap-3">
             <Link
               href={`/profile/${activity.userId}`}
-              className="flex-shrink-0"
+              className="shrink-0"
             >
               <img
                 src={userAvatar}
                 alt={userName}
-                className="size-10 rounded-full object-cover border-2 border-primary/20"
+                className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
               />
             </Link>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-bold text-gray-900 dark:text-white">{userName}</span>
+              <p className="text-sm text-espresso/70 leading-relaxed">
+                <span dir="auto" className="font-bold text-espresso">{userName}</span>
                 {" "}
                 بدأ متابعة
                 {" "}
                 <Link
                   href={`/profile/${activity.userId}`}
-                  className="text-primary hover:underline"
+                  dir="auto"
+                  className="font-semibold text-primary hover:underline"
                 >
                   {activity.entityId}
                 </Link>
@@ -141,24 +142,24 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
           <div className="flex items-start gap-3">
             <Link
               href={activity.entityType === "recipe" ? `/recipe/${activity.entityId}` : `/explore/${activity.entityId}`}
-              className="flex-shrink-0"
+              className="shrink-0"
             >
               <img
                 src={userAvatar}
                 alt={userName}
-                className="size-10 rounded-full object-cover border-2 border-primary/20"
+                className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
               />
             </Link>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-bold text-gray-900 dark:text-white">{userName}</span>
+              <p className="text-sm text-espresso/70 leading-relaxed">
+                <span dir="auto" className="font-bold text-espresso">{userName}</span>
                 {" "}
                 علّق على{" "}
                 {activity.entityType === "recipe" ? "وصفة" : "منشور"}
               </p>
               <Link
                 href={activity.entityType === "recipe" ? `/recipe/${activity.entityId}` : `/explore/${activity.entityId}`}
-                className="text-sm text-primary hover:underline"
+                className="inline-block mt-1 text-sm font-semibold text-primary hover:underline"
               >
                 عرض {activity.entityType === "recipe" ? "الوصفة" : "المنشور"}
               </Link>
@@ -172,11 +173,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
             <img
               src={userAvatar}
               alt={userName}
-              className="size-10 rounded-full object-cover border-2 border-primary/20"
+              className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-bold text-gray-900 dark:text-white">{userName}</span>
+              <p className="text-sm text-espresso/70 leading-relaxed">
+                <span dir="auto" className="font-bold text-espresso">{userName}</span>
                 {" "}
                 {activity.type.toLowerCase().replace(/_/g, " ")}
               </p>
@@ -187,9 +188,9 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+    <div className="bg-surface rounded-2xl border border-espresso/10 p-4">
       {renderActivity()}
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+      <p className="text-xs text-espresso/60 mt-2 ps-[52px]">
         {formatDate(activity.createdAt)}
       </p>
     </div>

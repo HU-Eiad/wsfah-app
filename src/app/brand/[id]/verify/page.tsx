@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, use } from "react";
+import Link from "next/link";
+import MaterialIcon from "@/components/MaterialIcon";
+import BrandIcon from "@/components/BrandIcon";
 
 export default function BrandVerifyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -45,17 +48,15 @@ export default function BrandVerifyPage({ params }: { params: Promise<{ id: stri
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-[#25f459]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-[#25f459]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
+      <div className="min-h-screen bg-background-light text-espresso flex items-center justify-center p-4">
+        <div className="bg-surface border border-espresso/10 rounded-2xl p-6 max-w-md w-full text-center">
+          <div className="size-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-4">
+            <BrandIcon name="verified" className="text-3xl" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 className="text-xl mb-2">
             تم تقديم طلب التوثيق
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm">
+          <p className="text-espresso/70 text-sm leading-relaxed">
             تم تقديم طلب توثيق علامتك التجارية وهو قيد المراجعة. سيتم إعلامك عند اتخاذ القرار.
           </p>
         </div>
@@ -64,41 +65,54 @@ export default function BrandVerifyPage({ params }: { params: Promise<{ id: stri
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-8 max-w-md w-full">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">توثيق العلامة التجارية</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-          قدّم المستندات لتوثيق علامتك التجارية. أدخل روابط المستندات الداعمة (رابط واحد في كل سطر).
-        </p>
+    <div className="min-h-screen bg-background-light text-espresso">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link href={`/brand/${id}`} aria-label="رجوع" className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <MaterialIcon icon="arrow_forward" />
+        </Link>
+        <h1 className="text-xl flex-1">توثيق العلامة التجارية</h1>
+      </header>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              روابط المستندات
-            </label>
-            <textarea
-              value={documents}
-              onChange={(e) => setDocuments(e.target.value)}
-              rows={4}
-              placeholder="https://example.com/business-license.pdf&#10;https://example.com/certificate.pdf"
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm resize-none focus:ring-2 focus:ring-[#25f459] focus:border-transparent outline-none"
-            />
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-              أدخل رابطاً واحداً في كل سطر. المقبول: رخصة تجارية، شهادة ضريبية، إلخ.
+      <main className="max-w-md mx-auto p-4">
+        <div className="bg-surface border border-espresso/10 rounded-2xl p-5">
+          <div className="flex items-start gap-3 mb-5">
+            <BrandIcon name="verified" className="text-3xl text-primary shrink-0" />
+            <p className="text-sm text-espresso/70 leading-relaxed">
+              قدّم المستندات لتوثيق علامتك التجارية. أدخل روابط المستندات الداعمة (رابط واحد في كل سطر).
             </p>
           </div>
 
-          {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="verify-documents" className="block text-sm font-semibold mb-1.5">
+                روابط المستندات
+              </label>
+              <textarea
+                id="verify-documents"
+                dir="ltr"
+                value={documents}
+                onChange={(e) => setDocuments(e.target.value)}
+                rows={4}
+                placeholder="https://example.com/business-license.pdf&#10;https://example.com/certificate.pdf"
+                className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm resize-none placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+              <p className="text-xs text-espresso/60 mt-1.5 leading-relaxed">
+                أدخل رابطاً واحداً في كل سطر. المقبول: رخصة تجارية، شهادة ضريبية، إلخ.
+              </p>
+            </div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full py-2.5 rounded-lg bg-[#25f459] hover:bg-[#20d64e] text-black font-medium text-sm transition-colors disabled:opacity-50"
-          >
-            {submitting ? "جاري التقديم..." : "تقديم طلب التوثيق"}
-          </button>
-        </form>
-      </div>
+            {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+            >
+              {submitting ? "جارٍ التقديم…" : "تقديم طلب التوثيق"}
+            </button>
+          </form>
+        </div>
+      </main>
     </div>
   );
 }

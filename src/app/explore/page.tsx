@@ -3,6 +3,7 @@ import BottomNav from "@/components/BottomNav";
 import PromotedBrands from "@/components/PromotedBrands";
 import ExploreUpload from "@/components/ExploreUpload";
 import MaterialIcon from "@/components/MaterialIcon";
+import BrandIcon from "@/components/BrandIcon";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
@@ -39,11 +40,11 @@ export default async function ExplorePage() {
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
-      <header className="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-light/80 backdrop-blur-md border-b border-espresso/5">
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">استكشف</h2>
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <h1 className="text-2xl flex-1">استكشف</h1>
       </header>
 
-      <main className="flex-1 px-4 pb-24 pt-4">
+      <main className="flex-1 px-4 pb-28 pt-4">
         {/* Upload form for brand admins only */}
         {brandCompany && (
           <ExploreUpload companyId={brandCompany.id} companyName={brandCompany.name} />
@@ -56,10 +57,10 @@ export default async function ExplorePage() {
         <AdSlot slot="explore-top" format="horizontal" />
 
         {posts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-espresso/40">
-            <MaterialIcon icon="explore" className="text-5xl mb-3" />
-            <p className="text-sm font-medium">لا يوجد محتوى للاستكشاف بعد</p>
-            <p className="text-xs mt-1">ستشارك المحمصات والعلامات التجارية محتواها هنا</p>
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <p className="text-sm font-semibold text-espresso/70">لا يوجد محتوى للاستكشاف بعد</p>
+            <p className="text-xs text-espresso/60 mt-1">ستشارك المحمصات والعلامات التجارية محتواها هنا</p>
           </div>
         ) : (
           <div className="columns-2 gap-3 space-y-3">
@@ -67,7 +68,7 @@ export default async function ExplorePage() {
               <Link
                 href={`/explore/${post.id}`}
                 key={post.id}
-                className="break-inside-avoid rounded-2xl overflow-hidden bg-white shadow-sm border border-espresso/5 block"
+                className="break-inside-avoid rounded-[20px] overflow-hidden bg-surface border border-espresso/10 block"
               >
                 {post.imageUrl && post.mediaType === "video" ? (
                   <video
@@ -85,31 +86,31 @@ export default async function ExplorePage() {
                   {post.company && (
                     <div className="flex items-center gap-2 mb-2">
                       <img
-                        src={post.company.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.company.name)}&background=25f459&color=fff&size=32`}
+                        src={post.company.logo || "/brand/banners/avatar-placeholder.svg"}
                         alt=""
-                        className="size-7 rounded-full object-cover border border-primary/20"
+                        className="size-7 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold truncate">{post.company.name}</p>
+                        <p dir="auto" className="text-xs font-bold truncate">{post.company.name}</p>
                       </div>
-                      <MaterialIcon icon="verified" className="text-primary text-xs shrink-0" filled />
+                      <BrandIcon name="verified" className="text-primary text-sm shrink-0" label="موثّق" />
                     </div>
                   )}
                   {!post.company && (
                     <div className="flex items-center gap-2 mb-2">
                       <img
-                        src={post.author.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.author.name || "User")}&size=32`}
+                        src={post.author.image || "/brand/banners/avatar-placeholder.svg"}
                         alt=""
-                        className="size-7 rounded-full object-cover"
+                        className="size-7 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
                       />
-                      <p className="text-xs font-bold truncate">{post.author.name}</p>
+                      <p dir="auto" className="text-xs font-bold truncate">{post.author.name}</p>
                     </div>
                   )}
-                  {post.caption && <p className="text-[11px] text-espresso/60 line-clamp-2">{post.caption}</p>}
+                  {post.caption && <p dir="auto" className="text-xs text-espresso/70 leading-relaxed line-clamp-2">{post.caption}</p>}
                   {/* Like count */}
-                  <div className="flex items-center gap-1 mt-2 text-espresso/40">
+                  <div className="flex items-center gap-1 mt-2 text-espresso/60">
                     <MaterialIcon icon="favorite" className="text-xs" />
-                    <span className="text-[10px] font-bold">{post._count.galleryLikes}</span>
+                    <span className="text-[11px] font-bold">{post._count.galleryLikes}</span>
                   </div>
                 </div>
               </Link>

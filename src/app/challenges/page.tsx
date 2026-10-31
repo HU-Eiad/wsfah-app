@@ -31,6 +31,9 @@ interface UserData {
 const RANKS = ["All", "Bronze", "Silver", "Gold"] as const;
 const CATEGORIES = ["All", "General", "Brewing", "Social", "Streak"] as const;
 
+const RANK_LABELS: Record<string, string> = { All: "الكل", Bronze: "برونزي", Silver: "فضي", Gold: "ذهبي" };
+const CATEGORY_LABELS: Record<string, string> = { All: "الكل", General: "عام", Brewing: "تحضير", Social: "اجتماعي", Streak: "سلسلة" };
+
 const rankColors: Record<string, { bg: string; text: string; border: string; badge: string }> = {
   Bronze: { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", badge: "bg-orange-100 text-orange-600" },
   Silver: { bg: "bg-slate-50", text: "text-slate-700", border: "border-slate-200", badge: "bg-slate-200 text-slate-600" },
@@ -101,26 +104,23 @@ export default function ChallengesPage() {
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background-light/80 backdrop-blur-md px-6 pt-6 pb-4 border-b border-espresso/5">
-        <div className="flex items-center gap-3 mb-4">
-          <Link href="/rewards" className="size-10 rounded-full flex items-center justify-center hover:bg-primary/10">
-            <MaterialIcon icon="arrow_back" />
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 pt-3 pb-4 border-b border-espresso/10">
+        <div className="flex items-center gap-2 mb-4">
+          <Link href="/rewards" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+            <MaterialIcon icon="arrow_forward" />
           </Link>
-          <h1 className="text-lg font-bold">التحديات</h1>
+          <h1 className="text-xl flex-1">التحديات</h1>
         </div>
 
         {/* User Rank Badge */}
-        <div className="flex items-center gap-3 mb-4 bg-white rounded-xl p-3 border border-espresso/10">
-          <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <MaterialIcon icon="military_tech" className="text-xl text-primary" />
+        <div className="relative overflow-hidden flex items-center gap-3 mb-4 bg-pine text-paper rounded-[20px] p-5 min-h-28">
+          <img src="/brand/banners/challenges-banner.svg" alt="" className="absolute inset-0 w-full h-full object-cover object-left" />
+          <div className="absolute inset-0 bg-gradient-to-l from-pine via-pine/85 to-transparent sm:via-pine/40" aria-hidden />
+          <div className="relative flex-1">
+            <p className="text-xs text-paper/70 font-medium">مرتبتك</p>
+            <p className="font-display text-xl">عضو {RANK_LABELS[userRank] ?? userRank}</p>
+            <p className="text-sm text-paper/80 mt-1 tabular-nums">{user?.points?.toLocaleString("ar") || "٠"} نقطة</p>
           </div>
-          <div className="flex-1">
-            <p className="text-xs text-espresso/60 font-medium">مرتبتك</p>
-            <p className="text-sm font-bold">عضو {userRank}</p>
-          </div>
-          <span className={`text-xs font-bold px-3 py-1 rounded-full ${rankColors[userRank]?.badge || "bg-orange-100 text-orange-600"}`}>
-            {user?.points?.toLocaleString() || 0} pts
-          </span>
         </div>
 
         {/* Rank Filter */}
@@ -129,13 +129,13 @@ export default function ChallengesPage() {
             <button
               key={rank}
               onClick={() => setActiveRank(rank)}
-              className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors ${
+              className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-colors ${
                 activeRank === rank
-                  ? "bg-primary text-espresso"
-                  : "bg-white border border-espresso/10 text-espresso/60"
+                  ? "bg-primary text-on-primary"
+                  : "bg-surface border border-espresso/10 text-espresso/70"
               }`}
             >
-              {rank}
+              {RANK_LABELS[rank]}
             </button>
           ))}
         </div>
@@ -146,28 +146,27 @@ export default function ChallengesPage() {
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`shrink-0 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors ${
+              className={`shrink-0 px-4 py-2 rounded-full text-xs font-semibold transition-colors ${
                 activeCategory === cat
-                  ? "bg-espresso text-white"
-                  : "bg-espresso/5 text-espresso/50"
+                  ? "bg-primary text-on-primary"
+                  : "bg-surface border border-espresso/10 text-espresso/70"
               }`}
             >
-              {cat}
+              {CATEGORY_LABELS[cat]}
             </button>
           ))}
         </div>
       </header>
 
-      <main className="flex-1 px-6 py-6 pb-28">
+      <main className="flex-1 px-4 py-6 pb-28">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <MaterialIcon icon="fitness_center" className="text-4xl text-primary animate-pulse" />
           </div>
         ) : challenges.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-espresso/40">
-            <MaterialIcon icon="emoji_events" className="text-5xl mb-4" />
-            <p className="text-sm font-medium">لا توجد تحديات متاحة</p>
-            <p className="text-xs mt-1">تحقق لاحقاً لتحديات جديدة!</p>
+          <div className="py-16 text-center">
+            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <p className="text-sm text-espresso/70">لا توجد تحديات بهذا الفلتر حالياً.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -185,11 +184,11 @@ export default function ChallengesPage() {
               return (
                 <div
                   key={ch.id}
-                  className={`rounded-2xl border overflow-hidden ${colors.border} ${
+                  className={`bg-surface rounded-2xl border border-espresso/10 overflow-hidden ${
                     isLocked ? "opacity-60" : ""
                   }`}
                 >
-                  <div className={`px-4 py-4 ${colors.bg}`}>
+                  <div className="p-4">
                     <div className="flex items-start gap-3">
                       <div className={`size-12 rounded-xl flex items-center justify-center shrink-0 ${colors.badge}`}>
                         <MaterialIcon icon={isLocked ? "lock" : ch.icon} className="text-xl" />
@@ -197,22 +196,22 @@ export default function ChallengesPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-sm font-bold" dir="auto">{ch.title}</h3>
-                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${colors.badge}`}>
-                            {ch.rank}
+                          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${colors.badge}`}>
+                            {RANK_LABELS[ch.rank] || ch.rank}
                           </span>
                         </div>
-                        <p className="text-xs text-espresso/60 mb-2" dir="auto">{ch.description}</p>
-                        <div className="flex items-center gap-3 text-xs text-espresso/50">
+                        <p className="text-xs text-espresso/70 mb-2 leading-relaxed" dir="auto">{ch.description}</p>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-espresso/60">
                           <span className="flex items-center gap-1">
-                            <MaterialIcon icon="stars" className="text-sm text-primary" />
-                            {ch.rewardPoints} pts
+                            <MaterialIcon icon="stars" className="text-sm text-crema" />
+                            <span className="font-display text-sm text-espresso tabular-nums">{ch.rewardPoints}</span> نقطة
                           </span>
                           <span className="flex items-center gap-1">
                             <MaterialIcon icon="flag" className="text-sm" />
-                            {ch.maxProgress} goal
+                            الهدف {ch.maxProgress}
                           </span>
-                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase bg-espresso/5`}>
-                            {ch.category}
+                          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-oat-milk text-espresso/70">
+                            {CATEGORY_LABELS[ch.category] || ch.category}
                           </span>
                         </div>
                       </div>
@@ -222,12 +221,12 @@ export default function ChallengesPage() {
                     {isJoined && (
                       <div className="mt-3">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-bold text-espresso/50">التقدم</span>
-                          <span className="text-[10px] font-bold">
+                          <span className="text-[11px] font-semibold text-espresso/60">التقدم</span>
+                          <span className="text-[11px] font-bold tabular-nums">
                             {userProgress.currentProgress}/{ch.maxProgress}
                           </span>
                         </div>
-                        <div className="h-2 bg-white rounded-full overflow-hidden">
+                        <div className="h-2 bg-oat-milk rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all ${isCompleted ? "bg-green-500" : "bg-primary"}`}
                             style={{ width: `${progress}%` }}
@@ -239,14 +238,14 @@ export default function ChallengesPage() {
                     {/* Action button */}
                     <div className="mt-3">
                       {isLocked ? (
-                        <p className="text-xs text-espresso/40 font-medium flex items-center gap-1">
+                        <p className="text-xs text-espresso/60 font-medium flex items-center gap-1">
                           <MaterialIcon icon="lock" className="text-sm" />
-                          حقق مرتبة {ch.rank} للفتح
+                          حقّق المرتبة {RANK_LABELS[ch.rank] || ch.rank} لفتح هذا التحدي
                         </p>
                       ) : isCompleted ? (
                         <div className="flex items-center gap-2 text-green-600">
                           <MaterialIcon icon="check_circle" className="text-lg" />
-                          <span className="text-xs font-bold">مكتمل!</span>
+                          <span className="text-xs font-bold">مكتمل</span>
                         </div>
                       ) : isJoined ? (
                         <div className="flex items-center gap-2 text-primary">
@@ -257,9 +256,9 @@ export default function ChallengesPage() {
                         <button
                           onClick={() => handleJoin(ch.id)}
                           disabled={joining === ch.id}
-                          className="bg-primary text-espresso text-xs font-bold px-4 py-2 rounded-lg active:scale-95 transition-transform disabled:opacity-50"
+                          className="bg-primary text-on-primary text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-primary/90 active:scale-95 transition-colors disabled:opacity-50"
                         >
-                          {joining === ch.id ? "جاري الانضمام..." : "انضم للتحدي"}
+                          {joining === ch.id ? "جارٍ الانضمام…" : "انضم للتحدي"}
                         </button>
                       )}
                     </div>

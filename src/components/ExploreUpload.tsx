@@ -56,19 +56,22 @@ export default function ExploreUpload({ companyId, companyName }: ExploreUploadP
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-primary/20 p-4 mb-4 shadow-sm">
-      <div className="flex items-center gap-2 mb-3">
-        <MaterialIcon icon="add_photo_alternate" className="text-primary text-xl" />
+    <div className="bg-surface rounded-2xl border border-espresso/10 p-4 mb-4">
+      <div className="flex items-center gap-3 mb-3">
+        <span className="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <MaterialIcon icon="add_photo_alternate" className="text-xl" />
+        </span>
         <div>
           <p className="text-sm font-bold">مشاركة محتوى</p>
-          <p className="text-[10px] text-slate-500">النشر باسم <span className="text-primary font-bold">{companyName}</span></p>
+          <p className="text-xs text-espresso/60">النشر باسم <span dir="auto" className="text-primary font-bold">{companyName}</span></p>
         </div>
       </div>
       <input
         value={caption}
         onChange={(e) => setCaption(e.target.value)}
-        className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 mb-3"
+        className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 mb-3"
         placeholder="وصف (اختياري)"
+        aria-label="وصف المنشور"
         dir="auto"
       />
       <input
@@ -90,10 +93,10 @@ export default function ExploreUpload({ companyId, companyName }: ExploreUploadP
             }
           }}
           disabled={uploading}
-          className="flex-1 bg-primary text-slate-900 text-sm font-bold py-2.5 rounded-lg disabled:opacity-50 flex items-center justify-center gap-2"
+          className="flex-1 bg-primary text-on-primary text-sm font-bold px-5 py-3 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <MaterialIcon icon="photo_camera" className="text-base" />
-          {uploading ? "جارٍ الرفع..." : "صورة"}
+          {uploading ? "جارٍ الرفع…" : "صورة"}
         </button>
         <button
           onClick={() => {
@@ -103,14 +106,14 @@ export default function ExploreUpload({ companyId, companyName }: ExploreUploadP
             }
           }}
           disabled={uploading}
-          className="flex-1 bg-primary/10 text-primary text-sm font-bold py-2.5 rounded-lg disabled:opacity-50 flex items-center justify-center gap-2 border border-primary/20"
+          className="flex-1 border border-espresso/15 text-sm font-semibold px-5 py-3 rounded-xl hover:border-primary/40 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <MaterialIcon icon="videocam" className="text-base" />
-          {uploading ? "جارٍ الرفع..." : "فيديو"}
+          {uploading ? "جارٍ الرفع…" : "فيديو"}
         </button>
       </div>
       {message && (
-        <p className={`text-xs mt-2 font-medium ${message.includes("بنجاح") ? "text-green-600" : "text-red-500"}`}>
+        <p className={`text-xs mt-2 font-medium ${message.includes("بنجاح") ? "text-green-600" : "text-red-600"}`}>
           {message}
         </p>
       )}

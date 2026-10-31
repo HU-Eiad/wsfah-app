@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import MaterialIcon from "./MaterialIcon";
+import BrandIcon from "./BrandIcon";
 
 type Product = {
   id: string;
@@ -105,18 +106,23 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
     }
   };
 
+  const inputClass =
+    "w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
+
   return (
     <div className="mt-6">
       {/* Tab Headers */}
-      <div className="flex border-b border-slate-200 px-4">
+      <div className="flex border-b border-espresso/10 px-4" role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.key}
+            role="tab"
+            aria-selected={activeTab === tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-4 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-3.5 text-sm border-b-2 -mb-px transition-colors flex items-center justify-center gap-1.5 ${
               activeTab === tab.key
-                ? "border-primary text-slate-900"
-                : "border-transparent text-slate-400 font-medium"
+                ? "border-primary text-primary font-bold"
+                : "border-transparent text-espresso/60 font-medium hover:text-espresso"
             }`}
           >
             <MaterialIcon icon={tab.icon} className="text-base" />
@@ -127,53 +133,56 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
 
       {/* Store Tab */}
       {activeTab === "store" && (
-        <div className="grid grid-cols-2 gap-4 p-4">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 p-4">
           {localProducts.length === 0 ? (
-            <div className="col-span-2 text-center py-12 text-slate-400">
-              <MaterialIcon icon="inventory_2" className="text-4xl mb-2" />
-              <p className="text-sm">لا توجد منتجات بعد</p>
+            <div className="col-span-2 text-center py-10">
+              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <p className="text-sm text-espresso/70">لا توجد منتجات بعد.</p>
             </div>
           ) : (
             localProducts.map((p) => (
               <div key={p.id} className="space-y-2">
                 {editingProduct === p.id && isOwner ? (
-                  <div className="bg-white rounded-xl border border-primary/20 p-3 space-y-2">
+                  <div className="bg-surface rounded-2xl border border-espresso/10 p-3 space-y-2">
                     <input
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="w-full text-sm font-bold border border-slate-200 rounded-lg px-3 py-2"
+                      className={`${inputClass} font-bold`}
                       placeholder="اسم المنتج"
+                      aria-label="اسم المنتج"
                       dir="auto"
                     />
                     <input
                       value={editPrice}
                       onChange={(e) => setEditPrice(e.target.value)}
-                      className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2"
+                      className={inputClass}
                       placeholder="السعر"
+                      aria-label="السعر"
                       inputMode="decimal"
                     />
                     <input
                       value={editUrl}
                       onChange={(e) => setEditUrl(e.target.value)}
-                      className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2"
+                      className={inputClass}
                       placeholder="رابط المتجر (https://...)"
+                      aria-label="رابط المتجر"
                       dir="ltr"
                     />
                     <div className="flex gap-2">
-                      <button onClick={() => handleSaveProduct(p.id)} className="flex-1 bg-primary text-slate-900 text-xs font-bold py-2 rounded-lg">
+                      <button onClick={() => handleSaveProduct(p.id)} className="flex-1 bg-primary text-on-primary text-sm font-bold py-2.5 rounded-xl hover:bg-primary/90 transition-colors">
                         حفظ
                       </button>
-                      <button onClick={() => setEditingProduct(null)} className="flex-1 bg-slate-100 text-slate-600 text-xs font-bold py-2 rounded-lg">
+                      <button onClick={() => setEditingProduct(null)} className="flex-1 border border-espresso/15 text-sm font-semibold py-2.5 rounded-xl hover:border-primary/40 transition-colors">
                         إلغاء
                       </button>
                     </div>
                   </div>
                 ) : (
                   <>
-                    <div className="aspect-[4/5] rounded-xl bg-slate-100 overflow-hidden relative">
+                    <div className="aspect-[4/5] rounded-[20px] bg-oat-milk overflow-hidden relative">
                       <img
                         className="w-full h-full object-cover"
-                        src={p.imageUrl || "https://via.placeholder.com/300x375"}
+                        src={p.imageUrl || "/brand/banners/recipe-placeholder.svg"}
                         alt={p.name}
                       />
                       {p.externalUrl ? (
@@ -181,27 +190,29 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                           href={p.externalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="absolute bottom-2 right-2 bg-white/90 p-2 rounded-full shadow-lg"
+                          aria-label="اشترِ من المتجر"
+                          className="absolute bottom-2 end-2 size-10 bg-surface/90 rounded-full flex items-center justify-center"
                         >
-                          <MaterialIcon icon="shopping_cart" className="text-primary" />
+                          <MaterialIcon icon="shopping_cart" className="text-primary text-xl" />
                         </a>
                       ) : (
-                        <div className="absolute bottom-2 right-2 bg-white/90 p-2 rounded-full shadow-lg opacity-40">
-                          <MaterialIcon icon="shopping_cart" className="text-slate-400" />
+                        <div className="absolute bottom-2 end-2 size-10 bg-surface/90 rounded-full flex items-center justify-center opacity-50">
+                          <MaterialIcon icon="shopping_cart" className="text-espresso/60 text-xl" />
                         </div>
                       )}
                       {isOwner && (
                         <button
                           onClick={() => handleEditProduct(p)}
-                          className="absolute top-2 right-2 bg-white/90 p-1.5 rounded-full shadow-lg"
+                          aria-label="تعديل المنتج"
+                          className="absolute top-2 end-2 size-9 bg-surface/90 rounded-full flex items-center justify-center"
                         >
-                          <MaterialIcon icon="edit" className="text-slate-600 text-sm" />
+                          <MaterialIcon icon="edit" className="text-espresso/70 text-base" />
                         </button>
                       )}
                     </div>
                     <div>
-                      <p className="font-bold text-sm" dir="auto">{p.name}</p>
-                      <p className="text-primary font-bold">${p.price.toFixed(2)}</p>
+                      <p className="font-bold text-sm leading-snug" dir="auto">{p.name}</p>
+                      <p className="text-primary font-bold text-sm tabular-nums">${p.price.toFixed(2)}</p>
                     </div>
                   </>
                 )}
@@ -213,33 +224,34 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
 
       {/* Recipes Tab */}
       {activeTab === "recipes" && (
-        <div className="grid grid-cols-2 gap-4 p-4">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 p-4">
           {recipes.length === 0 ? (
-            <div className="col-span-2 text-center py-12 text-slate-400">
-              <MaterialIcon icon="menu_book" className="text-4xl mb-2" />
-              <p className="text-sm">لا توجد وصفات بعد</p>
+            <div className="col-span-2 text-center py-10">
+              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <p className="text-sm text-espresso/70">لا توجد وصفات بعد.</p>
             </div>
           ) : (
             recipes.map((r) => (
-              <Link href={`/recipe/${r.slug}`} key={r.id} className="flex flex-col gap-2">
-                <div className="aspect-[3/4] rounded-xl bg-slate-100 overflow-hidden relative">
+              <Link href={`/recipe/${r.slug}`} key={r.id} className="flex flex-col gap-3">
+                <div className="aspect-[3/4] rounded-[20px] bg-pine overflow-hidden relative">
                   <img
-                    className="w-full h-full object-cover"
-                    src={r.imageUrl || "https://lh3.googleusercontent.com/aida-public/AB6AXuDTKhsPBTqVlKYRHt_XAv75ctvX3xBReG2P2T-ZoZnEalDyG9bGPiRvCXkljkKqVJea63kHokg5v2TbguwCd0ktoGmjt-OyhKjN6o3hmFbK4vv6LXyO0HKkbzfy14JOdKU1PHqEvyQjwSjoXy98PLVww8Mz7npuKv_u-MwuCXSqmRgxm6Z8rD_A1zGUa0jw4OqouaseX54IjXRusSJoROTVfGP3OuqbM-HMC7A4lFQAwxsDYfilbqHSNVYtZdPQtuFTx4n1kTHvZaIe"}
-                    alt={r.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    src={r.imageUrl || "/brand/banners/recipe-placeholder.svg"}
+                    alt=""
                   />
-                  <div className="absolute top-2 left-2 bg-primary/90 text-espresso text-[8px] font-black px-2 py-0.5 rounded flex items-center gap-0.5">
-                    <MaterialIcon icon="verified" className="text-[10px]" /> BRAND
-                  </div>
+                  <span className="absolute top-3 start-3 bg-brand-gold text-white text-[11px] font-bold px-2 py-1 rounded-md flex items-center gap-1">
+                    <BrandIcon name="verified" className="text-xs" /> علامة تجارية
+                  </span>
                 </div>
                 <div>
-                  <h4 className="font-bold text-sm leading-tight" dir="auto">{r.title}</h4>
-                  <p className="text-[10px] opacity-60 font-semibold tracking-wide flex items-center gap-1 uppercase">
-                    {r.author.name}
+                  <h4 className="font-bold text-sm leading-snug mb-1" dir="auto">{r.title}</h4>
+                  <p className="text-xs text-espresso/60 flex items-center gap-1">
+                    <span className="truncate" dir="auto">{r.author.name}</span>
                     {r.rating > 0 && (
-                      <>
-                        {" "}&bull; {r.rating.toFixed(1)} <MaterialIcon icon="star" className="text-[10px] text-primary" />
-                      </>
+                      <span className="flex items-center gap-0.5 shrink-0">
+                        <MaterialIcon icon="star" filled className="text-xs text-crema" />
+                        {r.rating.toFixed(1)}
+                      </span>
                     )}
                   </p>
                 </div>
@@ -254,7 +266,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
         <div className="p-4">
           {/* Gallery Upload (owner only) */}
           {isOwner && (
-            <div className="mb-4 bg-white rounded-xl border border-primary/20 p-4 space-y-3">
+            <div className="mb-4 bg-surface rounded-2xl border border-espresso/10 p-4 space-y-3">
               <p className="text-sm font-bold flex items-center gap-2">
                 <MaterialIcon icon="add_photo_alternate" className="text-primary" />
                 أضف إلى المعرض
@@ -262,8 +274,9 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
               <input
                 value={galleryCaption}
                 onChange={(e) => setGalleryCaption(e.target.value)}
-                className="w-full text-sm border border-slate-200 rounded-lg px-3 py-2"
+                className={inputClass}
                 placeholder="وصف (اختياري)"
+                aria-label="وصف"
                 dir="auto"
               />
               <input
@@ -279,29 +292,29 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
               <button
                 onClick={() => galleryFileRef.current?.click()}
                 disabled={uploading}
-                className="w-full bg-primary text-slate-900 text-sm font-bold py-2.5 rounded-lg disabled:opacity-50"
+                className="w-full bg-primary text-on-primary text-sm font-bold py-3 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
-                {uploading ? "جارٍ الرفع..." : "رفع صورة"}
+                {uploading ? "جارٍ الرفع…" : "رفع صورة"}
               </button>
             </div>
           )}
 
           {localGallery.length === 0 ? (
-            <div className="text-center py-12 text-slate-400">
-              <MaterialIcon icon="photo_library" className="text-4xl mb-2" />
-              <p className="text-sm">لا توجد منشورات في المعرض بعد</p>
+            <div className="text-center py-10">
+              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <p className="text-sm text-espresso/70">لا توجد منشورات في المعرض بعد.</p>
             </div>
           ) : (
             <div className="columns-2 gap-3 space-y-3">
               {localGallery.map((post) => (
-                <div key={post.id} className="break-inside-avoid rounded-xl overflow-hidden bg-slate-50 border border-slate-100">
+                <div key={post.id} className="break-inside-avoid rounded-2xl overflow-hidden bg-surface border border-espresso/10">
                   {post.imageUrl && (post.mediaType === "video" ? (
                     <video src={post.imageUrl} controls playsInline preload="metadata" className="w-full object-cover" />
                   ) : (
                     <img src={post.imageUrl} alt={post.caption || ""} className="w-full object-cover" />
                   ))}
                   {post.caption && (
-                    <p className="text-xs text-slate-600 p-2.5 font-medium" dir="auto">{post.caption}</p>
+                    <p className="text-xs text-espresso/70 p-2.5 leading-relaxed" dir="auto">{post.caption}</p>
                   )}
                 </div>
               ))}

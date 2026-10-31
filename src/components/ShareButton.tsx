@@ -49,11 +49,12 @@ export default function ShareButton({ url, title, className }: ShareButtonProps)
   return (
     <button
       onClick={handleShare}
-      className={className || "bg-primary/10 text-primary border border-primary/20 px-4 py-3 rounded-xl relative"}
+      aria-label={copied ? "تم نسخ الرابط" : "مشاركة"}
+      className={className || "text-primary border border-espresso/15 px-4 py-3 rounded-xl relative hover:border-primary/40 transition-colors"}
     >
       <MaterialIcon icon={copied ? "check" : "share"} className="block" />
       {copied && (
-        <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-espresso text-white text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap">
+        <span className="absolute -top-9 left-1/2 -translate-x-1/2 bg-espresso text-background-light text-xs font-semibold px-2.5 py-1 rounded-lg shadow-sm whitespace-nowrap">
           تم النسخ!
         </span>
       )}

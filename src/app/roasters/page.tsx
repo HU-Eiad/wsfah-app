@@ -1,5 +1,6 @@
 import BottomNav from "@/components/BottomNav";
 import MaterialIcon from "@/components/MaterialIcon";
+import BrandIcon from "@/components/BrandIcon";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
@@ -31,19 +32,18 @@ export default async function RoastersPage() {
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
-      <header className="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-light/80 backdrop-blur-md border-b border-primary/10">
-        <Link href="/" className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10">
-          <MaterialIcon icon="arrow_back" />
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link href="/" aria-label="رجوع" className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">جميع العلامات التجارية</h2>
-        <div className="size-10" />
+        <h1 className="text-xl flex-1">جميع العلامات التجارية</h1>
       </header>
 
       <main className="flex-1 px-4 pb-24 pt-4">
         {companies.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-espresso/40">
-            <MaterialIcon icon="storefront" className="text-5xl mb-3" />
-            <p className="text-sm font-medium">لا توجد علامات تجارية بعد</p>
+          <div className="py-16 text-center">
+            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <p className="text-sm text-espresso/70">لا توجد علامات تجارية بعد.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
@@ -51,54 +51,46 @@ export default async function RoastersPage() {
               <Link
                 key={c.id}
                 href={`/brand/${c.id}`}
-                className="bg-white rounded-2xl border border-espresso/5 overflow-hidden hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all group"
+                className="bg-surface rounded-2xl border border-espresso/10 p-4 flex flex-col hover:border-primary/40 transition-colors group"
               >
-                {/* Card Header - Logo + Badge */}
-                <div className="relative bg-gradient-to-br from-primary/5 to-primary/15 p-4 pb-8">
-                  <div className="flex items-start justify-between">
-                    <div className="size-14 rounded-xl border-2 border-white shadow-md overflow-hidden bg-white">
-                      <img
-                        src={c.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=25f459&color=fff&size=64`}
-                        alt={c.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    {c.isVerified && (
-                      <div className="bg-primary text-white text-[8px] font-black px-2 py-1 rounded-full flex items-center gap-0.5 uppercase tracking-wider">
-                        <MaterialIcon icon="verified" className="text-[10px]" filled /> موثق
-                      </div>
-                    )}
+                {/* Logo + verified */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="size-14 rounded-full ring-1 ring-espresso/10 overflow-hidden bg-oat-milk">
+                    <img
+                      src={c.logo || "/brand/banners/avatar-placeholder.svg"}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  {/* Type pill */}
-                  <div className="absolute -bottom-3 left-4">
-                    <span className="inline-flex items-center gap-1 bg-white text-espresso/70 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm border border-espresso/5">
-                      <MaterialIcon icon={typeIcons[c.type] || "store"} className="text-primary text-xs" />
-                      {typeLabels[c.type] || c.type}
+                  {c.isVerified && (
+                    <span className="bg-brand-gold text-white text-[11px] font-bold px-2 py-1 rounded-md flex items-center gap-1">
+                      <BrandIcon name="verified" className="text-xs" /> موثق
                     </span>
-                  </div>
+                  )}
                 </div>
 
-                {/* Card Body */}
-                <div className="p-4 pt-5">
-                  <h3 className="font-bold text-sm truncate mb-1" dir="auto">{c.name}</h3>
-                  {c.description && (
-                    <p className="text-[11px] text-espresso/50 line-clamp-2 mb-3 leading-relaxed" dir="auto">{c.description}</p>
-                  )}
+                <h3 className="font-bold text-sm truncate mb-1 group-hover:text-primary transition-colors" dir="auto">{c.name}</h3>
+                <span className="inline-flex items-center gap-1 text-espresso/60 text-[11px] font-semibold mb-2">
+                  <MaterialIcon icon={typeIcons[c.type] || "store"} className="text-primary text-xs" />
+                  {typeLabels[c.type] || c.type}
+                </span>
+                {c.description && (
+                  <p className="text-xs text-espresso/60 line-clamp-2 mb-3 leading-relaxed" dir="auto">{c.description}</p>
+                )}
 
-                  {/* Stats Row */}
-                  <div className="flex items-center justify-between pt-3 border-t border-espresso/5">
-                    <div className="flex items-center gap-1 text-espresso/40">
-                      <MaterialIcon icon="inventory_2" className="text-xs" />
-                      <span className="text-[10px] font-bold">{c._count.products}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-espresso/40">
-                      <MaterialIcon icon="menu_book" className="text-xs" />
-                      <span className="text-[10px] font-bold">{c._count.recipes}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-espresso/40">
-                      <MaterialIcon icon="photo_library" className="text-xs" />
-                      <span className="text-[10px] font-bold">{c._count.galleryPosts}</span>
-                    </div>
+                {/* Stats Row */}
+                <div className="mt-auto flex items-center justify-between pt-3 border-t border-espresso/10 text-espresso/60">
+                  <div className="flex items-center gap-1" title="المنتجات">
+                    <MaterialIcon icon="inventory_2" className="text-xs" />
+                    <span className="text-[11px] font-bold tabular-nums">{c._count.products}</span>
+                  </div>
+                  <div className="flex items-center gap-1" title="الوصفات">
+                    <MaterialIcon icon="menu_book" className="text-xs" />
+                    <span className="text-[11px] font-bold tabular-nums">{c._count.recipes}</span>
+                  </div>
+                  <div className="flex items-center gap-1" title="المعرض">
+                    <MaterialIcon icon="photo_library" className="text-xs" />
+                    <span className="text-[11px] font-bold tabular-nums">{c._count.galleryPosts}</span>
                   </div>
                 </div>
               </Link>

@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import BrandIcon from "@/components/BrandIcon";
 
 export default function VerifyEmailWrapper() {
   return (
@@ -34,41 +35,63 @@ function VerifyEmailPage() {
   }, [token]);
 
   return (
-    <div className="bg-background-light text-espresso min-h-screen flex items-center justify-center p-6">
-      <div className="max-w-md w-full text-center">
+    <div className="bg-background-light text-espresso min-h-screen flex flex-col items-center justify-center px-6 py-12">
+      <div className="w-full max-w-sm text-center">
+        <div className="inline-flex mb-10">
+          <BrandMark />
+        </div>
         {status === "loading" && (
           <div>
-            <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 animate-pulse">
-              <MaterialIcon icon="hourglass_top" className="text-primary text-3xl" />
-            </div>
-            <p className="font-bold">جارٍ التحقق...</p>
+            <div className="size-10 rounded-full border-4 border-primary border-t-transparent animate-spin mx-auto mb-4" aria-hidden />
+            <p className="font-semibold">جارٍ التحقق…</p>
           </div>
         )}
         {status === "success" && (
           <div>
-            <div className="size-16 rounded-2xl bg-green-100 flex items-center justify-center mx-auto mb-4">
-              <MaterialIcon icon="verified" className="text-green-600 text-3xl" />
+            <div className="size-14 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+              <BrandIcon name="verified" className="text-green-700 text-3xl" />
             </div>
-            <h1 className="text-2xl font-extrabold mb-2">تم التأكيد!</h1>
-            <p className="text-espresso/50 mb-6">تم تأكيد بريدك الإلكتروني بنجاح</p>
-            <Link href="/home" className="inline-block bg-primary text-espresso px-6 py-3 rounded-xl font-bold text-sm">
+            <h1 className="text-2xl mb-2">تم تأكيد بريدك</h1>
+            <p className="text-sm text-espresso/60 leading-relaxed mb-6">تم تأكيد بريدك الإلكتروني بنجاح</p>
+            <Link
+              href="/home"
+              className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
+            >
               الذهاب للرئيسية
             </Link>
           </div>
         )}
         {status === "error" && (
           <div>
-            <div className="size-16 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <MaterialIcon icon="error" className="text-red-500 text-3xl" />
+            <div className="size-14 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
+              <MaterialIcon icon="error" className="text-red-600 text-3xl" />
             </div>
-            <h1 className="text-2xl font-extrabold mb-2">رابط غير صالح</h1>
-            <p className="text-espresso/50 mb-6">الرابط منتهي الصلاحية أو غير صحيح</p>
-            <Link href="/login" className="inline-block bg-primary text-espresso px-6 py-3 rounded-xl font-bold text-sm">
+            <h1 className="text-2xl mb-2">رابط غير صالح</h1>
+            <p className="text-sm text-espresso/60 leading-relaxed mb-6">الرابط منتهي الصلاحية أو غير صحيح</p>
+            <Link
+              href="/login"
+              className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
+            >
               تسجيل الدخول
             </Link>
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+function BrandMark() {
+  return (
+    <span className="flex items-center gap-2.5">
+      <span className="size-10 rounded-xl bg-forest text-paper flex items-center justify-center">
+        <span
+          className="wsfa-icon"
+          style={{ "--icon": "url(/brand/wsfa-mark.svg)", fontSize: 24 } as React.CSSProperties}
+          aria-hidden
+        />
+      </span>
+      <span className="font-display text-2xl font-semibold">وصفة</span>
+    </span>
   );
 }

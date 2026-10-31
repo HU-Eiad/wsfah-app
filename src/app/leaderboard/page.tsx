@@ -21,21 +21,18 @@ const TABS: { key: SortTab; label: string }[] = [
   { key: "followers", label: "المتابعين" },
 ];
 
-function getMedal(rank: number): string | null {
-  if (rank === 1) return "\u{1F947}";
-  if (rank === 2) return "\u{1F948}";
-  if (rank === 3) return "\u{1F949}";
-  return null;
-}
+const SCORE_UNITS: Record<SortTab, string> = {
+  points: "نقطة",
+  recipes: "وصفة",
+  followers: "متابع",
+};
 
-function getInitials(name: string | null): string {
-  if (!name) return "?";
-  return name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+/** Podium styling for the top three ranks. */
+function rankStyle(rank: number): string {
+  if (rank === 1) return "bg-crema text-white";
+  if (rank === 2) return "bg-leaf text-pine";
+  if (rank === 3) return "bg-primary/15 text-primary";
+  return "text-espresso/60";
 }
 
 export default function LeaderboardPage() {
@@ -53,101 +50,86 @@ export default function LeaderboardPage() {
   }, [activeTab]);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        المتصدرين
-      </h1>
+    <div className="bg-background-light text-espresso min-h-screen">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <h1 className="text-2xl flex-1">المتصدرين</h1>
+      </header>
 
-      {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-        {TABS.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-              activeTab === tab.key
-                ? "text-black shadow-sm"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-            }`}
-            style={
-              activeTab === tab.key
-                ? { backgroundColor: "#25f459" }
-                : undefined
-            }
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* List */}
-      {loading ? (
-        <p className="text-center text-gray-500 dark:text-gray-400 py-12">
-          جاري التحميل...
-        </p>
-      ) : entries.length === 0 ? (
-        <p className="text-center text-gray-500 dark:text-gray-400 py-12">
-          لا يوجد مستخدمون بعد.
-        </p>
-      ) : (
-        <div className="space-y-2">
-          {entries.map((entry) => {
-            const medal = getMedal(entry.rank);
-            return (
-              <div
-                key={entry.id}
-                className="flex items-center gap-4 bg-white dark:bg-gray-800 rounded-xl px-4 py-3 border border-gray-200 dark:border-gray-700"
-              >
-                {/* Rank */}
-                <div className="w-8 text-center shrink-0">
-                  {medal ? (
-                    <span className="text-xl">{medal}</span>
-                  ) : (
-                    <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
-                      {entry.rank}
-                    </span>
-                  )}
-                </div>
-
-                {/* Avatar */}
-                {entry.image ? (
-                  <img
-                    src={entry.image}
-                    alt={entry.name || "مستخدم"}
-                    className="w-10 h-10 rounded-full object-cover shrink-0"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                      {getInitials(entry.name)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Name */}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {entry.name || "مجهول"}
-                  </p>
-                </div>
-
-                {/* Score */}
-                <div className="text-right shrink-0">
-                  <p
-                    className="text-sm font-bold"
-                    style={{ color: "#25f459" }}
-                  >
-                    {entry.score.toLocaleString()}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {activeTab}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        {/* Tabs */}
+        <div className="flex border-b border-espresso/10 mb-6">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${
+                activeTab === tab.key
+                  ? "text-primary border-primary"
+                  : "text-espresso/60 border-transparent hover:text-espresso"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
-      )}
+
+        {/* List */}
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
+          </div>
+        ) : entries.length === 0 ? (
+          <div className="text-center py-12 px-6">
+            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <p className="text-sm text-espresso/70">لا يوجد مستخدمون بعد.</p>
+          </div>
+        ) : (
+          <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10 overflow-hidden">
+            {entries.map((entry) => {
+              const podium = entry.rank <= 3;
+              return (
+                <div
+                  key={entry.id}
+                  className={`flex items-center gap-3 px-4 ${podium ? "py-4" : "py-3"}`}
+                >
+                  {/* Rank */}
+                  <div
+                    className={`size-9 rounded-full flex items-center justify-center shrink-0 ${rankStyle(entry.rank)} ${
+                      podium ? "font-display text-lg" : "text-sm font-semibold tabular-nums"
+                    }`}
+                  >
+                    {entry.rank}
+                  </div>
+
+                  {/* Avatar */}
+                  <img
+                    src={entry.image || "/brand/banners/avatar-placeholder.svg"}
+                    alt=""
+                    className={`rounded-full object-cover shrink-0 bg-oat-milk ${podium ? "size-12" : "size-10"}`}
+                  />
+
+                  {/* Name */}
+                  <div className="flex-1 min-w-0">
+                    <p dir="auto" className={`truncate ${podium ? "font-bold text-base" : "font-semibold text-sm"}`}>
+                      {entry.name || "مجهول"}
+                    </p>
+                  </div>
+
+                  {/* Score */}
+                  <div className="text-end shrink-0">
+                    <p className={`text-primary ${podium ? "font-display text-xl" : "font-bold text-sm"}`}>
+                      {entry.score.toLocaleString()}
+                    </p>
+                    <p className="text-[11px] text-espresso/60">
+                      {SCORE_UNITS[activeTab]}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import BrandIcon from "@/components/BrandIcon";
 import BottomNav from "@/components/BottomNav";
 
 interface Category {
@@ -29,14 +30,24 @@ const GRIND_SIZES = [
   "Coarse",
 ] as const;
 
+// Display labels only; the stored values stay the English keys above.
+const GRIND_LABELS: Record<string, string> = {
+  "Extra Fine": "ناعم جداً",
+  Fine: "ناعم",
+  "Medium-Fine": "متوسط إلى ناعم",
+  Medium: "متوسط",
+  "Medium-Coarse": "متوسط إلى خشن",
+  Coarse: "خشن",
+};
+
 const INGREDIENT_UNITS: { value: IngredientUnit; label: string }[] = [
-  { value: "g", label: "g" },
-  { value: "ml", label: "ml" },
+  { value: "g", label: "غ" },
+  { value: "ml", label: "مل" },
   { value: "oz", label: "oz" },
-  { value: "tsp", label: "tsp" },
-  { value: "tbsp", label: "tbsp" },
-  { value: "cups", label: "cups" },
-  { value: "whole", label: "whole" },
+  { value: "tsp", label: "ملعقة ص" },
+  { value: "tbsp", label: "ملعقة ك" },
+  { value: "cups", label: "كوب" },
+  { value: "whole", label: "حبة" },
 ];
 
 function formatBrewTime(seconds: number): string {
@@ -87,7 +98,7 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
       try {
         const res = await fetch(`/api/recipes/${id}`);
         if (!res.ok) {
-          setError("Recipe not found");
+          setError("ÙÙ ÙØªÙ Ø§ÙØ¹Ø«ÙØ± Ø¹ÙÙ Ø§ÙÙØµÙØ©");
           setLoading(false);
           return;
         }
@@ -120,7 +131,7 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
           setBrewTimeSec(data.brewParams.brewTimeSec || "");
         }
       } catch {
-        setError("Failed to load recipe");
+        setError("ØªØ¹Ø°ÙØ± ØªØ­ÙÙÙ Ø§ÙÙØµÙØ©");
       } finally {
         setLoading(false);
       }
@@ -167,7 +178,7 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
 
   const handleSave = async () => {
     if (!recipeName || !category) {
-      setError("Recipe name and category are required");
+      setError("Ø§Ø³Ù Ø§ÙÙØµÙØ© ÙØ§ÙÙØ³Ù ÙØ·ÙÙØ¨Ø§Ù");
       return;
     }
 
@@ -213,22 +224,25 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to save");
+        throw new Error(data.error || "ØªØ¹Ø°ÙØ± Ø­ÙØ¸ Ø§ÙØªØ¹Ø¯ÙÙØ§ØªØ Ø­Ø§ÙÙ ÙØ±Ø© Ø£Ø®Ø±Ù");
       }
 
       setSaved(true);
       setTimeout(() => router.push(`/recipe/${id}`), 1500);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : "Ø­Ø¯Ø« Ø®Ø·Ø£ ØºÙØ± ÙØªÙÙØ¹Ø Ø­Ø§ÙÙ ÙØ±Ø© Ø£Ø®Ø±Ù");
     } finally {
       setSaving(false);
     }
   };
 
   const inputClass =
-    "w-full bg-white rounded-xl px-4 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary transition-colors";
+    "w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors";
   const labelClass =
-    "text-xs font-bold uppercase tracking-widest text-espresso/60 mb-2 block";
+    "text-sm font-semibold text-espresso/80 mb-1.5 block";
+  const sectionClass = "bg-surface rounded-2xl border border-espresso/10 p-4";
+  const paramInputClass =
+    "w-full bg-transparent text-sm font-medium outline-none placeholder:text-espresso/50";
 
   if (loading) {
     return (
@@ -240,38 +254,39 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
-      <header className="sticky top-0 z-30 bg-background-light/80 backdrop-blur-md px-6 pt-6 pb-4 flex items-center justify-between border-b border-espresso/5">
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link
           href={`/recipe/${id}`}
-          className="size-10 rounded-full flex items-center justify-center hover:bg-primary/10"
+          aria-label="إغلاق"
+          className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk"
         >
           <MaterialIcon icon="close" />
         </Link>
-        <h1 className="text-lg font-bold">تعديل الوصفة</h1>
+        <h1 className="text-xl flex-1">تعديل الوصفة</h1>
         <button
           onClick={handleSave}
           disabled={saving}
-          className="text-primary font-bold text-sm active:scale-95 transition-transform disabled:opacity-50"
+          className="bg-primary text-on-primary rounded-xl px-4 py-2 font-bold text-sm hover:bg-primary/90 active:scale-95 transition-colors disabled:opacity-50"
         >
-          {saving ? "..." : "حفظ"}
+          {saving ? "…" : "حفظ"}
         </button>
       </header>
 
       {saved && (
-        <div className="mx-6 mt-4 bg-primary/10 border border-primary/20 rounded-xl p-4 flex items-center gap-3">
+        <div className="mx-4 mt-4 bg-primary/10 rounded-xl p-4 flex items-center gap-3">
           <MaterialIcon icon="check_circle" className="text-primary text-xl" />
-          <p className="text-sm font-medium text-primary">تم تحديث الوصفة بنجاح!</p>
+          <p className="text-sm font-semibold text-primary">تم تحديث الوصفة بنجاح.</p>
         </div>
       )}
 
       {error && (
-        <div className="mx-6 mt-4 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
-          <MaterialIcon icon="error" className="text-red-500 text-xl" />
-          <p className="text-sm font-medium text-red-600">{error}</p>
+        <div className="mx-4 mt-4 bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+          <MaterialIcon icon="error" className="text-red-600 text-xl" />
+          <p className="text-sm font-medium text-red-700">{error}</p>
         </div>
       )}
 
-      <main className="flex-1 px-6 py-6 pb-28 space-y-6">
+      <main className="flex-1 px-4 py-6 pb-28 space-y-4">
         {/* Photo Upload */}
         <input
           ref={fileInputRef}
@@ -282,15 +297,15 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
         />
         <div
           onClick={() => fileInputRef.current?.click()}
-          className="aspect-video rounded-2xl border-2 border-dashed border-espresso/20 flex flex-col items-center justify-center gap-3 bg-white cursor-pointer hover:border-primary/40 transition-colors overflow-hidden relative"
+          className="aspect-video rounded-[20px] border-2 border-dashed border-espresso/15 flex flex-col items-center justify-center gap-3 bg-surface cursor-pointer hover:border-primary/40 transition-colors overflow-hidden relative"
         >
           {uploading ? (
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
           ) : imageUrl ? (
             <>
-              <img src={imageUrl} alt="Recipe" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={imageUrl} alt="صورة الوصفة" className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <div className="bg-white/90 rounded-full p-3">
+                <div className="bg-surface/90 rounded-full p-3">
                   <MaterialIcon icon="edit" className="text-xl text-espresso" />
                 </div>
               </div>
@@ -302,152 +317,161 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
               </div>
               <div className="text-center">
                 <p className="text-sm font-bold">أضف صورة غلاف</p>
-                <p className="text-xs text-espresso/40 mt-1">اضغط للرفع</p>
+                <p className="text-xs text-espresso/60 mt-1">اضغط للرفع</p>
               </div>
             </>
           )}
         </div>
 
-        {/* Recipe Name */}
-        <div>
-          <label className={labelClass}>اسم الوصفة</label>
-          <input
-            dir="auto"
-            value={recipeName}
-            onChange={(e) => setRecipeName(e.target.value)}
-            className={inputClass}
-            placeholder="e.g., Morning Ritual Pour Over"
-          />
-        </div>
+        {/* Basic info */}
+        <section className={`${sectionClass} space-y-4`}>
+          <h2 className="text-xl">عن الوصفة</h2>
 
-        {/* Category & Difficulty */}
-        <div className="grid grid-cols-2 gap-4">
+          {/* Recipe Name */}
           <div>
-            <label className={labelClass}>القسم</label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className={`${inputClass} appearance-none`}
-            >
-              <option value="">اختر...</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.name}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+            <label htmlFor="edit-name" className={labelClass}>اسم الوصفة</label>
+            <input
+              id="edit-name"
+              dir="auto"
+              value={recipeName}
+              onChange={(e) => setRecipeName(e.target.value)}
+              className={inputClass}
+              placeholder="مثال: قهوة الصباح بالترشيح"
+            />
           </div>
-          <div>
-            <label className={labelClass}>المستوى</label>
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              className={`${inputClass} appearance-none`}
-            >
-              <option value="Beginner">مبتدئ</option>
-              <option value="Intermediate">متوسط</option>
-              <option value="Advanced">متقدم</option>
-            </select>
-          </div>
-        </div>
 
-        {/* Brew Time */}
-        <div>
-          <label className={labelClass}>وقت التحضير</label>
-          <input
-            dir="auto"
-            value={brewTime}
-            onChange={(e) => setBrewTime(e.target.value)}
-            className={inputClass}
-            placeholder="e.g., 10 mins"
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className={labelClass}>الوصف</label>
-          <textarea
-            dir="auto"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={3}
-            className={`${inputClass} resize-none`}
-            placeholder="اروِ قصة وصفتك..."
-          />
-        </div>
-
-        {/* Brewing Parameters */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded-full bg-primary/10 flex items-center justify-center">
-              <MaterialIcon icon="tune" className="text-lg text-primary" />
+          {/* Category & Difficulty */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="edit-category" className={labelClass}>القسم</label>
+              <select
+                id="edit-category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className={`${inputClass} appearance-none`}
+              >
+                <option value="">اختر…</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
-              <h2 className="text-sm font-bold">معايير التحضير</h2>
-              <p className="text-xs text-espresso/40">اضبط تحضيرك</p>
+              <label htmlFor="edit-difficulty" className={labelClass}>المستوى</label>
+              <select
+                id="edit-difficulty"
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value)}
+                className={`${inputClass} appearance-none`}
+              >
+                <option value="Beginner">مبتدئ</option>
+                <option value="Intermediate">متوسط</option>
+                <option value="Advanced">متقدم</option>
+              </select>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-espresso/10 divide-y divide-espresso/5 overflow-hidden">
-            <div className="flex items-center gap-4 px-4 py-3.5">
-              <div className="size-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
-                <MaterialIcon icon="thermostat" className="text-xl text-red-400" />
+          {/* Brew Time */}
+          <div>
+            <label htmlFor="edit-brew-time" className={labelClass}>وقت التحضير</label>
+            <input
+              id="edit-brew-time"
+              dir="auto"
+              value={brewTime}
+              onChange={(e) => setBrewTime(e.target.value)}
+              className={inputClass}
+              placeholder="مثال: ١٠ دقائق"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label htmlFor="edit-description" className={labelClass}>الوصف</label>
+            <textarea
+              id="edit-description"
+              dir="auto"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              className={`${inputClass} resize-none leading-relaxed`}
+              placeholder="اروِ قصة وصفتك…"
+            />
+          </div>
+        </section>
+
+        {/* Brewing Parameters */}
+        <section className={sectionClass}>
+          <div className="mb-4">
+            <h2 className="text-xl">معايير التحضير</h2>
+            <p className="text-xs text-espresso/60 mt-1">اضبط تحضيرك</p>
+          </div>
+
+          <div className="rounded-xl border border-espresso/10 divide-y divide-espresso/10 overflow-hidden">
+            <div className="flex items-center gap-4 px-4 py-3">
+              <div className="size-10 rounded-xl bg-oat-milk text-primary flex items-center justify-center shrink-0">
+                <BrandIcon name="thermometer" className="text-xl" />
               </div>
               <div className="flex-1 min-w-0">
-                <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 block mb-1">الحرارة</label>
+                <label htmlFor="edit-temp" className="text-xs font-semibold text-espresso/60 block mb-1">الحرارة</label>
                 <input
+                  id="edit-temp"
                   inputMode="numeric"
                   value={temperature}
                   onChange={(e) => setTemperature(e.target.value)}
-                  className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-espresso/30"
-                  placeholder="e.g., 93"
+                  className={paramInputClass}
+                  placeholder="مثال: ٩٣"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-4 px-4 py-3.5">
-              <div className="size-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
-                <MaterialIcon icon="balance" className="text-xl text-blue-400" />
+            <div className="flex items-center gap-4 px-4 py-3">
+              <div className="size-10 rounded-xl bg-oat-milk text-primary flex items-center justify-center shrink-0">
+                <BrandIcon name="scale" className="text-xl" />
               </div>
               <div className="flex-1 min-w-0">
-                <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 block mb-1">النسبة</label>
+                <label htmlFor="edit-ratio" className="text-xs font-semibold text-espresso/60 block mb-1">النسبة</label>
                 <input
+                  id="edit-ratio"
                   dir="ltr"
                   value={ratio}
                   onChange={(e) => setRatio(e.target.value)}
-                  className="w-full bg-transparent text-sm font-medium outline-none placeholder:text-espresso/30"
-                  placeholder="e.g., 1:15"
+                  className={`${paramInputClass} text-end`}
+                  placeholder="مثال: 1:15"
                 />
               </div>
             </div>
 
-            <div className="flex items-center gap-4 px-4 py-3.5">
-              <div className="size-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-                <MaterialIcon icon="grain" className="text-xl text-amber-500" />
+            <div className="flex items-center gap-4 px-4 py-3">
+              <div className="size-10 rounded-xl bg-oat-milk text-primary flex items-center justify-center shrink-0">
+                <BrandIcon name="grind" className="text-xl" />
               </div>
               <div className="flex-1 min-w-0">
-                <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 block mb-1">حجم الطحن</label>
+                <label htmlFor="edit-grind" className="text-xs font-semibold text-espresso/60 block mb-1">حجم الطحن</label>
                 <select
+                  id="edit-grind"
                   value={grindSize}
                   onChange={(e) => setGrindSize(e.target.value)}
-                  className="w-full bg-transparent text-sm font-medium outline-none appearance-none"
+                  className={`${paramInputClass} appearance-none`}
                 >
-                  <option value="">اختر حجم الطحن...</option>
+                  <option value="">اختر حجم الطحن…</option>
                   {GRIND_SIZES.map((size) => (
-                    <option key={size} value={size}>{size}</option>
+                    <option key={size} value={size}>{GRIND_LABELS[size] || size}</option>
                   ))}
                 </select>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 px-4 py-3.5">
-              <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <MaterialIcon icon="timer" className="text-xl text-primary" />
+            <div className="flex items-center gap-4 px-4 py-3">
+              <div className="size-10 rounded-xl bg-oat-milk text-primary flex items-center justify-center shrink-0">
+                <BrandIcon name="timer" className="text-xl" />
               </div>
               <div className="flex-1 min-w-0">
-                <label className="text-xs font-bold uppercase tracking-widest text-espresso/60 block mb-1">مؤقت التحضير (ثواني)</label>
+                <label htmlFor="edit-timer" className="text-xs font-semibold text-espresso/60 block mb-1">مؤقت التحضير (بالثواني)</label>
                 <div className="flex items-center gap-3">
                   <input
+                    id="edit-timer"
                     type="number"
                     inputMode="numeric"
                     min={0}
@@ -455,11 +479,11 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
                     onChange={(e) =>
                       setBrewTimeSec(e.target.value === "" ? "" : Number(e.target.value))
                     }
-                    className="flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-espresso/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                    placeholder="e.g., 240"
+                    className={`flex-1 ${paramInputClass} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
+                    placeholder="مثال: ٢٤٠"
                   />
                   {typeof brewTimeSec === "number" && brewTimeSec > 0 && (
-                    <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg whitespace-nowrap">
+                    <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full whitespace-nowrap tabular-nums" dir="ltr">
                       {formatBrewTime(brewTimeSec)}
                     </span>
                   )}
@@ -467,91 +491,109 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Ingredients */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <label className="text-xs font-bold uppercase tracking-widest text-espresso/60">المكونات</label>
-            <button onClick={addIngredient} className="text-primary text-xs font-bold flex items-center gap-1">
-              <MaterialIcon icon="add" className="text-sm" /> إضافة
+        <section className={sectionClass}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl">المكونات</h2>
+            <button
+              onClick={addIngredient}
+              className="text-primary text-sm font-semibold flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors"
+            >
+              <MaterialIcon icon="add" className="text-base" /> إضافة
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {ingredients.map((ing, idx) => (
-              <div key={idx} className="flex gap-2 items-center">
+              <div key={idx} className="flex gap-2 items-center bg-oat-milk rounded-xl p-2">
                 <input
                   dir="auto"
+                  aria-label={`اسم المكوّن ${idx + 1}`}
                   value={ing.name}
                   onChange={(e) => updateIngredient(idx, "name", e.target.value)}
-                  className="flex-1 bg-white rounded-xl px-4 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary"
+                  className="flex-1 min-w-0 bg-surface rounded-xl px-3 py-2.5 border border-espresso/10 text-sm placeholder:text-espresso/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   placeholder="المكوّن"
                 />
                 <input
                   inputMode="decimal"
+                  aria-label={`كمية المكوّن ${idx + 1}`}
                   value={ing.amount}
                   onChange={(e) => updateIngredient(idx, "amount", e.target.value)}
-                  className="w-20 bg-white rounded-xl px-3 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary"
+                  className="w-20 bg-surface rounded-xl px-3 py-2.5 border border-espresso/10 text-sm placeholder:text-espresso/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   placeholder="الكمية"
                 />
                 <select
+                  aria-label={`وحدة المكوّن ${idx + 1}`}
                   value={ing.unit}
                   onChange={(e) => updateIngredient(idx, "unit", e.target.value)}
-                  className="w-20 bg-white rounded-xl px-2 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary appearance-none text-center"
+                  className="w-20 bg-surface rounded-xl px-2 py-2.5 border border-espresso/10 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 appearance-none text-center"
                 >
                   {INGREDIENT_UNITS.map((u) => (
                     <option key={u.value} value={u.value}>{u.label}</option>
                   ))}
                 </select>
                 {ingredients.length > 1 && (
-                  <button onClick={() => removeIngredient(idx)} className="text-red-400 hover:text-red-600">
+                  <button
+                    onClick={() => removeIngredient(idx)}
+                    aria-label="حذف المكوّن"
+                    className="size-9 shrink-0 rounded-full flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors"
+                  >
                     <MaterialIcon icon="delete" className="text-lg" />
                   </button>
                 )}
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Steps */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <label className="text-xs font-bold uppercase tracking-widest text-espresso/60">الخطوات</label>
-            <button onClick={addStep} className="text-primary text-xs font-bold flex items-center gap-1">
-              <MaterialIcon icon="add" className="text-sm" /> إضافة خطوة
+        <section className={sectionClass}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl">الخطوات</h2>
+            <button
+              onClick={addStep}
+              className="text-primary text-sm font-semibold flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors"
+            >
+              <MaterialIcon icon="add" className="text-base" /> إضافة خطوة
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {steps.map((step, idx) => (
-              <div key={idx} className="flex gap-3 items-start">
-                <div className="size-8 rounded-full bg-primary text-espresso flex items-center justify-center font-bold text-sm shrink-0 mt-2.5">
+              <div key={idx} className="flex gap-3 items-start bg-oat-milk rounded-xl p-3">
+                <div className="size-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-sm shrink-0 mt-1.5">
                   {idx + 1}
                 </div>
                 <textarea
                   dir="auto"
+                  aria-label={`الخطوة ${idx + 1}`}
                   value={step}
                   onChange={(e) => updateStep(idx, e.target.value)}
                   rows={2}
-                  className="flex-1 bg-white rounded-xl px-4 py-3 border border-espresso/10 text-sm font-medium outline-none focus:border-primary resize-none"
-                  placeholder={`Step ${idx + 1} instructions...`}
+                  className="flex-1 min-w-0 bg-surface rounded-xl px-3 py-2.5 border border-espresso/10 text-sm leading-relaxed placeholder:text-espresso/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
+                  placeholder={`تعليمات الخطوة ${idx + 1}…`}
                 />
                 {steps.length > 1 && (
-                  <button onClick={() => removeStep(idx)} className="text-red-400 hover:text-red-600 mt-2.5">
+                  <button
+                    onClick={() => removeStep(idx)}
+                    aria-label="حذف الخطوة"
+                    className="size-9 shrink-0 rounded-full flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors mt-1"
+                  >
                     <MaterialIcon icon="delete" className="text-lg" />
                   </button>
                 )}
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Save Button */}
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full bg-primary text-espresso font-bold py-4 rounded-xl text-sm active:scale-[0.98] transition-transform shadow-lg shadow-primary/20 disabled:opacity-50"
+          className="w-full bg-primary text-on-primary font-bold py-4 rounded-xl text-sm hover:bg-primary/90 active:scale-[0.98] transition-colors disabled:opacity-50"
         >
-          {saving ? "جاري الحفظ..." : "حفظ التغييرات"}
+          {saving ? "جارٍ الحفظ…" : "حفظ التغييرات"}
         </button>
       </main>
 

@@ -41,32 +41,32 @@ export default function AdminVerificationPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-[#F2E8DF] mb-6">توثيق العلامات التجارية</h2>
+      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">توثيق العلامات التجارية</h2>
 
       {loading ? (
-        <p className="text-[#F2E8DF66]">جاري التحميل...</p>
+        <p className="text-[#eef0e899]">جاري التحميل...</p>
       ) : applications.length === 0 ? (
-        <div className="bg-[#1a2420] border border-[#F2E8DF0d] rounded-2xl p-8 text-center">
-          <p className="text-[#F2E8DF66]">لا توجد طلبات توثيق معلقة.</p>
+        <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-8 text-center">
+          <p className="text-[#eef0e899]">لا توجد طلبات توثيق معلقة.</p>
         </div>
       ) : (
         <div className="space-y-4">
           {applications.map((app) => (
             <div
               key={app.id}
-              className="bg-[#1a2420] border border-[#F2E8DF0d] rounded-2xl p-6"
+              className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[#F2E8DF]">
+                  <h3 className="text-lg font-semibold text-[#eef0e8]">
                     {app.company.name}
                   </h3>
-                  <p className="text-sm text-[#F2E8DFaa] mt-1">
+                  <p className="text-sm text-[#eef0e8aa] mt-1">
                     مقدم الطلب: {app.applicant?.name || app.applicant?.email || "غير معروف"}
                   </p>
                   {app.documents && (
                     <div className="mt-2">
-                      <p className="text-xs text-[#F2E8DF66] mb-1">المستندات:</p>
+                      <p className="text-xs text-[#eef0e899] mb-1">المستندات:</p>
                       <div className="flex flex-wrap gap-2">
                         {JSON.parse(app.documents).map((url: string, i: number) => (
                           <a
@@ -74,7 +74,7 @@ export default function AdminVerificationPage() {
                             href={url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-[#25f459] hover:underline"
+                            className="text-xs text-[#8fbf9a] hover:underline"
                           >
                             مستند {i + 1}
                           </a>
@@ -82,11 +82,11 @@ export default function AdminVerificationPage() {
                       </div>
                     </div>
                   )}
-                  <p className="text-xs text-[#F2E8DF50] mt-2">
+                  <p className="text-xs text-[#eef0e880] mt-2">
                     تاريخ التقديم: {new Date(app.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-                <div className="flex gap-2 ml-4">
+                <div className="flex gap-2 ms-4">
                   <button
                     onClick={() => handleAction(app.id, "APPROVED")}
                     className="px-3 py-1.5 rounded bg-green-600 hover:bg-green-700 text-white text-xs font-medium"

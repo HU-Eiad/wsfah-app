@@ -1,35 +1,46 @@
 import Link from "next/link";
-import MaterialIcon from "@/components/MaterialIcon";
+
+function Wordmark({ size = "md" }: { size?: "md" | "sm" }) {
+  return (
+    <span className="flex items-center gap-2.5">
+      <span className={`${size === "md" ? "size-10 rounded-xl" : "size-8 rounded-lg"} bg-forest text-paper flex items-center justify-center`}>
+        <span
+          className="wsfa-icon"
+          style={{ "--icon": "url(/brand/wsfa-mark.svg)", fontSize: size === "md" ? 24 : 18 } as React.CSSProperties}
+          aria-hidden
+        />
+      </span>
+      <span className={`font-display ${size === "md" ? "text-2xl" : "text-xl"} font-semibold`}>وصفة</span>
+    </span>
+  );
+}
 
 export default function RefundPolicyPage() {
   return (
     <div className="bg-background-light text-espresso min-h-screen">
       {/* Nav - matches landing page */}
-      <nav className="sticky top-0 z-50 bg-background-light/80 backdrop-blur-xl border-b border-espresso/5">
+      <nav className="sticky top-0 z-50 bg-background-light/85 backdrop-blur-xl border-b border-espresso/10">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="size-10 bg-primary rounded-xl flex items-center justify-center">
-              <MaterialIcon icon="coffee" className="text-espresso text-xl" />
-            </div>
-            <span className="text-xl font-extrabold tracking-tight">وصفة</span>
+          <Link href="/" aria-label="وصفة، الصفحة الرئيسية">
+            <Wordmark />
           </Link>
-          <Link href="/login" className="text-sm font-semibold opacity-60 hover:opacity-100">
+          <Link href="/login" className="text-sm font-semibold text-espresso/70 hover:text-espresso">
             تسجيل الدخول
           </Link>
         </div>
       </nav>
 
-      <main className="max-w-4xl mx-auto px-6 py-16 md:py-24">
+      <main className="max-w-2xl mx-auto px-6 py-14 md:py-20">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">سياسة الاسترداد</h1>
-          <p className="text-base opacity-50 max-w-lg mx-auto font-medium">
+        <header className="mb-12">
+          <h1 className="text-3xl md:text-4xl mb-4">سياسة الاسترداد</h1>
+          <p className="text-base text-espresso/70 leading-loose">
             قواعدنا المتعلقة بالمدفوعات والإلغاءات وأهلية الاسترداد
           </p>
-        </div>
+        </header>
 
         {/* Policies */}
-        <div className="max-w-2xl mx-auto space-y-0">
+        <div>
           {[
             {
               num: "01",
@@ -62,55 +73,35 @@ export default function RefundPolicyPage() {
               body: "تتم معالجة استرداد المبالغ المعتمدة على الخدمات التي تم شراؤها من خلال العروض الترويجية أو الخصومات بناءً على المبلغ الفعلي الذي دفعه العميل.",
             },
           ].map((item, i) => (
-            <div
+            <section
               key={item.num}
-              className={`flex gap-6 py-8 ${i > 0 ? "border-t border-espresso/5" : ""}`}
+              className={`py-8 ${i > 0 ? "border-t border-espresso/10" : "pt-0"}`}
             >
-              <div className="relative flex-shrink-0">
-                <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <MaterialIcon icon={item.icon} className="text-primary text-2xl" />
-                </div>
-                <div className="absolute -top-1.5 -right-1.5 size-6 rounded-full bg-primary text-espresso flex items-center justify-center text-[10px] font-extrabold shadow-sm">
-                  {item.num}
-                </div>
-              </div>
-              <div className="pt-1">
-                <h3 className="text-base font-bold mb-2">{item.title}</h3>
-                <p className="text-sm opacity-50 font-medium leading-relaxed">{item.body}</p>
-              </div>
-            </div>
+              <h2 className="text-xl mb-3">{item.title}</h2>
+              <p className="text-base text-espresso/70 leading-loose">{item.body}</p>
+            </section>
           ))}
         </div>
 
         {/* Contact */}
-        <div className="max-w-2xl mx-auto mt-16 text-center">
-          <div className="bg-espresso/[0.02] rounded-2xl border border-espresso/5 p-8">
-            <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <MaterialIcon icon="support_agent" className="text-primary text-2xl" />
-            </div>
-            <h3 className="font-bold mb-2">تحتاج مساعدة؟</h3>
-            <p className="text-sm opacity-40 font-medium mb-4">للاستفسارات حول الاسترداد والمدفوعات</p>
-            <a
-              href="mailto:support@wsfa.app"
-              className="inline-flex items-center gap-2 bg-primary text-espresso px-6 py-3 rounded-xl text-sm font-extrabold hover:bg-primary/90 transition-colors"
-            >
-              <MaterialIcon icon="email" className="text-lg" />
-              support@wsfa.app
-            </a>
-          </div>
-        </div>
+        <section className="mt-12 bg-surface rounded-2xl border border-espresso/10 p-6 md:p-8">
+          <h2 className="text-xl mb-2">تحتاج مساعدة؟</h2>
+          <p className="text-sm text-espresso/70 leading-relaxed mb-5">للاستفسارات حول الاسترداد والمدفوعات</p>
+          <a
+            href="mailto:support@wsfa.app"
+            dir="ltr"
+            className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
+          >
+            support@wsfa.app
+          </a>
+        </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-espresso/5 py-8">
-        <div className="max-w-4xl mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="size-8 bg-primary rounded-lg flex items-center justify-center">
-              <MaterialIcon icon="coffee" className="text-espresso text-sm" />
-            </div>
-            <span className="font-extrabold tracking-tight text-sm">وصفة</span>
-          </div>
-          <p className="text-xs opacity-30 font-medium">© {new Date().getFullYear()} وصفة. جميع الحقوق محفوظة.</p>
+      <footer className="border-t border-espresso/10 py-8">
+        <div className="max-w-4xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <Wordmark size="sm" />
+          <p className="text-xs text-espresso/60">© {new Date().getFullYear()} وصفة. جميع الحقوق محفوظة.</p>
         </div>
       </footer>
     </div>

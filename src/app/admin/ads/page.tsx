@@ -42,8 +42,8 @@ export default function AdminAdsPage() {
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#F2E8DF]">إدارة الإعلانات</h1>
-          <p className="text-sm text-[#F2E8DF66] mt-1">
+          <h1 className="text-2xl font-bold text-[#eef0e8]">إدارة الإعلانات</h1>
+          <p className="text-sm text-[#eef0e899] mt-1">
             إعداد مواضع Google AdSense في التطبيق
           </p>
         </div>
@@ -57,14 +57,14 @@ export default function AdminAdsPage() {
       </div>
 
       {/* AdSense Configuration */}
-      <div className="bg-[#1a2420] rounded-2xl border border-[#F2E8DF0d] p-6 mb-6">
-        <h2 className="font-bold text-lg text-[#F2E8DF] mb-4 flex items-center gap-2">
+      <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-6 mb-6">
+        <h2 className="font-bold text-lg text-[#eef0e8] mb-4 flex items-center gap-2">
           <span className="material-symbols-outlined text-blue-500">ads_click</span>
           Google AdSense
         </h2>
         <div className="grid gap-4">
           <div>
-            <label className="block text-sm font-medium text-[#F2E8DFcc] mb-1">
+            <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">
               معرّف الناشر (NEXT_PUBLIC_ADSENSE_ID)
             </label>
             <input
@@ -72,9 +72,9 @@ export default function AdminAdsPage() {
               value={adsenseId}
               onChange={(e) => setAdsenseId(e.target.value)}
               placeholder="ca-pub-XXXXXXXXXXXXXXXX"
-              className="w-full px-4 py-2.5 rounded-lg border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF] text-sm"
+              className="w-full px-4 py-2.5 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm"
             />
-            <p className="text-xs text-[#F2E8DF50] mt-1">
+            <p className="text-xs text-[#eef0e880] mt-1">
               قم بتعيينه في ملف .env.local باسم NEXT_PUBLIC_ADSENSE_ID
             </p>
           </div>
@@ -83,35 +83,35 @@ export default function AdminAdsPage() {
 
       {/* Revenue Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-[#1a2420] rounded-2xl border border-[#F2E8DF0d] p-5">
+        <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="size-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
               <span className="material-symbols-outlined text-green-600 dark:text-green-400">monetization_on</span>
             </div>
-            <span className="text-sm font-medium text-[#F2E8DF66]">الإيرادات المقدرة</span>
+            <span className="text-sm font-medium text-[#eef0e899]">الإيرادات المقدرة</span>
           </div>
-          <p className="text-2xl font-bold text-[#F2E8DF]">$0.00</p>
-          <p className="text-xs text-[#F2E8DF50] mt-1">اربط AdSense لرؤية البيانات</p>
+          <p className="text-2xl font-bold text-[#eef0e8]">$0.00</p>
+          <p className="text-xs text-[#eef0e880] mt-1">اربط AdSense لرؤية البيانات</p>
         </div>
-        <div className="bg-[#1a2420] rounded-2xl border border-[#F2E8DF0d] p-5">
+        <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="size-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
               <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">visibility</span>
             </div>
-            <span className="text-sm font-medium text-[#F2E8DF66]">مرات الظهور</span>
+            <span className="text-sm font-medium text-[#eef0e899]">مرات الظهور</span>
           </div>
-          <p className="text-2xl font-bold text-[#F2E8DF]">0</p>
-          <p className="text-xs text-[#F2E8DF50] mt-1">إجمالي مرات ظهور الإعلانات اليوم</p>
+          <p className="text-2xl font-bold text-[#eef0e8]">0</p>
+          <p className="text-xs text-[#eef0e880] mt-1">إجمالي مرات ظهور الإعلانات اليوم</p>
         </div>
-        <div className="bg-[#1a2420] rounded-2xl border border-[#F2E8DF0d] p-5">
+        <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-5">
           <div className="flex items-center gap-3 mb-2">
             <div className="size-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
               <span className="material-symbols-outlined text-purple-600 dark:text-purple-400">ads_click</span>
             </div>
-            <span className="text-sm font-medium text-[#F2E8DF66]">المواضع النشطة</span>
+            <span className="text-sm font-medium text-[#eef0e899]">المواضع النشطة</span>
           </div>
-          <p className="text-2xl font-bold text-[#F2E8DF]">{enabledCount}/{placements.length}</p>
-          <p className="text-xs text-[#F2E8DF50] mt-1">مواضع الإعلانات المفعّلة</p>
+          <p className="text-2xl font-bold text-[#eef0e8]">{enabledCount}/{placements.length}</p>
+          <p className="text-xs text-[#eef0e880] mt-1">مواضع الإعلانات المفعّلة</p>
         </div>
       </div>
 
@@ -131,37 +131,37 @@ export default function AdminAdsPage() {
       </div>
 
       {/* Ad Placements */}
-      <div className="bg-[#1a2420] rounded-2xl border border-[#F2E8DF0d] overflow-hidden">
-        <div className="px-6 py-4 border-b border-[#F2E8DF0d]">
+      <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] overflow-hidden">
+        <div className="px-6 py-4 border-b border-[#eef0e80d]">
           <h2 className="font-bold text-lg">مواضع الإعلانات</h2>
         </div>
-        <div className="divide-y divide-[#F2E8DF08]">
+        <div className="divide-y divide-[#eef0e808]">
           {placements.map((placement) => (
-            <div key={placement.id} className="flex items-center justify-between px-6 py-4 hover:bg-[#F2E8DF05]">
+            <div key={placement.id} className="flex items-center justify-between px-6 py-4 hover:bg-[#eef0e805]">
               <div className="flex items-center gap-4">
                 <div className={`size-10 rounded-lg flex items-center justify-center ${
                   placement.enabled
                     ? "bg-green-100 dark:bg-green-900/30"
-                    : "bg-[#F2E8DF08]"
+                    : "bg-[#eef0e808]"
                 }`}>
                   <span className={`material-symbols-outlined text-lg ${
                     placement.enabled
                       ? "text-green-600 dark:text-green-400"
-                      : "text-gray-400"
+                      : "text-[#eef0e899]"
                   }`}>
                     {placement.format === "rectangle" ? "crop_square" : "view_day"}
                   </span>
                 </div>
                 <div>
-                  <p className="font-semibold text-sm text-[#F2E8DF]">{placement.name}</p>
+                  <p className="font-semibold text-sm text-[#eef0e8]">{placement.name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs text-gray-400 bg-[#F2E8DF08] px-2 py-0.5 rounded">
+                    <span className="text-xs text-[#eef0e899] bg-[#eef0e808] px-2 py-0.5 rounded">
                       {placement.page}
                     </span>
-                    <span className="text-xs text-[#F2E8DF60]">
+                    <span className="text-xs text-[#eef0e880]">
                       الموضع: {placement.slot}
                     </span>
-                    <span className="text-xs text-[#F2E8DF60]">
+                    <span className="text-xs text-[#eef0e880]">
                       الشكل: {placement.format}
                     </span>
                   </div>
@@ -185,15 +185,15 @@ export default function AdminAdsPage() {
       </div>
 
       {/* Integration Guide */}
-      <div className="bg-[#1a2420] rounded-2xl border border-[#F2E8DF0d] p-6 mt-6">
-        <h2 className="font-bold text-lg text-[#F2E8DF] mb-4 flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#F2E8DF60]">integration_instructions</span>
+      <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-6 mt-6">
+        <h2 className="font-bold text-lg text-[#eef0e8] mb-4 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[#eef0e880]">integration_instructions</span>
           دليل الإعداد
         </h2>
-        <ol className="text-sm text-[#F2E8DFaa] space-y-3 list-decimal list-inside">
+        <ol className="text-sm text-[#eef0e8aa] space-y-3 list-decimal list-inside">
           <li>أنشئ حساب Google AdSense على <strong>adsense.google.com</strong></li>
-          <li>احصل على معرّف الناشر (يبدأ بـ <code className="bg-[#F2E8DF08] px-1.5 py-0.5 rounded text-xs">ca-pub-</code>)</li>
-          <li>أضف <code className="bg-[#F2E8DF08] px-1.5 py-0.5 rounded text-xs">NEXT_PUBLIC_ADSENSE_ID=ca-pub-XXXX</code> إلى ملف <strong>.env.local</strong></li>
+          <li>احصل على معرّف الناشر (يبدأ بـ <code className="bg-[#eef0e808] px-1.5 py-0.5 rounded text-xs">ca-pub-</code>)</li>
+          <li>أضف <code className="bg-[#eef0e808] px-1.5 py-0.5 rounded text-xs">NEXT_PUBLIC_ADSENSE_ID=ca-pub-XXXX</code> إلى ملف <strong>.env.local</strong></li>
           <li>أنشئ وحدات إعلانية في AdSense واستبدل معرّفات المواضع أعلاه</li>
           <li>انشر التطبيق وانتظر موافقة AdSense (عادة 1-2 أسبوع)</li>
         </ol>

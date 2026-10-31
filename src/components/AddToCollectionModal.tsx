@@ -77,7 +77,7 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
       }
     } catch (error) {
       console.error("Error toggling collection:", error);
-      alert("Failed to update collection");
+      alert("تعذّر تحديث المجموعة");
     } finally {
       setUpdating((prev) => {
         const next = new Set(prev);
@@ -113,65 +113,69 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
       setShowCreateForm(false);
     } catch (error) {
       console.error("Error creating collection:", error);
-      alert("Failed to create collection");
+      alert("تعذّر إنشاء المجموعة");
     } finally {
       setCreating(false);
     }
   };
 
+  const inputClass =
+    "w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20";
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-black/50">
+      <div className="bg-surface text-espresso rounded-t-3xl sm:rounded-2xl shadow-sm w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-bold">إضافة إلى مجموعة</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10">
+          <h2 className="font-display text-xl">إضافة إلى مجموعة</h2>
           <button
             onClick={onClose}
-            className="flex items-center justify-center rounded-full size-8 hover:bg-gray-100 dark:hover:bg-gray-700"
+            aria-label="إغلاق"
+            className="flex items-center justify-center rounded-full size-10 hover:bg-oat-milk"
           >
             <MaterialIcon icon="close" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-4">
+        <div className="p-5">
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
             </div>
           ) : collections.length === 0 ? (
-            <div className="text-center py-8">
-              <MaterialIcon icon="collections_bookmark" className="text-4xl text-gray-300 dark:text-gray-600 mb-3" />
-              <p className="text-gray-500 dark:text-gray-400 mb-4">لا توجد مجموعات بعد</p>
+            <div className="text-center py-6">
+              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <p className="text-sm text-espresso/70 mb-4">لا توجد مجموعات بعد</p>
               <button
                 onClick={() => setShowCreateForm(true)}
-                className="text-primary font-bold text-sm"
+                className="bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
               >
                 أنشئ مجموعتك الأولى
               </button>
             </div>
           ) : (
-            <div className="space-y-2 max-h-60 overflow-y-auto">
+            <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10 max-h-60 overflow-y-auto">
               {collections.map((collection) => {
                 const isSelected = selectedIds.has(collection.id);
                 const isUpdating = updating.has(collection.id);
                 return (
                   <label
                     key={collection.id}
-                    className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-oat-milk/50 cursor-pointer transition-colors"
                   >
                     <input
                       type="checkbox"
                       checked={isSelected}
                       onChange={(e) => handleToggle(collection.id, e.target.checked)}
                       disabled={isUpdating}
-                      className="w-5 h-5 text-green-600 rounded focus:ring-green-500 cursor-pointer"
+                      className="size-5 rounded accent-primary cursor-pointer"
                     />
                     <div className="flex-1 min-w-0">
-                      <span className="font-bold text-sm block" dir="auto">
+                      <span className="font-bold text-sm block truncate" dir="auto">
                         {collection.name}
                       </span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="text-xs text-espresso/60">
                         {collection._count.recipes} وصفات
                       </span>
                     </div>
@@ -186,26 +190,30 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
 
           {/* Create New Collection Form */}
           {showCreateForm && (
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-5 pt-5 border-t border-espresso/10">
               <h3 className="font-bold text-sm mb-3">إنشاء مجموعة جديدة</h3>
               <form onSubmit={handleCreate} className="space-y-3">
                 <div>
                   <input
                     type="text"
+                    dir="auto"
+                    aria-label="اسم المجموعة"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                     placeholder="اسم المجموعة"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className={inputClass}
                     maxLength={100}
                     required
                   />
                 </div>
                 <div>
                   <textarea
+                    dir="auto"
+                    aria-label="الوصف (اختياري)"
                     value={newDescription}
                     onChange={(e) => setNewDescription(e.target.value)}
                     placeholder="الوصف (اختياري)"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                    className={`${inputClass} leading-relaxed resize-none`}
                     rows={2}
                     maxLength={500}
                   />
@@ -216,7 +224,7 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
                     id="newIsPublic"
                     checked={newIsPublic}
                     onChange={(e) => setNewIsPublic(e.target.checked)}
-                    className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
+                    className="size-4 rounded accent-primary"
                   />
                   <label htmlFor="newIsPublic" className="text-sm">
                     جعل المجموعة عامة
@@ -225,9 +233,9 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
                 <button
                   type="submit"
                   disabled={creating || !newName.trim()}
-                  className="w-full py-3 bg-primary text-background-dark rounded-lg font-bold text-sm hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {creating ? "جارٍ الإنشاء..." : "إنشاء وإضافة"}
+                  {creating ? "جارٍ الإنشاء…" : "إنشاء وإضافة"}
                 </button>
               </form>
             </div>
@@ -236,9 +244,9 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
           {!showCreateForm && collections.length > 0 && (
             <button
               onClick={() => setShowCreateForm(true)}
-              className="w-full mt-4 py-3 border border-primary text-primary rounded-lg font-bold text-sm hover:bg-primary/5 transition-colors"
+              className="w-full mt-4 flex items-center justify-center gap-1.5 border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm text-primary hover:border-primary/40 transition-colors"
             >
-              <MaterialIcon icon="add" className="mr-1" />
+              <MaterialIcon icon="add" className="text-lg" />
               إنشاء مجموعة جديدة
             </button>
           )}

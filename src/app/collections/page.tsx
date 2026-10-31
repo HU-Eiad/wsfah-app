@@ -58,7 +58,7 @@ export default function CollectionsPage() {
       setShowCreateForm(false);
     } catch (error) {
       console.error("Error creating collection:", error);
-      alert("Failed to create collection");
+      alert("تعذّر إنشاء المجموعة");
     } finally {
       setCreating(false);
     }
@@ -73,121 +73,129 @@ export default function CollectionsPage() {
   }
 
   return (
-    <div className="bg-background-light font-display text-slate-900 min-h-screen pb-24">
+    <div className="bg-background-light text-espresso min-h-screen pb-28">
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center p-4 justify-between bg-background-light/80 backdrop-blur-md border-b border-primary/10">
-        <h1 className="text-xl font-bold">مجموعاتي</h1>
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <h1 className="text-2xl flex-1">مجموعاتي</h1>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-background-dark rounded-full font-bold text-sm hover:bg-primary/80 transition-colors"
+          className="flex items-center gap-1.5 bg-primary text-on-primary rounded-xl px-4 py-2.5 font-bold text-sm hover:bg-primary/90 transition-colors"
         >
-          <MaterialIcon icon="add" />
+          <MaterialIcon icon="add" className="text-lg" />
           إنشاء
         </button>
       </header>
 
-      {/* Create Collection Form */}
-      {showCreateForm && (
-        <div className="p-4 bg-white border-b border-primary/10">
-          <form onSubmit={handleCreate} className="space-y-4">
-            <div>
-              <label className="block text-sm font-bold mb-2">الاسم</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="اسم المجموعة"
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                maxLength={100}
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold mb-2">الوصف (اختياري)</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="عن ماذا هذه المجموعة؟"
-                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-                rows={3}
-                maxLength={500}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="isPublic"
-                checked={isPublic}
-                onChange={(e) => setIsPublic(e.target.checked)}
-                className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
-              />
-              <label htmlFor="isPublic" className="text-sm">
-                جعل المجموعة عامة
-              </label>
-            </div>
-            <div className="flex gap-3">
-              <button
-                type="submit"
-                disabled={creating || !name.trim()}
-                className="flex-1 py-3 bg-primary text-background-dark rounded-lg font-bold text-sm hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {creating ? "جاري الإنشاء..." : "إنشاء مجموعة"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowCreateForm(false)}
-                disabled={creating}
-                className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg font-bold text-sm hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
-              >
-                إلغاء
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Collections Grid */}
-      <div className="p-4">
-        {collections.length === 0 ? (
-          <div className="text-center py-16">
-            <MaterialIcon icon="collections_bookmark" className="text-6xl text-gray-300 dark:text-gray-600 mb-4" />
-            <p className="text-gray-500 dark:text-gray-400 mb-2">لا توجد مجموعات بعد</p>
-            <p className="text-sm text-gray-400 dark:text-gray-500">
-              أنشئ مجموعتك الأولى لتنظيم وصفاتك المفضلة
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {collections.map((collection) => (
-              <Link
-                key={collection.id}
-                href={`/collections/${collection.id}`}
-                className="block bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-bold text-lg truncate flex-1" dir="auto">
-                    {collection.name}
-                  </h3>
-                  {collection.isPublic && (
-                    <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 border border-green-200 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0 ml-2">
-                      <MaterialIcon icon="public" className="text-[10px]" />
-                      عامة
-                    </span>
-                  )}
-                </div>
-                {collection.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2" dir="auto">
-                    {collection.description}
-                  </p>
-                )}
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                  <MaterialIcon icon="restaurant" />
-                  <span>{collection._count.recipes} وصفات</span>
-                </div>
-              </Link>
-            ))}
+      <div className="max-w-5xl mx-auto">
+        {/* Create Collection Form */}
+        {showCreateForm && (
+          <div className="p-4">
+            <form onSubmit={handleCreate} className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
+              <div>
+                <label htmlFor="collection-name" className="block text-xs font-semibold text-espresso/70 mb-2">الاسم</label>
+                <input
+                  id="collection-name"
+                  type="text"
+                  dir="auto"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="اسم المجموعة"
+                  className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  maxLength={100}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="collection-description" className="block text-xs font-semibold text-espresso/70 mb-2">الوصف (اختياري)</label>
+                <textarea
+                  id="collection-description"
+                  dir="auto"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="عن ماذا هذه المجموعة؟"
+                  className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm leading-relaxed placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
+                  rows={3}
+                  maxLength={500}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="isPublic"
+                  checked={isPublic}
+                  onChange={(e) => setIsPublic(e.target.checked)}
+                  className="size-4 rounded accent-primary"
+                />
+                <label htmlFor="isPublic" className="text-sm">
+                  جعل المجموعة عامة
+                </label>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={creating || !name.trim()}
+                  className="flex-1 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {creating ? "جارٍ الإنشاء…" : "إنشاء مجموعة"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateForm(false)}
+                  disabled={creating}
+                  className="border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm hover:border-primary/40 transition-colors disabled:opacity-50"
+                >
+                  إلغاء
+                </button>
+              </div>
+            </form>
           </div>
         )}
+
+        {/* Collections Grid */}
+        <div className="p-4">
+          {collections.length === 0 ? (
+            <div className="text-center py-12 px-6">
+              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <p className="text-sm text-espresso/70 leading-relaxed">
+                لا توجد مجموعات بعد. أنشئ مجموعتك الأولى لتنظيم وصفاتك المفضلة.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {collections.map((collection) => (
+                <Link
+                  key={collection.id}
+                  href={`/collections/${collection.id}`}
+                  className="flex items-start gap-3 bg-surface rounded-2xl p-4 border border-espresso/10 hover:border-primary/40 transition-colors"
+                >
+                  <span className="size-11 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <MaterialIcon icon="collections_bookmark" className="text-xl" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h3 className="font-bold text-base truncate flex-1" dir="auto">
+                        {collection.name}
+                      </h3>
+                      {collection.isPublic && (
+                        <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[11px] font-bold shrink-0">
+                          <MaterialIcon icon="public" className="text-[11px]" />
+                          عامة
+                        </span>
+                      )}
+                    </div>
+                    {collection.description && (
+                      <p className="text-sm text-espresso/70 leading-relaxed mb-2 line-clamp-2" dir="auto">
+                        {collection.description}
+                      </p>
+                    )}
+                    <p className="text-xs text-espresso/60">{collection._count.recipes} وصفات</p>
+                  </div>
+                  <MaterialIcon icon="chevron_left" className="text-espresso/50 self-center shrink-0" />
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <BottomNav />

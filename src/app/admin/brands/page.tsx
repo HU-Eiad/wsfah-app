@@ -18,6 +18,7 @@ const TAB_LABELS: Record<string, string> = {
   REJECTED: "مرفوضة",
 };
 
+const BRAND_TYPE_LABELS: Record<string, string> = { roaster: "محمصة", cafe: "مقهى", equipment: "معدات", tea_brand: "علامة شاي" };
 export default function AdminBrandsPage() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [activeTab, setActiveTab] = useState("ALL");
@@ -64,7 +65,7 @@ export default function AdminBrandsPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-[#F2E8DF] mb-6">العلامات التجارية</h2>
+      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">العلامات التجارية</h2>
 
       <div className="flex gap-2 mb-6">
         {TABS.map((tab) => (
@@ -73,8 +74,8 @@ export default function AdminBrandsPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab
-                ? "bg-[#25f459] text-black"
-                : "bg-[#F2E8DF08] text-[#F2E8DFaa] hover:bg-gray-200 dark:hover:bg-gray-700"
+                ? "bg-[#8fbf9a] text-[#0e1a13]"
+                : "bg-[#eef0e808] text-[#eef0e8aa] hover:bg-gray-200 dark:hover:bg-gray-700"
             }`}
           >
             {TAB_LABELS[tab] || tab}
@@ -83,27 +84,27 @@ export default function AdminBrandsPage() {
       </div>
 
       {loading ? (
-        <p className="text-[#F2E8DF66]">جاري التحميل...</p>
+        <p className="text-[#eef0e899]">جاري التحميل...</p>
       ) : brands.length === 0 ? (
-        <p className="text-[#F2E8DF66]">لا توجد علامات تجارية.</p>
+        <p className="text-[#eef0e899]">لا توجد علامات تجارية.</p>
       ) : (
-        <div className="overflow-x-auto bg-[#1a2420] border border-[#F2E8DF0d] rounded-2xl">
+        <div className="overflow-x-auto bg-[#16261d] border border-[#eef0e80d] rounded-2xl">
           <table className="w-full text-sm min-w-[600px]">
             <thead>
-              <tr className="border-b border-[#F2E8DF0d]">
-                <th className="text-left p-4 text-[#F2E8DF66] font-medium">الشركة</th>
-                <th className="text-left p-4 text-[#F2E8DF66] font-medium">النوع</th>
-                <th className="text-left p-4 text-[#F2E8DF66] font-medium">المالك</th>
-                <th className="text-left p-4 text-[#F2E8DF66] font-medium">الحالة</th>
-                <th className="text-left p-4 text-[#F2E8DF66] font-medium">إجراءات</th>
+              <tr className="border-b border-[#eef0e80d]">
+                <th className="text-start p-4 text-[#eef0e899] font-medium">الشركة</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">النوع</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">المالك</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">الحالة</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">إجراءات</th>
               </tr>
             </thead>
             <tbody>
               {brands.map((brand) => (
-                <tr key={brand.id} className="border-b border-[#F2E8DF0d] last:border-0">
-                  <td className="p-4 text-[#F2E8DF] font-medium">{brand.name}</td>
-                  <td className="p-4 text-[#F2E8DFaa]">{brand.type}</td>
-                  <td className="p-4 text-[#F2E8DFaa]">
+                <tr key={brand.id} className="border-b border-[#eef0e80d] last:border-0">
+                  <td className="p-4 text-[#eef0e8] font-medium">{brand.name}</td>
+                  <td className="p-4 text-[#eef0e8aa]">{BRAND_TYPE_LABELS[(brand.type || "").toLowerCase()] ?? brand.type}</td>
+                  <td className="p-4 text-[#eef0e8aa]">
                     {brand.owner?.name || brand.owner?.email || "—"}
                   </td>
                   <td className="p-4">

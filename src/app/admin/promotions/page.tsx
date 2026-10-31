@@ -127,7 +127,7 @@ export default function AdminPromotionsPage() {
     <div className="max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#F2E8DF] flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-[#eef0e8] flex items-center gap-3">
             طلبات الترويج
             {pendingCount > 0 && (
               <span className="bg-yellow-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
@@ -135,7 +135,7 @@ export default function AdminPromotionsPage() {
               </span>
             )}
           </h1>
-          <p className="text-sm text-[#F2E8DF66] mt-1">
+          <p className="text-sm text-[#eef0e899] mt-1">
             مراجعة وإدارة طلبات ترويج المحامص
           </p>
         </div>
@@ -150,7 +150,7 @@ export default function AdminPromotionsPage() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               filter === s
                 ? "bg-green-600 text-white"
-                : "bg-[#1a2420] text-[#F2E8DFaa] border border-[#F2E8DF0d] hover:bg-[#F2E8DF05]"
+                : "bg-[#16261d] text-[#eef0e8aa] border border-[#eef0e80d] hover:bg-[#eef0e805]"
             }`}
           >
             {s === "ALL" ? `الكل (${promos.length})` : `${filterLabel[s]} (${promos.filter((p) => p.status === s).length})`}
@@ -159,32 +159,32 @@ export default function AdminPromotionsPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="bg-[#1a2420] rounded-2xl border border-[#F2E8DF0d] p-12 text-center">
-          <span className="material-symbols-outlined text-5xl text-[#F2E8DF30] mb-3 block">campaign</span>
-          <p className="text-[#F2E8DF66] font-medium">لا توجد طلبات ترويج</p>
-          <p className="text-sm text-[#F2E8DF50] mt-1">يمكن للمحامص طلب الترويج من صفحة علامتهم التجارية</p>
+        <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-12 text-center">
+          <span className="material-symbols-outlined text-5xl text-[#eef0e880] mb-3 block">campaign</span>
+          <p className="text-[#eef0e899] font-medium">لا توجد طلبات ترويج</p>
+          <p className="text-sm text-[#eef0e880] mt-1">يمكن للمحامص طلب الترويج من صفحة علامتهم التجارية</p>
         </div>
       ) : (
         <div className="space-y-4">
           {filtered.map((p) => (
-            <div key={p.id} className="bg-[#1a2420] rounded-2xl border border-[#F2E8DF0d] overflow-hidden">
+            <div key={p.id} className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] overflow-hidden">
               <div className="p-5">
                 <div className="flex items-start gap-4">
                   {/* Brand Logo */}
                   <img
-                    src={p.company.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(p.company.name)}&background=25f459&color=fff&size=64`}
+                    src={p.company.logo || "/brand/banners/avatar-placeholder.svg"}
                     alt={p.company.name}
                     className="size-14 rounded-2xl object-cover border border-gray-200 dark:border-gray-600 shrink-0"
                   />
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className="font-bold text-[#F2E8DF] text-lg">{p.company.name}</h3>
-                      <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${statusColor[p.status]}`}>
+                      <h3 className="font-bold text-[#eef0e8] text-lg">{p.company.name}</h3>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${statusColor[p.status]}`}>
                         {statusLabel[p.status] || p.status}
                       </span>
                     </div>
-                    <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm text-[#F2E8DF66]">
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm text-[#eef0e899]">
                       <span className="flex items-center gap-1">
                         <span className="material-symbols-outlined text-base">location_on</span>
                         {placementLabel[p.placement] || p.placement}
@@ -205,7 +205,7 @@ export default function AdminPromotionsPage() {
                       )}
                     </div>
                     {p.message && (
-                      <p className="text-sm text-[#F2E8DFaa] mt-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 italic">
+                      <p className="text-sm text-[#eef0e8aa] mt-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 italic">
                         &ldquo;{p.message}&rdquo;
                       </p>
                     )}
@@ -217,42 +217,42 @@ export default function AdminPromotionsPage() {
 
                 {/* Edit Form */}
                 {editingId === p.id && (
-                  <div className="mt-4 pt-4 border-t border-[#F2E8DF0d] grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="mt-4 pt-4 border-t border-[#eef0e80d] grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-[#F2E8DF99] mb-1">الأولوية (الأعلى = يظهر أولاً)</label>
+                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">الأولوية (الأعلى = يظهر أولاً)</label>
                       <input
                         type="number"
                         value={editForm.priority}
                         onChange={(e) => setEditForm({ ...editForm, priority: parseInt(e.target.value) || 0 })}
-                        className="w-full px-3 py-2 rounded-lg border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF] text-sm"
+                        className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#F2E8DF99] mb-1">ملاحظات الإدارة</label>
+                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">ملاحظات الإدارة</label>
                       <input
                         type="text"
                         value={editForm.adminNotes}
                         onChange={(e) => setEditForm({ ...editForm, adminNotes: e.target.value })}
                         placeholder="ملاحظات داخلية..."
-                        className="w-full px-3 py-2 rounded-lg border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF] text-sm"
+                        className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#F2E8DF99] mb-1">تاريخ البدء</label>
+                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">تاريخ البدء</label>
                       <input
                         type="date"
                         value={editForm.startDate}
                         onChange={(e) => setEditForm({ ...editForm, startDate: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF] text-sm"
+                        className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#F2E8DF99] mb-1">تاريخ الانتهاء</label>
+                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">تاريخ الانتهاء</label>
                       <input
                         type="date"
                         value={editForm.endDate}
                         onChange={(e) => setEditForm({ ...editForm, endDate: e.target.value })}
-                        className="w-full px-3 py-2 rounded-lg border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF] text-sm"
+                        className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm"
                       />
                     </div>
                     <div className="sm:col-span-2 flex gap-2">
@@ -264,7 +264,7 @@ export default function AdminPromotionsPage() {
                       </button>
                       <button
                         onClick={() => setEditingId(null)}
-                        className="px-4 py-2 bg-[#F2E8DF08] text-[#F2E8DFcc] rounded-lg text-sm font-medium"
+                        className="px-4 py-2 bg-[#eef0e808] text-[#eef0e8cc] rounded-lg text-sm font-medium"
                       >
                         إلغاء
                       </button>
@@ -274,7 +274,7 @@ export default function AdminPromotionsPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2 px-5 py-3 bg-gray-50 dark:bg-gray-750 border-t border-[#F2E8DF0d]">
+              <div className="flex items-center gap-2 px-5 py-3 bg-gray-50 dark:bg-gray-750 border-t border-[#eef0e80d]">
                 {p.status === "PENDING" && (
                   <>
                     <button

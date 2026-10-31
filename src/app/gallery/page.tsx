@@ -17,37 +17,36 @@ export default async function GalleryPage() {
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
-      <header className="flex items-center p-4 justify-between sticky top-0 z-10 bg-background-light/80 backdrop-blur-md border-b border-primary/10">
-        <Link href="/" className="flex size-10 items-center justify-center rounded-full hover:bg-primary/10">
-          <MaterialIcon icon="arrow_back" />
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <Link href="/" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-lg font-bold leading-tight tracking-tight flex-1 text-center">المعرض</h2>
-        <div className="size-10" />
+        <h1 className="text-xl flex-1">المعرض</h1>
       </header>
 
-      <main className="flex-1 px-4 pb-24 pt-4">
+      <main className="flex-1 px-4 pb-28 pt-4">
         {posts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-espresso/40">
-            <MaterialIcon icon="photo_library" className="text-5xl mb-3" />
-            <p className="text-sm font-medium">لا توجد منشورات بعد</p>
-            <p className="text-xs mt-1">يمكن للمبدعين والعلامات التجارية مشاركة صورهم هنا</p>
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <p className="text-sm font-semibold text-espresso/70">لا توجد منشورات بعد</p>
+            <p className="text-xs text-espresso/60 mt-1">يمكن للمبدعين والعلامات التجارية مشاركة صورهم هنا</p>
           </div>
         ) : (
           <div className="columns-2 gap-3 space-y-3">
             {posts.map((post) => (
-              <div key={post.id} className="break-inside-avoid rounded-2xl overflow-hidden bg-white shadow-sm border border-espresso/5">
+              <div key={post.id} className="break-inside-avoid rounded-[20px] overflow-hidden bg-surface border border-espresso/10">
                 {post.imageUrl && <img src={post.imageUrl} alt={post.caption || "منشور المعرض"} className="w-full object-cover" />}
                 <div className="p-3">
-                  {post.caption && <p className="text-sm font-medium mb-2" dir="auto">{post.caption}</p>}
+                  {post.caption && <p className="text-sm leading-relaxed mb-2" dir="auto">{post.caption}</p>}
                   <div className="flex items-center gap-2">
                     <img
-                      src={post.author.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.author.name || "User")}&size=32`}
+                      src={post.author.image || "/brand/banners/avatar-placeholder.svg"}
                       alt=""
-                      className="size-6 rounded-full object-cover"
+                      className="size-6 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
                     />
-                    <span className="text-xs text-espresso/60 font-medium">{post.author.name}</span>
+                    <span dir="auto" className="text-xs text-espresso/60 font-medium truncate">{post.author.name}</span>
                     {post.company && (
-                      <Link href={`/brand/${post.company.id}`} className="text-xs text-primary font-bold ml-auto">
+                      <Link href={`/brand/${post.company.id}`} dir="auto" className="text-xs text-primary font-bold ms-auto shrink-0">
                         {post.company.name}
                       </Link>
                     )}

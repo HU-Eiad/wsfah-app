@@ -36,6 +36,8 @@ interface RecipeDetail {
 
 const CATEGORIES = ["pour-over", "cold-brew", "espresso", "matcha", "tea", "rituals"];
 const DIFFICULTIES = ["Beginner", "Intermediate", "Advanced"];
+const CATEGORY_LABELS: Record<string, string> = { "pour-over": "التقطير", "cold-brew": "التخمير البارد", espresso: "إسبريسو", matcha: "ماتشا", tea: "الشاي", rituals: "طقوس القهوة" };
+const DIFFICULTY_LABELS: Record<string, string> = { Beginner: "مبتدئ", Intermediate: "متوسط", Advanced: "متقدم" };
 
 function ImageUpload({ value, onChange }: { value: string; onChange: (url: string) => void }) {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -69,8 +71,8 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
           onClick={() => setMode("upload")}
           className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
             mode === "upload"
-              ? "bg-[#25f459]/20 text-[#25f459] border border-[#25f459]/30"
-              : "bg-[#F2E8DF08] text-[#F2E8DF66] border border-transparent"
+              ? "bg-[#8fbf9a]/20 text-[#8fbf9a] border border-[#8fbf9a]/30"
+              : "bg-[#eef0e808] text-[#eef0e899] border border-transparent"
           }`}
         >
           رفع
@@ -80,8 +82,8 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
           onClick={() => setMode("url")}
           className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
             mode === "url"
-              ? "bg-[#25f459]/20 text-[#25f459] border border-[#25f459]/30"
-              : "bg-[#F2E8DF08] text-[#F2E8DF66] border border-transparent"
+              ? "bg-[#8fbf9a]/20 text-[#8fbf9a] border border-[#8fbf9a]/30"
+              : "bg-[#eef0e808] text-[#eef0e899] border border-transparent"
           }`}
         >
           رابط
@@ -101,7 +103,7 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
             type="button"
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
-            className="w-full px-4 py-3 rounded-lg border-2 border-dashed border-[#F2E8DF1a] bg-[#ffffff05] text-[#F2E8DF66] text-sm hover:border-[#25f459]/50 hover:bg-[#25f459]/5 transition-colors disabled:opacity-50"
+            className="w-full px-4 py-3 rounded-lg border-2 border-dashed border-[#eef0e81a] bg-[#ffffff05] text-[#eef0e899] text-sm hover:border-[#8fbf9a]/50 hover:bg-[#8fbf9a]/5 transition-colors disabled:opacity-50"
           >
             {uploading ? "جاري الرفع..." : value ? "تغيير الصورة" : "اضغط لرفع صورة"}
           </button>
@@ -111,7 +113,7 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF] text-sm focus:ring-2 focus:ring-[#25f459] focus:border-transparent outline-none"
+          className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm focus:ring-2 focus:ring-[#8fbf9a] focus:border-transparent outline-none"
           placeholder="https://example.com/image.jpg"
         />
       )}
@@ -121,7 +123,7 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
           <img
             src={value}
             alt="معاينة"
-            className="w-full max-w-[200px] h-auto rounded-lg border border-[#F2E8DF0d]"
+            className="w-full max-w-[200px] h-auto rounded-lg border border-[#eef0e80d]"
           />
           <button
             type="button"
@@ -340,8 +342,8 @@ export default function AdminRecipesPage() {
   }
 
   const inputClass =
-    "w-full px-3 py-2 rounded-lg border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF] text-sm focus:ring-2 focus:ring-[#25f459] focus:border-transparent outline-none";
-  const labelClass = "block text-xs font-medium text-[#F2E8DFaa] mb-1";
+    "w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm focus:ring-2 focus:ring-[#8fbf9a] focus:border-transparent outline-none";
+  const labelClass = "block text-xs font-medium text-[#eef0e8aa] mb-1";
 
   function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
     return (
@@ -350,7 +352,7 @@ export default function AdminRecipesPage() {
           type="button"
           onClick={() => onChange(!checked)}
           className={`w-10 h-5 rounded-full relative transition-colors ${
-            checked ? "bg-[#25f459]" : "bg-gray-300 dark:bg-gray-700"
+            checked ? "bg-[#8fbf9a]" : "bg-gray-300 dark:bg-gray-700"
           }`}
         >
           <span
@@ -359,7 +361,7 @@ export default function AdminRecipesPage() {
             }`}
           />
         </button>
-        <span className="text-sm text-[#F2E8DFcc]">{label}</span>
+        <span className="text-sm text-[#eef0e8cc]">{label}</span>
       </label>
     );
   }
@@ -367,13 +369,13 @@ export default function AdminRecipesPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-[#F2E8DF]">الوصفات</h2>
+        <h2 className="text-2xl font-bold text-[#eef0e8]">الوصفات</h2>
         <button
           onClick={() => {
             resetForm();
             setShowForm(!showForm);
           }}
-          className="px-4 py-2 rounded-lg bg-[#25f459] text-black font-medium text-sm hover:bg-[#25f459]/80 transition-colors"
+          className="px-4 py-2 rounded-lg bg-[#8fbf9a] text-[#0e1a13] font-medium text-sm hover:bg-[#8fbf9a]/80 transition-colors"
         >
           {showForm ? "إلغاء" : "+ وصفة جديدة"}
         </button>
@@ -381,8 +383,8 @@ export default function AdminRecipesPage() {
 
       {/* Create / Edit Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-[#1a2420] border border-[#F2E8DF0d] rounded-2xl p-6 mb-6 space-y-6">
-          <h3 className="text-lg font-semibold text-[#F2E8DF]">
+        <form onSubmit={handleSubmit} className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 mb-6 space-y-6">
+          <h3 className="text-lg font-semibold text-[#eef0e8]">
             {editingId ? "تعديل الوصفة" : "إنشاء وصفة جديدة"}
           </h3>
 
@@ -413,7 +415,7 @@ export default function AdminRecipesPage() {
                 className={inputClass}
               >
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>{CATEGORY_LABELS[c] ?? c}</option>
                 ))}
               </select>
             </div>
@@ -425,7 +427,7 @@ export default function AdminRecipesPage() {
                 className={inputClass}
               >
                 {DIFFICULTIES.map((d) => (
-                  <option key={d} value={d}>{d}</option>
+                  <option key={d} value={d}>{DIFFICULTY_LABELS[d] ?? d}</option>
                 ))}
               </select>
             </div>
@@ -465,11 +467,11 @@ export default function AdminRecipesPage() {
             <Toggle checked={form.isFeatured} onChange={(v) => setForm({ ...form, isFeatured: v })} label="مميزة" />
             <Toggle checked={form.isVerified} onChange={(v) => setForm({ ...form, isVerified: v })} label="موثقة" />
             <div className="flex items-center gap-2">
-              <label className="text-sm text-[#F2E8DFcc]">الوصول:</label>
+              <label className="text-sm text-[#eef0e8cc]">الوصول:</label>
               <select
                 value={form.accessTier}
                 onChange={(e) => setForm({ ...form, accessTier: e.target.value })}
-                className="px-3 py-1.5 rounded-lg border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF] text-sm"
+                className="px-3 py-1.5 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm"
               >
                 <option value="FREE">مجاني (جميع المستخدمين)</option>
                 <option value="BASIC">الخطة الأساسية</option>
@@ -481,7 +483,7 @@ export default function AdminRecipesPage() {
 
           {/* Brewing Parameters */}
           <div>
-            <h4 className="text-sm font-semibold text-[#F2E8DF] mb-3">معايير التحضير</h4>
+            <h4 className="text-sm font-semibold text-[#eef0e8] mb-3">معايير التحضير</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div>
                 <label className={labelClass}>درجة الحرارة</label>
@@ -528,20 +530,20 @@ export default function AdminRecipesPage() {
           {/* Ingredients */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-[#F2E8DF]">المكونات</h4>
+              <h4 className="text-sm font-semibold text-[#eef0e8]">المكونات</h4>
               <button
                 type="button"
                 onClick={() => setIngredients([...ingredients, { name: "", baseAmount: 0, unit: "g" }])}
-                className="text-xs text-[#25f459] font-medium hover:underline"
+                className="text-xs text-[#8fbf9a] font-medium hover:underline"
               >
                 + إضافة
               </button>
             </div>
             <div className="space-y-3">
               {ingredients.map((ing, i) => (
-                <div key={i} className="bg-[#ffffff05] rounded-lg p-3 border border-[#F2E8DF0d]">
+                <div key={i} className="bg-[#ffffff05] rounded-lg p-3 border border-[#eef0e80d]">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-[#F2E8DF50]">#{i + 1}</span>
+                    <span className="text-xs font-bold text-[#eef0e880]">#{i + 1}</span>
                     {ingredients.length > 1 && (
                       <button
                         type="button"
@@ -597,11 +599,11 @@ export default function AdminRecipesPage() {
           {/* Steps */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-[#F2E8DF]">الخطوات</h4>
+              <h4 className="text-sm font-semibold text-[#eef0e8]">الخطوات</h4>
               <button
                 type="button"
                 onClick={() => setSteps([...steps, { title: "", description: "" }])}
-                className="text-xs text-[#25f459] font-medium hover:underline"
+                className="text-xs text-[#8fbf9a] font-medium hover:underline"
               >
                 + إضافة خطوة
               </button>
@@ -609,7 +611,7 @@ export default function AdminRecipesPage() {
             <div className="space-y-3">
               {steps.map((step, i) => (
                 <div key={i} className="flex gap-2">
-                  <span className="text-xs font-bold text-[#F2E8DF50] pt-2 w-6 shrink-0">
+                  <span className="text-xs font-bold text-[#eef0e880] pt-2 w-6 shrink-0">
                     {i + 1}.
                   </span>
                   <div className="flex-1 space-y-1">
@@ -654,14 +656,14 @@ export default function AdminRecipesPage() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2.5 rounded-lg bg-[#25f459] text-black font-medium text-sm disabled:opacity-50 hover:bg-[#25f459]/80 transition-colors"
+              className="px-6 py-2.5 rounded-lg bg-[#8fbf9a] text-[#0e1a13] font-medium text-sm disabled:opacity-50 hover:bg-[#8fbf9a]/80 transition-colors"
             >
               {saving ? "جاري الحفظ..." : editingId ? "تحديث الوصفة" : "إنشاء الوصفة"}
             </button>
             <button
               type="button"
               onClick={() => { setShowForm(false); resetForm(); }}
-              className="px-6 py-2.5 rounded-lg bg-gray-200 dark:bg-gray-700 text-[#F2E8DFcc] font-medium text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              className="px-6 py-2.5 rounded-lg bg-gray-200 dark:bg-gray-700 text-[#eef0e8cc] font-medium text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
             >
               إلغاء
             </button>
@@ -676,30 +678,30 @@ export default function AdminRecipesPage() {
           placeholder="البحث عن وصفات..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-md px-4 py-2 rounded-lg border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF] focus:ring-2 focus:ring-[#25f459] focus:border-transparent outline-none"
+          className="w-full max-w-md px-4 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] focus:ring-2 focus:ring-[#8fbf9a] focus:border-transparent outline-none"
         />
       </div>
 
       {/* Recipe Table */}
       {loading ? (
-        <p className="text-[#F2E8DF66]">جاري التحميل...</p>
+        <p className="text-[#eef0e899]">جاري التحميل...</p>
       ) : recipes.length === 0 ? (
-        <p className="text-[#F2E8DF66]">لا توجد وصفات.</p>
+        <p className="text-[#eef0e899]">لا توجد وصفات.</p>
       ) : (
         <>
         {/* Mobile: Card layout */}
         <div className="lg:hidden space-y-3">
           {recipes.map((recipe) => (
-            <div key={recipe.id} className="bg-[#1a2420] border border-[#F2E8DF0d] rounded-2xl p-4 space-y-3">
+            <div key={recipe.id} className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-4 space-y-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-bold text-sm text-[#F2E8DF] truncate">{recipe.title}</p>
-                  <p className="text-xs text-[#F2E8DF66]">{recipe.author?.name || "—"} · {recipe.category}</p>
+                  <p className="font-bold text-sm text-[#eef0e8] truncate">{recipe.title}</p>
+                  <p className="text-xs text-[#eef0e899]">{recipe.author?.name || "—"} · {CATEGORY_LABELS[recipe.category] ?? recipe.category}</p>
                 </div>
                 <select
                   value={recipe.accessTier}
                   onChange={(e) => updateAccessTier(recipe.id, e.target.value)}
-                  className="shrink-0 px-2 py-1 rounded text-[10px] font-bold border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF]"
+                  className="shrink-0 px-2 py-1 rounded text-[11px] font-bold border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8]"
                 >
                   <option value="FREE">مجاني</option>
                   <option value="BASIC">أساسي</option>
@@ -708,19 +710,19 @@ export default function AdminRecipesPage() {
                 </select>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-                <label className="flex items-center gap-2 text-xs text-[#F2E8DFaa]">
+                <label className="flex items-center gap-2 text-xs text-[#eef0e8aa]">
                   <button
                     onClick={() => toggleField(recipe.id, "isFeatured", !recipe.isFeatured)}
-                    className={`w-9 h-5 rounded-full relative transition-colors ${recipe.isFeatured ? "bg-[#25f459]" : "bg-gray-300 dark:bg-gray-700"}`}
+                    className={`w-9 h-5 rounded-full relative transition-colors ${recipe.isFeatured ? "bg-[#8fbf9a]" : "bg-gray-300 dark:bg-gray-700"}`}
                   >
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${recipe.isFeatured ? "left-[18px]" : "left-0.5"}`} />
                   </button>
                   مميزة
                 </label>
-                <label className="flex items-center gap-2 text-xs text-[#F2E8DFaa]">
+                <label className="flex items-center gap-2 text-xs text-[#eef0e8aa]">
                   <button
                     onClick={() => toggleField(recipe.id, "isVerified", !recipe.isVerified)}
-                    className={`w-9 h-5 rounded-full relative transition-colors ${recipe.isVerified ? "bg-[#25f459]" : "bg-gray-300 dark:bg-gray-700"}`}
+                    className={`w-9 h-5 rounded-full relative transition-colors ${recipe.isVerified ? "bg-[#8fbf9a]" : "bg-gray-300 dark:bg-gray-700"}`}
                   >
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${recipe.isVerified ? "left-[18px]" : "left-0.5"}`} />
                   </button>
@@ -736,40 +738,40 @@ export default function AdminRecipesPage() {
         </div>
 
         {/* Desktop: Table layout */}
-        <div className="hidden lg:block overflow-x-auto bg-[#1a2420] border border-[#F2E8DF0d] rounded-2xl">
+        <div className="hidden lg:block overflow-x-auto bg-[#16261d] border border-[#eef0e80d] rounded-2xl">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#F2E8DF0d]">
-                <th className="text-right p-4 text-[#F2E8DF66] font-medium">العنوان</th>
-                <th className="text-right p-4 text-[#F2E8DF66] font-medium">المؤلف</th>
-                <th className="text-right p-4 text-[#F2E8DF66] font-medium">القسم</th>
-                <th className="text-right p-4 text-[#F2E8DF66] font-medium">مميزة</th>
-                <th className="text-right p-4 text-[#F2E8DF66] font-medium">موثقة</th>
-                <th className="text-right p-4 text-[#F2E8DF66] font-medium">المستوى</th>
-                <th className="text-right p-4 text-[#F2E8DF66] font-medium">إجراءات</th>
+              <tr className="border-b border-[#eef0e80d]">
+                <th className="text-start p-4 text-[#eef0e899] font-medium">العنوان</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">المؤلف</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">القسم</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">مميزة</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">موثقة</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">المستوى</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">إجراءات</th>
               </tr>
             </thead>
             <tbody>
               {recipes.map((recipe) => (
-                <tr key={recipe.id} className="border-b border-[#F2E8DF0d] last:border-0">
-                  <td className="p-4 text-[#F2E8DF] font-medium">{recipe.title}</td>
-                  <td className="p-4 text-[#F2E8DFaa]">{recipe.author?.name || "—"}</td>
-                  <td className="p-4 text-[#F2E8DFaa]">{recipe.category}</td>
+                <tr key={recipe.id} className="border-b border-[#eef0e80d] last:border-0">
+                  <td className="p-4 text-[#eef0e8] font-medium">{recipe.title}</td>
+                  <td className="p-4 text-[#eef0e8aa]">{recipe.author?.name || "—"}</td>
+                  <td className="p-4 text-[#eef0e8aa]">{CATEGORY_LABELS[recipe.category] ?? recipe.category}</td>
                   <td className="p-4">
                     <button onClick={() => toggleField(recipe.id, "isFeatured", !recipe.isFeatured)}
-                      className={`w-10 h-5 rounded-full relative transition-colors ${recipe.isFeatured ? "bg-[#25f459]" : "bg-gray-300 dark:bg-gray-700"}`}>
+                      className={`w-10 h-5 rounded-full relative transition-colors ${recipe.isFeatured ? "bg-[#8fbf9a]" : "bg-gray-300 dark:bg-gray-700"}`}>
                       <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${recipe.isFeatured ? "left-5" : "left-0.5"}`} />
                     </button>
                   </td>
                   <td className="p-4">
                     <button onClick={() => toggleField(recipe.id, "isVerified", !recipe.isVerified)}
-                      className={`w-10 h-5 rounded-full relative transition-colors ${recipe.isVerified ? "bg-[#25f459]" : "bg-gray-300 dark:bg-gray-700"}`}>
+                      className={`w-10 h-5 rounded-full relative transition-colors ${recipe.isVerified ? "bg-[#8fbf9a]" : "bg-gray-300 dark:bg-gray-700"}`}>
                       <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${recipe.isVerified ? "left-5" : "left-0.5"}`} />
                     </button>
                   </td>
                   <td className="p-4">
                     <select value={recipe.accessTier} onChange={(e) => updateAccessTier(recipe.id, e.target.value)}
-                      className="px-2 py-1 rounded text-xs font-medium border border-[#F2E8DF1a] bg-[#1a2420] text-[#F2E8DF]">
+                      className="px-2 py-1 rounded text-xs font-medium border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8]">
                       <option value="FREE">مجاني</option>
                       <option value="BASIC">أساسي</option>
                       <option value="PREMIUM">مميز</option>

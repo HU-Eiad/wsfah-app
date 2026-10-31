@@ -29,8 +29,7 @@ interface ProfileTabsProps {
   likes: LikeEntry[];
 }
 
-const PLACEHOLDER_IMG =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuDTKhsPBTqVlKYRHt_XAv75ctvX3xBReG2P2T-ZoZnEalDyG9bGPiRvCXkljkKqVJea63kHokg5v2TbguwCd0ktoGmjt-OyhKjN6o3hmFbK4vv6LXyO0HKkbzfy14JOdKU1PHqEvyQjwSjoXy98PLVww8Mz7npuKv_u-MwuCXSqmRgxm6Z8rD_A1zGUa0jw4OqouaseX54IjXRusSJoROTVfGP3OuqbM-HMC7A4lFQAwxsDYfilbqHSNVYtZdPQtuFTx4n1kTHvZaIe";
+const PLACEHOLDER_IMG = "/brand/banners/recipe-placeholder.svg";
 
 type TabKey = "recipes" | "saved" | "liked";
 
@@ -40,7 +39,7 @@ const tabs: { key: TabKey; label: string }[] = [
   { key: "liked", label: "الإعجابات" },
 ];
 
-function RecipeGrid({ items, emptyIcon, emptyText, emptyAction }: {
+function RecipeGrid({ items, emptyText, emptyAction }: {
   items: RecipeCard[];
   emptyIcon: string;
   emptyText: string;
@@ -48,11 +47,11 @@ function RecipeGrid({ items, emptyIcon, emptyText, emptyAction }: {
 }) {
   if (items.length === 0) {
     return (
-      <div className="col-span-2 flex flex-col items-center py-12 text-slate-400">
-        <MaterialIcon icon={emptyIcon} className="text-4xl mb-2" />
-        <p className="text-sm font-medium" dir="auto">{emptyText}</p>
+      <div className="col-span-2 flex flex-col items-center py-10 text-center">
+        <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+        <p className="text-sm text-espresso/70 mb-4" dir="auto">{emptyText}</p>
         {emptyAction && (
-          <Link href={emptyAction.href} className="text-primary text-sm font-bold mt-2" dir="auto">
+          <Link href={emptyAction.href} className="bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors" dir="auto">
             {emptyAction.label}
           </Link>
         )}
@@ -64,25 +63,25 @@ function RecipeGrid({ items, emptyIcon, emptyText, emptyAction }: {
     <>
       {items.map((r) => (
         <Link href={`/recipe/${r.slug}`} key={r.id} className="flex flex-col gap-2">
-          <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-md">
+          <div className="relative aspect-[3/4] rounded-[20px] overflow-hidden bg-pine">
             <img
               className="absolute inset-0 w-full h-full object-cover"
               src={r.imageUrl || PLACEHOLDER_IMG}
-              alt={r.title}
+              alt=""
             />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-              <div className="flex items-center justify-between text-white text-[10px] font-bold">
+            <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-pine/80 to-transparent p-3">
+              <div className="flex items-center justify-between text-paper text-[11px] font-bold">
                 <div className="flex items-center gap-1">
                   <MaterialIcon icon="favorite" className="text-xs" filled />
                   {r.likes}
                 </div>
                 <div className="flex items-center gap-0.5">
-                  {r.rating.toFixed(1)} <MaterialIcon icon="star" className="text-xs text-primary" filled />
+                  {r.rating.toFixed(1)} <MaterialIcon icon="star" className="text-xs text-crema" filled />
                 </div>
               </div>
             </div>
           </div>
-          <h4 className="font-bold text-sm leading-tight" dir="auto">{r.title}</h4>
+          <h4 className="font-bold text-sm leading-snug" dir="auto">{r.title}</h4>
         </Link>
       ))}
     </>
@@ -98,15 +97,15 @@ export default function ProfileTabs({ recipes, saves, likes }: ProfileTabsProps)
   return (
     <div>
       {/* Tab Headers */}
-      <div className="flex border-b border-slate-200 px-4">
+      <div className="flex border-b border-espresso/10 px-4">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`flex-1 py-4 text-sm font-bold border-b-2 transition-colors ${
               activeTab === tab.key
-                ? "border-primary text-slate-900"
-                : "border-transparent text-slate-500 font-medium"
+                ? "border-primary text-primary"
+                : "border-transparent text-espresso/60 font-medium"
             }`}
           >
             {tab.label}

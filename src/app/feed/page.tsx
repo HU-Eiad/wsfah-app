@@ -63,18 +63,19 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="bg-background-light font-display text-slate-900 min-h-screen pb-24">
+    <div className="bg-background-light text-espresso min-h-screen pb-28">
       {/* Header */}
-      <header className="sticky top-0 z-10 flex items-center p-4 justify-between bg-background-light/80 backdrop-blur-md border-b border-primary/10">
-        <h1 className="text-xl font-bold">آخر الأخبار</h1>
+      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+        <h1 className="text-2xl flex-1">آخر الأخبار</h1>
       </header>
 
       {/* Feed */}
       <div className="p-4">
         {activities.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-gray-500 dark:text-gray-400 mb-2">لا يوجد نشاط بعد</p>
-            <p className="text-sm text-gray-400 dark:text-gray-500">
+            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <p className="text-espresso/70 font-semibold mb-1">لا يوجد نشاط بعد</p>
+            <p className="text-sm text-espresso/60 leading-relaxed">
               تابع مستخدمين لرؤية نشاطهم في صفحتك
             </p>
           </div>
@@ -97,7 +98,7 @@ export default function FeedPage() {
           <div className="mt-6 text-center">
             <button
               onClick={handleLoadMore}
-              className="px-6 py-3 bg-primary text-background-dark rounded-full font-bold text-sm hover:bg-primary/80 transition-colors"
+              className="px-5 py-3 border border-espresso/15 rounded-xl font-semibold text-sm hover:border-primary/40 transition-colors"
             >
               تحميل المزيد
             </button>
