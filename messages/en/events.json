@@ -1,0 +1,15 @@
+{
+  "title": "Events",
+  "createEvent": "Create event",
+  "newEvent": "New event",
+  "titlePlaceholder": "Event title",
+  "descriptionPlaceholder": "Description (optional)",
+  "descriptionLabel": "Event description",
+  "locationPlaceholder": "Location (optional)",
+  "locationLabel": "Event location",
+  "startDate": "Start date",
+  "endDate": "End date (optional)",
+  "creating": "Creating…",
+  "empty": "No upcoming events.",
+  "attendees": "{count, plural, one {# attendee} other {# attendees}}"
+}

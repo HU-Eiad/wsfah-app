@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
 import BrandIcon from "./BrandIcon";
 
@@ -19,6 +20,8 @@ interface BrewModeProps {
 }
 
 export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onComplete }: BrewModeProps) {
+  const t = useTranslations("brewMode");
+  const tc = useTranslations("common");
   const [currentStep, setCurrentStep] = useState(0);
   const [timer, setTimer] = useState(brewTimeSec);
   const [running, setRunning] = useState(false);
@@ -82,20 +85,20 @@ export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onCo
           <div className="size-24 rounded-full bg-leaf/15 flex items-center justify-center mx-auto">
             <MaterialIcon icon="check_circle" className="text-6xl text-leaf" filled />
           </div>
-          <h2 className="text-3xl font-bold">اكتمل التحضير!</h2>
+          <h2 className="text-3xl font-bold">{t("completeTitle")}</h2>
           <p className="text-paper/60 text-lg">{recipeName}</p>
           <div className="flex gap-4 mt-8">
             <button
               onClick={onComplete}
               className="flex-1 bg-leaf text-pine font-bold py-4 rounded-2xl text-lg hover:opacity-90 transition-opacity"
             >
-              سجّل هذا التحضير
+              {t("logBrew")}
             </button>
             <button
               onClick={onClose}
               className="px-6 py-4 rounded-2xl border border-paper/20 text-paper font-bold hover:bg-paper/10 transition-colors"
             >
-              إغلاق
+              {tc("close")}
             </button>
           </div>
         </div>
@@ -107,11 +110,11 @@ export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onCo
     <div className="fixed inset-0 z-[200] bg-pine flex flex-col text-paper">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-paper/10">
-        <button onClick={onClose} aria-label="إغلاق وضع التحضير" className="size-10 rounded-full hover:bg-paper/10 flex items-center justify-center">
+        <button onClick={onClose} aria-label={t("closeLabel")} className="size-10 rounded-full hover:bg-paper/10 flex items-center justify-center">
           <MaterialIcon icon="close" className="text-paper" />
         </button>
         <div className="text-center">
-          <p className="text-xs text-paper/50 font-bold">وضع التحضير</p>
+          <p className="text-xs text-paper/50 font-bold">{t("title")}</p>
           <p className="text-sm font-medium text-paper/80">{recipeName}</p>
         </div>
         <div className="w-10" />
@@ -130,7 +133,7 @@ export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onCo
           ))}
         </div>
         <p className="text-xs text-paper/40 mt-2 text-center">
-          الخطوة {currentStep + 1} من {totalSteps}
+          {t("stepOf", { current: currentStep + 1, total: totalSteps })}
         </p>
       </div>
 
@@ -140,7 +143,7 @@ export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onCo
           <BrandIcon name="drop" className="text-3xl text-leaf" />
         </div>
         <h3 dir="auto" className="text-sm text-leaf font-bold mb-3">
-          {step?.title || `الخطوة ${currentStep + 1}`}
+          {step?.title || t("stepFallback", { number: currentStep + 1 })}
         </h3>
         <p dir="auto" className="text-2xl font-semibold leading-loose max-w-md">
           {step?.description}
@@ -164,14 +167,14 @@ export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onCo
           <div className="flex items-center justify-center gap-4">
             <button
               onClick={resetTimer}
-              aria-label="إعادة ضبط المؤقت"
+              aria-label={t("resetTimer")}
               className="size-12 rounded-full border border-paper/20 flex items-center justify-center hover:bg-paper/10"
             >
               <MaterialIcon icon="restart_alt" className="text-paper/70" />
             </button>
             <button
               onClick={() => setRunning(!running)}
-              aria-label={running ? "إيقاف مؤقت" : "تشغيل المؤقت"}
+              aria-label={running ? t("pauseTimer") : t("startTimer")}
               className={`size-16 rounded-full flex items-center justify-center text-2xl ${
                 running ? "bg-crema hover:bg-crema/85" : "bg-leaf hover:bg-leaf/80"
               } transition-colors`}
@@ -180,7 +183,7 @@ export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onCo
             </button>
             <button
               onClick={() => setTimer((t) => Math.max(0, t - 10))}
-              aria-label="تقديم 10 ثوانٍ"
+              aria-label={t("skip10")}
               className="size-12 rounded-full border border-paper/20 flex items-center justify-center hover:bg-paper/10"
             >
               <MaterialIcon icon="fast_forward" className="text-paper/70" />
@@ -196,13 +199,13 @@ export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onCo
           disabled={currentStep === 0}
           className="flex-1 py-4 rounded-2xl border border-paper/20 font-bold text-paper disabled:opacity-30 hover:bg-paper/10 transition-colors"
         >
-          السابق
+          {t("previous")}
         </button>
         <button
           onClick={nextStep}
           className="flex-1 py-4 rounded-2xl bg-leaf text-pine font-bold hover:opacity-90 transition-opacity"
         >
-          {currentStep === totalSteps - 1 ? "إنهاء" : "الخطوة التالية"}
+          {currentStep === totalSteps - 1 ? t("finish") : t("nextStep")}
         </button>
       </div>
     </div>

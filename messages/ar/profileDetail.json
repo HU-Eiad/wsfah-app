@@ -1,0 +1,22 @@
+{
+  "notFound": "المستخدم غير موجود",
+  "home": "الرئيسية",
+  "back": "رجوع",
+  "title": "الملف الشخصي",
+  "roles": {
+    "USER": "باريستا منزلي",
+    "CREATOR": "مبدع موثق",
+    "BRAND_ADMIN": "مدير علامة تجارية"
+  },
+  "stats": {
+    "recipes": "وصفات",
+    "followers": "متابعين",
+    "following": "يتابع",
+    "avgRating": "متوسط التقييم"
+  },
+  "shareTitle": "تعرّف على ملف {name} في وصفة",
+  "viewBrand": "عرض العلامة التجارية",
+  "badges": "الشارات",
+  "recipes": "الوصفات",
+  "likes": "{count} إعجاب"
+}

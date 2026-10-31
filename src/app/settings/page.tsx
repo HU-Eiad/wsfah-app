@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "@/components/MaterialIcon";
 import BottomNav from "@/components/BottomNav";
 import DarkModeToggle from "@/components/DarkModeToggle";
+import LanguageSwitch from "@/components/LanguageSwitch";
 import BrandIcon from "@/components/BrandIcon";
 import { logout } from "@/app/actions";
 
@@ -25,6 +27,7 @@ interface PrivacyData {
 }
 
 export default function SettingsPage() {
+  const t = useTranslations("settings");
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -71,9 +74,9 @@ export default function SettingsPage() {
       if (!patchRes.ok) throw new Error("Save failed");
       const updated = await patchRes.json();
       setUser((prev) => (prev ? { ...prev, image: updated.image } : prev));
-      setMessage({ type: "success", text: "تم تحديث صورة الملف الشخصي!" });
+      setMessage({ type: "success", text: t("messages.avatarUpdated") });
     } catch {
-      setMessage({ type: "error", text: "فشل تحديث صورة الملف الشخصي." });
+      setMessage({ type: "error", text: t("messages.avatarFailed") });
     } finally {
       setUploadingAvatar(false);
     }
@@ -127,7 +130,7 @@ export default function SettingsPage() {
       }
 
       if (Object.keys(body).length === 0) {
-        setMessage({ type: "error", text: "لا توجد تغييرات للحفظ." });
+        setMessage({ type: "error", text: t("messages.noChanges") });
         setSaving(false);
         return;
       }
@@ -140,16 +143,16 @@ export default function SettingsPage() {
 
       if (!res.ok) {
         const err = await res.json();
-        setMessage({ type: "error", text: err.error || "فشل حفظ التغييرات." });
+        setMessage({ type: "error", text: err.error || t("messages.saveFailed") });
       } else {
         const updated = await res.json();
         setUser((prev) => (prev ? { ...prev, ...updated } : prev));
         setCurrentPassword("");
         setNewPassword("");
-        setMessage({ type: "success", text: "تم تحديث الملف الشخصي بنجاح!" });
+        setMessage({ type: "success", text: t("messages.profileUpdated") });
       }
     } catch {
-      setMessage({ type: "error", text: "حدث خطأ ما. حاول مرة أخرى." });
+      setMessage({ type: "error", text: t("messages.genericError") });
     } finally {
       setSaving(false);
     }
@@ -158,11 +161,11 @@ export default function SettingsPage() {
   const roleBadgeLabel = (role: string) => {
     switch (role) {
       case "CREATOR":
-        return "مبدع";
+        return t("roles.CREATOR");
       case "BRAND_ADMIN":
-        return "مدير علامة تجارية";
+        return t("roles.BRAND_ADMIN");
       default:
-        return "باريستا منزلي";
+        return t("roles.USER");
     }
   };
 
@@ -192,12 +195,12 @@ export default function SettingsPage() {
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link
           href="/profile"
-          aria-label="رجوع"
+          aria-label={t("back")}
           className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk"
         >
           <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h1 className="text-xl flex-1">الإعدادات</h1>
+        <h1 className="text-xl flex-1">{t("title")}</h1>
       </header>
 
       <main className="flex-1 pb-28 px-4 max-w-screen-sm mx-auto w-full">
@@ -210,7 +213,7 @@ export default function SettingsPage() {
               className="size-24 rounded-full object-cover ring-4 ring-surface bg-oat-milk"
             />
             <label
-              aria-label="تغيير الصورة"
+              aria-label={t("changePhoto")}
               className="absolute bottom-0 end-0 size-9 rounded-full bg-primary text-on-primary flex items-center justify-center cursor-pointer ring-4 ring-background-light hover:bg-primary/90 transition-colors"
             >
               {uploadingAvatar ? (
@@ -248,11 +251,11 @@ export default function SettingsPage() {
 
         {/* Profile Fields */}
         <section className="mb-8">
-          <h2 className="text-xl mb-4">الحساب</h2>
+          <h2 className="text-xl mb-4">{t("account.title")}</h2>
           <div className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
             <div>
               <label htmlFor="settings-name" className={labelClass}>
-                الاسم
+                {t("account.name")}
               </label>
               <input
                 id="settings-name"
@@ -260,21 +263,21 @@ export default function SettingsPage() {
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="اسمك"
+                placeholder={t("account.namePlaceholder")}
                 className={inputClass}
               />
             </div>
 
             <div>
               <label htmlFor="settings-bio" className={labelClass}>
-                النبذة
+                {t("account.bio")}
               </label>
               <textarea
                 id="settings-bio"
                 dir="auto"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
-                placeholder="أخبرنا عن نفسك..."
+                placeholder={t("account.bioPlaceholder")}
                 rows={3}
                 className={`${inputClass} leading-relaxed resize-none`}
               />
@@ -282,7 +285,7 @@ export default function SettingsPage() {
 
             <div>
               <label htmlFor="settings-email" className={labelClass}>
-                البريد الإلكتروني
+                {t("account.email")}
               </label>
               <input
                 id="settings-email"
@@ -291,13 +294,13 @@ export default function SettingsPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                className={`${inputClass} text-end`}
+                className={`${inputClass} rtl:text-right`}
               />
             </div>
 
             <div>
               <label htmlFor="settings-phone" className={labelClass}>
-                الهاتف
+                {t("account.phone")}
               </label>
               <input
                 id="settings-phone"
@@ -306,7 +309,7 @@ export default function SettingsPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+1 234 567 890"
-                className={`${inputClass} text-end`}
+                className={`${inputClass} rtl:text-right`}
               />
             </div>
           </div>
@@ -314,11 +317,11 @@ export default function SettingsPage() {
 
         {/* Password Section */}
         <section className="mb-6">
-          <h2 className="text-xl mb-4">تغيير كلمة المرور</h2>
+          <h2 className="text-xl mb-4">{t("password.title")}</h2>
           <div className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
             <div>
               <label htmlFor="settings-current-password" className={labelClass}>
-                كلمة المرور الحالية
+                {t("password.current")}
               </label>
               <input
                 id="settings-current-password"
@@ -326,14 +329,14 @@ export default function SettingsPage() {
                 type="password"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="أدخل كلمة المرور الحالية"
+                placeholder={t("password.currentPlaceholder")}
                 className={inputClass}
               />
             </div>
 
             <div>
               <label htmlFor="settings-new-password" className={labelClass}>
-                كلمة المرور الجديدة
+                {t("password.new")}
               </label>
               <input
                 id="settings-new-password"
@@ -341,7 +344,7 @@ export default function SettingsPage() {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="أدخل كلمة المرور الجديدة"
+                placeholder={t("password.newPlaceholder")}
                 className={inputClass}
               />
             </div>
@@ -357,19 +360,19 @@ export default function SettingsPage() {
           {saving ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-on-primary border-t-transparent" />
-              جارٍ الحفظ…
+              {t("saving")}
             </>
           ) : (
             <>
               <MaterialIcon icon="save" className="text-lg" />
-              حفظ التغييرات
+              {t("saveChanges")}
             </>
           )}
         </button>
 
         {/* Privacy Settings */}
         <section className="mb-8">
-          <h2 className="text-xl mb-4">الخصوصية</h2>
+          <h2 className="text-xl mb-4">{t("privacy.title")}</h2>
 
           <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10 mb-4">
             {/* Who sees followers */}
@@ -379,15 +382,15 @@ export default function SettingsPage() {
                   <MaterialIcon icon="group" className="text-xl" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold">من يستطيع رؤية متابعيني</p>
-                  <p className="text-xs text-espresso/60 leading-relaxed">تحكم بمن يرى قائمة متابعيك</p>
+                  <p className="text-sm font-semibold">{t("privacy.followersTitle")}</p>
+                  <p className="text-xs text-espresso/60 leading-relaxed">{t("privacy.followersHint")}</p>
                 </div>
               </div>
               <div className="flex gap-2">
                 {[
-                  { value: "everyone", label: "الجميع" },
-                  { value: "followers", label: "المتابعون" },
-                  { value: "none", label: "لا أحد" },
+                  { value: "everyone", label: t("privacy.everyone") },
+                  { value: "followers", label: t("privacy.followers") },
+                  { value: "none", label: t("privacy.none") },
                 ].map((opt) => (
                   <button
                     key={opt.value}
@@ -407,14 +410,14 @@ export default function SettingsPage() {
                   <MaterialIcon icon="favorite" className="text-xl" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold">الوصفات المعجب بها</p>
-                  <p className="text-xs text-espresso/60 leading-relaxed">اعرض وصفاتك المعجب بها في ملفك الشخصي</p>
+                  <p className="text-sm font-semibold">{t("privacy.likesTitle")}</p>
+                  <p className="text-xs text-espresso/60 leading-relaxed">{t("privacy.likesHint")}</p>
                 </div>
               </div>
               <div className="flex gap-2">
                 {[
-                  { value: "public", label: "عام" },
-                  { value: "private", label: "خاص" },
+                  { value: "public", label: t("privacy.public") },
+                  { value: "private", label: t("privacy.private") },
                 ].map((opt) => (
                   <button
                     key={opt.value}
@@ -434,14 +437,14 @@ export default function SettingsPage() {
                   <MaterialIcon icon="bookmark" className="text-xl" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold">الوصفات المحفوظة</p>
-                  <p className="text-xs text-espresso/60 leading-relaxed">اعرض وصفاتك المحفوظة في ملفك الشخصي</p>
+                  <p className="text-sm font-semibold">{t("privacy.savedTitle")}</p>
+                  <p className="text-xs text-espresso/60 leading-relaxed">{t("privacy.savedHint")}</p>
                 </div>
               </div>
               <div className="flex gap-2">
                 {[
-                  { value: "public", label: "عام" },
-                  { value: "private", label: "خاص" },
+                  { value: "public", label: t("privacy.public") },
+                  { value: "private", label: t("privacy.private") },
                 ].map((opt) => (
                   <button
                     key={opt.value}
@@ -466,10 +469,10 @@ export default function SettingsPage() {
                   body: JSON.stringify(privacy),
                 });
                 if (res.ok) {
-                  setMessage({ type: "success", text: "تم حفظ إعدادات الخصوصية!" });
+                  setMessage({ type: "success", text: t("messages.privacySaved") });
                 }
               } catch {
-                setMessage({ type: "error", text: "فشل حفظ إعدادات الخصوصية." });
+                setMessage({ type: "error", text: t("messages.privacyFailed") });
               } finally {
                 setPrivacySaving(false);
               }
@@ -478,15 +481,16 @@ export default function SettingsPage() {
             className="w-full border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm hover:border-primary/40 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             <MaterialIcon icon="shield" className="text-lg" />
-            {privacySaving ? "جارٍ الحفظ…" : "حفظ إعدادات الخصوصية"}
+            {privacySaving ? t("saving") : t("privacy.save")}
           </button>
         </section>
 
         {/* Appearance & account links */}
         <section className="mb-6">
-          <h2 className="text-xl mb-4">التطبيق</h2>
+          <h2 className="text-xl mb-4">{t("app.title")}</h2>
           <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10 overflow-hidden">
             <DarkModeToggle />
+            <LanguageSwitch variant="row" />
 
             <Link
               href="/profile"
@@ -495,7 +499,7 @@ export default function SettingsPage() {
               <span className="size-9 rounded-full bg-oat-milk flex items-center justify-center text-espresso/70">
                 <MaterialIcon icon="person" className="text-xl" />
               </span>
-              <span className="text-sm font-semibold flex-1">عرض الملف الشخصي</span>
+              <span className="text-sm font-semibold flex-1">{t("app.viewProfile")}</span>
               <MaterialIcon icon="chevron_left" className="text-espresso/50" />
             </Link>
 
@@ -506,7 +510,7 @@ export default function SettingsPage() {
               <span className="size-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                 <MaterialIcon icon="workspace_premium" className="text-xl" />
               </span>
-              <span className="text-sm font-semibold flex-1">إدارة الاشتراك</span>
+              <span className="text-sm font-semibold flex-1">{t("app.manageSubscription")}</span>
               <MaterialIcon icon="chevron_left" className="text-espresso/50" />
             </Link>
 
@@ -518,7 +522,7 @@ export default function SettingsPage() {
               <span className="size-9 rounded-full bg-red-50 flex items-center justify-center">
                 <MaterialIcon icon="logout" className="text-xl" />
               </span>
-              <span className="text-sm font-semibold flex-1">تسجيل الخروج</span>
+              <span className="text-sm font-semibold flex-1">{t("app.signOut")}</span>
             </button>
           </div>
         </section>

@@ -1,0 +1,16 @@
+{
+  "companyType": {
+    "roaster": "محمصة",
+    "cafe": "مقهى",
+    "tea_brand": "علامة شاي",
+    "equipment": "معدات"
+  },
+  "title": "جميع العلامات التجارية",
+  "empty": "لا توجد علامات تجارية بعد.",
+  "verified": "موثق",
+  "stats": {
+    "products": "المنتجات",
+    "recipes": "الوصفات",
+    "gallery": "المعرض"
+  }
+}

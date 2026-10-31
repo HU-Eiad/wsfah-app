@@ -1,0 +1,16 @@
+{
+  "title": "My collections",
+  "create": "Create",
+  "nameLabel": "Name",
+  "namePlaceholder": "Collection name",
+  "descriptionLabel": "Description (optional)",
+  "descriptionPlaceholder": "What's this collection about?",
+  "makePublic": "Make collection public",
+  "creating": "Creating…",
+  "createCollection": "Create collection",
+  "cancel": "Cancel",
+  "empty": "No collections yet. Create your first one to organize your favorite recipes.",
+  "public": "Public",
+  "recipeCount": "{count, plural, one {# recipe} other {# recipes}}",
+  "createError": "Couldn't create the collection"
+}

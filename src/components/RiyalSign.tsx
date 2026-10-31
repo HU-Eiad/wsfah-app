@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 interface RiyalSignProps {
   className?: string;
 }
@@ -8,12 +12,13 @@ interface RiyalSignProps {
  * Path data: SAMA's official glyph, via the MIT-licensed `riyal` package.
  */
 export default function RiyalSign({ className = "" }: RiyalSignProps) {
+  const t = useTranslations("common");
   return (
     <svg
       viewBox="0 0 1124.14 1256.39"
       fill="currentColor"
       role="img"
-      aria-label="ريال سعودي"
+      aria-label={t("currency.riyal")}
       className={`inline-block h-[0.85em] w-auto align-[-0.05em] ${className}`}
     >
       <path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z" />

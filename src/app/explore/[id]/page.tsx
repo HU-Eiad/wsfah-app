@@ -8,6 +8,8 @@ import BrandIcon from "@/components/BrandIcon";
 import FollowButton from "@/components/FollowButton";
 import CommentSection from "@/components/CommentSection";
 import BottomNav from "@/components/BottomNav";
+import { useTranslations, useLocale } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface Post {
   id: string;
@@ -22,6 +24,9 @@ interface Post {
 
 export default function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const t = useTranslations("exploreDetail");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
@@ -84,9 +89,9 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
   const handleShare = () => {
     const shareUrl = `${window.location.origin}/explore/${id}`;
     if (navigator.share) {
-      navigator.share({ title: post?.caption || "شاهد هذا على WSFA!", url: shareUrl }).catch(() => {});
+      navigator.share({ title: post?.caption || t("shareTitle"), url: shareUrl }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(shareUrl).then(() => alert("تم نسخ الرابط!")).catch(() => {});
+      navigator.clipboard.writeText(shareUrl).then(() => alert(t("linkCopied"))).catch(() => {});
     }
   };
 
@@ -103,14 +108,14 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
       <div className="bg-background-light text-espresso min-h-screen flex items-center justify-center p-6">
         <div className="text-center">
           <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-          <p className="text-sm text-espresso/70">المنشور غير موجود</p>
-          <Link href="/explore" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">العودة للاستكشاف</Link>
+          <p className="text-sm text-espresso/70">{t("notFound")}</p>
+          <Link href="/explore" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">{t("backToExplore")}</Link>
         </div>
       </div>
     );
   }
 
-  const displayName = post.company?.name || post.author.name || "مجهول";
+  const displayName = post.company?.name || post.author.name || tc("unknownUser");
   const displayAvatar = post.company?.logo || post.author.image || "/brand/banners/avatar-placeholder.svg";
   const profileLink = post.company ? `/brand/${post.company.id}` : "#";
   const followUserId = post.author.id;
@@ -120,11 +125,11 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <Link href="/explore" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <Link href="/explore" aria-label={tc("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h1 className="text-xl flex-1">منشور</h1>
-        <button onClick={handleShare} aria-label="مشاركة" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <h1 className="text-xl flex-1">{t("title")}</h1>
+        <button onClick={handleShare} aria-label={tc("share")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="share" />
         </button>
       </header>
@@ -145,7 +150,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
               {post.company && (
                 <div className="flex items-center gap-1">
                   <BrandIcon name="verified" className="text-primary text-xs" />
-                  <span className="text-xs text-primary font-semibold">علامة تجارية</span>
+                  <span className="text-xs text-primary font-semibold">{tc("badges.brand")}</span>
                 </div>
               )}
             </Link>
@@ -175,7 +180,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
           <button
             onClick={toggleLike}
             disabled={likeBusy}
-            aria-label={liked ? "إلغاء الإعجاب" : "أعجبني"}
+            aria-label={liked ? t("unlike") : t("like")}
             className="flex items-center gap-1.5 active:scale-95 transition-transform disabled:opacity-60"
           >
             <MaterialIcon
@@ -186,13 +191,13 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
             <span className="text-sm font-bold tabular-nums">{likeCount}</span>
           </button>
 
-          <button onClick={handleShare} aria-label="مشاركة" className="flex items-center gap-1.5 active:scale-95 transition-transform">
+          <button onClick={handleShare} aria-label={tc("share")} className="flex items-center gap-1.5 active:scale-95 transition-transform">
             <MaterialIcon icon="send" className="text-2xl text-espresso/60" />
           </button>
 
           <div className="ms-auto">
             <span className="text-xs text-espresso/60">
-              {new Date(post.createdAt).toLocaleDateString("ar-u-nu-latn")}
+              {new Date(post.createdAt).toLocaleDateString(intlLocale(locale))}
             </span>
           </div>
         </div>

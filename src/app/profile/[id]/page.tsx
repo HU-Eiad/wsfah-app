@@ -6,6 +6,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
 
   // If viewing own profile, redirect to /profile
   if (isOwnProfile) redirect("/profile");
+  const t = await getTranslations("profileDetail");
 
   const user = await prisma.user.findUnique({
     where: { id },
@@ -41,17 +43,17 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       <div className="bg-background-light min-h-screen flex items-center justify-center">
         <div className="text-center px-6">
           <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-          <p className="text-sm text-espresso/70 mb-4">المستخدم غير موجود</p>
-          <Link href="/" className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">الرئيسية</Link>
+          <p className="text-sm text-espresso/70 mb-4">{t("notFound")}</p>
+          <Link href="/" className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">{t("home")}</Link>
         </div>
       </div>
     );
   }
 
   const roleBadgeConfig: Record<string, { label: string; color: string; icon?: string }> = {
-    USER: { label: "باريستا منزلي", color: "bg-green-100 text-green-700 border-green-200" },
-    CREATOR: { label: "مبدع موثق", color: "bg-purple-100 text-purple-700 border-purple-200", icon: "verified" },
-    BRAND_ADMIN: { label: "مدير علامة تجارية", color: "bg-amber-100 text-amber-700 border-amber-200" },
+    USER: { label: t("roles.USER"), color: "bg-green-100 text-green-700 border-green-200" },
+    CREATOR: { label: t("roles.CREATOR"), color: "bg-purple-100 text-purple-700 border-purple-200", icon: "verified" },
+    BRAND_ADMIN: { label: t("roles.BRAND_ADMIN"), color: "bg-amber-100 text-amber-700 border-amber-200" },
   };
   const currentRoleBadge = roleBadgeConfig[user.role] || roleBadgeConfig.USER;
 
@@ -73,10 +75,10 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col max-w-screen-sm mx-auto w-full">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <Link href="/" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <Link href="/" aria-label={t("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h1 className="text-xl flex-1">الملف الشخصي</h1>
+        <h1 className="text-xl flex-1">{t("title")}</h1>
       </header>
 
       <main className="flex-1 pb-28">
@@ -104,17 +106,17 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           <div className="w-full flex divide-x divide-espresso/10 bg-surface rounded-2xl border border-espresso/10 py-3">
             <div className="flex-1 text-center px-2">
               <p className="font-display text-xl">{user.recipes.length}</p>
-              <p className="text-xs text-espresso/60 mt-0.5">وصفات</p>
+              <p className="text-xs text-espresso/60 mt-0.5">{t("stats.recipes")}</p>
             </div>
             {showFollowers && (
               <>
                 <div className="flex-1 text-center px-2">
                   <p className="font-display text-xl">{formatCount(user.followers)}</p>
-                  <p className="text-xs text-espresso/60 mt-0.5">متابعين</p>
+                  <p className="text-xs text-espresso/60 mt-0.5">{t("stats.followers")}</p>
                 </div>
                 <div className="flex-1 text-center px-2">
                   <p className="font-display text-xl">{formatCount(user.following)}</p>
-                  <p className="text-xs text-espresso/60 mt-0.5">يتابع</p>
+                  <p className="text-xs text-espresso/60 mt-0.5">{t("stats.following")}</p>
                 </div>
               </>
             )}
@@ -123,7 +125,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                 <p className="font-display text-xl">{user.avgRating.toFixed(1)}</p>
                 <MaterialIcon icon="star" className="text-crema text-sm" filled />
               </div>
-              <p className="text-xs text-espresso/60 mt-0.5">متوسط التقييم</p>
+              <p className="text-xs text-espresso/60 mt-0.5">{t("stats.avgRating")}</p>
             </div>
           </div>
 
@@ -131,7 +133,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
             <FollowButton userId={user.id} className="flex-1" />
             <ShareButton
               url={`/profile/${user.id}`}
-              title={`تعرّف على ملف ${user.name} في وصفة`}
+              title={t("shareTitle", { name: user.name ?? "" })}
               className="relative border border-espresso/15 rounded-xl px-4 py-3 text-espresso/70 hover:border-primary/40 transition-colors"
             />
           </div>
@@ -147,7 +149,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-sm" dir="auto">{company.name}</h3>
-                  <p className="text-xs text-espresso/60">عرض العلامة التجارية</p>
+                  <p className="text-xs text-espresso/60">{t("viewBrand")}</p>
                 </div>
                 <MaterialIcon icon="chevron_left" className="text-espresso/50 text-xl shrink-0" />
               </div>
@@ -158,7 +160,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
         {/* Badges */}
         {user.badges.length > 0 && (
           <section className="px-4 py-6">
-            <h2 className="text-xl mb-4">الشارات</h2>
+            <h2 className="text-xl mb-4">{t("badges")}</h2>
             <div className="flex gap-3 overflow-x-auto no-scrollbar">
               {user.badges.map((ub) => (
                 <div key={ub.id} className="flex flex-col items-center gap-2 shrink-0 min-w-[72px]">
@@ -180,7 +182,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
         {/* Recipes */}
         {user.recipes.length > 0 && (
           <section className="px-4 py-4">
-            <h2 className="text-xl mb-4">الوصفات</h2>
+            <h2 className="text-xl mb-4">{t("recipes")}</h2>
             <div className="grid grid-cols-2 gap-x-4 gap-y-6">
               {user.recipes.map((r) => (
                 <Link href={`/recipe/${r.id}`} key={r.id} className="flex flex-col gap-3">
@@ -194,7 +196,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                   <div>
                     <h3 className="font-bold text-sm leading-snug mb-1" dir="auto">{r.title}</h3>
                     <p className="text-xs text-espresso/60 flex items-center gap-1">
-                      {r.likes} إعجاب
+                      {t("likes", { count: r.likes })}
                       {r.rating > 0 && (
                         <> &bull; {r.rating.toFixed(1)} <MaterialIcon icon="star" filled className="text-xs text-crema" /></>
                       )}

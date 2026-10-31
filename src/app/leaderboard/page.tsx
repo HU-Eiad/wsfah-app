@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface LeaderboardEntry {
   rank: number;
@@ -15,17 +17,8 @@ interface LeaderboardEntry {
 
 type SortTab = "points" | "recipes" | "followers";
 
-const TABS: { key: SortTab; label: string }[] = [
-  { key: "points", label: "النقاط" },
-  { key: "recipes", label: "الوصفات" },
-  { key: "followers", label: "المتابعين" },
-];
-
-const SCORE_UNITS: Record<SortTab, string> = {
-  points: "نقطة",
-  recipes: "وصفة",
-  followers: "متابع",
-};
+// Labels: messages leaderboard.tabs.<key> and leaderboard.units.<key>
+const TABS: SortTab[] = ["points", "recipes", "followers"];
 
 /** Podium styling for the top three ranks. */
 function rankStyle(rank: number): string {
@@ -36,6 +29,9 @@ function rankStyle(rank: number): string {
 }
 
 export default function LeaderboardPage() {
+  const t = useTranslations("leaderboard");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [activeTab, setActiveTab] = useState<SortTab>("points");
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +48,7 @@ export default function LeaderboardPage() {
   return (
     <div className="bg-background-light text-espresso min-h-screen">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <h1 className="text-2xl flex-1">المتصدرين</h1>
+        <h1 className="text-2xl flex-1">{t("title")}</h1>
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
@@ -60,15 +56,15 @@ export default function LeaderboardPage() {
         <div className="flex border-b border-espresso/10 mb-6">
           {TABS.map((tab) => (
             <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
+              key={tab}
+              onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${
-                activeTab === tab.key
+                activeTab === tab
                   ? "text-primary border-primary"
                   : "text-espresso/60 border-transparent hover:text-espresso"
               }`}
             >
-              {tab.label}
+              {t(`tabs.${tab}`)}
             </button>
           ))}
         </div>
@@ -81,7 +77,7 @@ export default function LeaderboardPage() {
         ) : entries.length === 0 ? (
           <div className="text-center py-12 px-6">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-            <p className="text-sm text-espresso/70">لا يوجد مستخدمون بعد.</p>
+            <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
           <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10 overflow-hidden">
@@ -111,17 +107,17 @@ export default function LeaderboardPage() {
                   {/* Name */}
                   <div className="flex-1 min-w-0">
                     <p dir="auto" className={`truncate ${podium ? "font-bold text-base" : "font-semibold text-sm"}`}>
-                      {entry.name || "مجهول"}
+                      {entry.name || tc("unknownUser")}
                     </p>
                   </div>
 
                   {/* Score */}
                   <div className="text-end shrink-0">
                     <p className={`text-primary ${podium ? "font-display text-xl" : "font-bold text-sm"}`}>
-                      {entry.score.toLocaleString("en-US")}
+                      {entry.score.toLocaleString(intlLocale(locale))}
                     </p>
                     <p className="text-[11px] text-espresso/60">
-                      {SCORE_UNITS[activeTab]}
+                      {t(`units.${activeTab}`, { count: entry.score })}
                     </p>
                   </div>
                 </div>

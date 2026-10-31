@@ -1,0 +1,43 @@
+{
+  "appName": "WSFA",
+  "back": "Back",
+  "close": "Close",
+  "cancel": "Cancel",
+  "save": "Save",
+  "saving": "Saving…",
+  "delete": "Delete",
+  "edit": "Edit",
+  "share": "Share",
+  "loading": "Loading…",
+  "seeAll": "See all",
+  "retry": "Try again",
+  "guest": "Guest",
+  "unknownUser": "Unknown",
+  "minutesShort": "{count} min",
+  "points": "{count} pts",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "badges": {
+    "brand": "Brand",
+    "community": "Community",
+    "verified": "Verified",
+    "featured": "Featured",
+    "sponsored": "Ad",
+    "promoted": "Promoted"
+  },
+  "currency": {
+    "riyal": "Saudi riyal"
+  },
+  "language": {
+    "label": "Language",
+    "current": "English",
+    "switchTo": "العربية",
+    "switchLabel": "التبديل إلى العربية"
+  },
+  "nav": {
+    "home": "Home",
+    "search": "Search",
+    "create": "Create",
+    "rewards": "Rewards",
+    "explore": "Explore"
+  }
+}

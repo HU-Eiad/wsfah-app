@@ -1,0 +1,19 @@
+{
+  "report": "Report",
+  "heading": "Report content",
+  "reasons": {
+    "spam": "Spam",
+    "inappropriate": "Inappropriate content",
+    "harassment": "Harassment",
+    "misinformation": "Misinformation",
+    "other": "Other"
+  },
+  "detailsLabel": "Additional details",
+  "detailsPlaceholder": "Additional details (optional)",
+  "success": "Report sent. Thank you.",
+  "errorFailed": "Couldn't send the report.",
+  "errorNetwork": "Network error. Please try again.",
+  "cancel": "Cancel",
+  "submit": "Send report",
+  "submitting": "Sending…"
+}

@@ -1,0 +1,35 @@
+{
+  "title": "المكافآت",
+  "notifications": "الإشعارات",
+  "tiers": {
+    "Bronze": "برونزي",
+    "Silver": "فضي",
+    "Gold": "ذهبي"
+  },
+  "memberTier": "عضو {tier}",
+  "rankProgress": "تقدم المرتبة",
+  "maxedTier": "وصلت لأعلى مرتبة، أنت عضو ذهبي.",
+  "tierProgress": "<current>{points}</current> / <num>{max}</num> نقطة، <hl>{remaining} نقطة للمرتبة {next}</hl>",
+  "totalPoints": "رصيد النقاط الإجمالي",
+  "nextRank": "المرتبة التالية: {detail}",
+  "nextRankTop": "وصلت الأعلى!",
+  "pointsToGold": "{count} نقطة للذهبي",
+  "pointsToSilver": "{count} نقطة للفضي",
+  "dailyStreak": "سلسلة يومية",
+  "streakDays": "{current}/{total} أيام",
+  "streakComplete": "اكتملت السلسلة، حصلت على 50 نقطة إضافية.",
+  "streakRemaining": "{count} يوم متبقي للحصول على <hl>50 نقطة إضافية</hl>",
+  "activeChallenges": "التحديات النشطة",
+  "noChallenges": "لم تنضم إلى أي تحدٍّ بعد.",
+  "browseChallenges": "تصفح التحديات",
+  "challengeReward": "المكافأة: {count} نقطة",
+  "redeemable": "مكافآت قابلة للاستبدال",
+  "noRewards": "لا توجد مكافآت متاحة بعد.",
+  "pointsCost": "<num>{formatted}</num> نقطة",
+  "redeem": {
+    "success": "تم استبدال المكافأة بنجاح!",
+    "failed": "فشل الاستبدال",
+    "error": "حدث خطأ ما",
+    "redeeming": "جارٍ الاستبدال…"
+  }
+}

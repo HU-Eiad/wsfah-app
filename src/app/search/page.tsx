@@ -6,6 +6,10 @@ import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
 import BrandIcon from "@/components/BrandIcon";
 import BottomNav from "@/components/BottomNav";
+import { useTranslations } from "next-intl";
+
+/** Internal "no filter" sentinel value (not shown directly; label comes from messages). */
+const ALL = "الكل";
 
 interface Recipe {
   id: string;
@@ -35,32 +39,34 @@ export default function SearchPage() {
 
 function SearchContent() {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get("category") || "الكل";
+  const t = useTranslations("search");
+  const tc = useTranslations("common");
+  const initialCategory = searchParams.get("category") || ALL;
 
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState(initialCategory);
-  const [activeDifficulty, setActiveDifficulty] = useState("الكل");
-  const [activeSource, setActiveSource] = useState("الكل");
+  const [activeDifficulty, setActiveDifficulty] = useState(ALL);
+  const [activeSource, setActiveSource] = useState(ALL);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   const difficultyOptions = [
-    { label: "الكل", value: "الكل" },
-    { label: "مبتدئ", value: "Beginner" },
-    { label: "متوسط", value: "Intermediate" },
-    { label: "متقدم", value: "Advanced" },
+    { label: t("all"), value: ALL },
+    { label: t("difficulty.beginner"), value: "Beginner" },
+    { label: t("difficulty.intermediate"), value: "Intermediate" },
+    { label: t("difficulty.advanced"), value: "Advanced" },
   ];
 
   const sourceOptions = [
-    { label: "الكل", value: "الكل" },
-    { label: "مجتمع", value: "COMMUNITY" },
-    { label: "علامة تجارية", value: "BRAND" },
+    { label: t("all"), value: ALL },
+    { label: t("source.community"), value: "COMMUNITY" },
+    { label: t("source.brand"), value: "BRAND" },
   ];
 
   // Sync activeCategory when URL param changes
   useEffect(() => {
-    const urlCategory = searchParams.get("category") || "الكل";
+    const urlCategory = searchParams.get("category") || ALL;
     setActiveCategory(urlCategory);
   }, [searchParams]);
 
@@ -75,9 +81,9 @@ function SearchContent() {
     setLoading(true);
     const params = new URLSearchParams();
     if (query) params.set("search", query);
-    if (activeCategory !== "الكل") params.set("category", activeCategory);
-    if (activeDifficulty !== "الكل") params.set("difficulty", activeDifficulty);
-    if (activeSource !== "الكل") params.set("source", activeSource);
+    if (activeCategory !== ALL) params.set("category", activeCategory);
+    if (activeDifficulty !== ALL) params.set("difficulty", activeDifficulty);
+    if (activeSource !== ALL) params.set("source", activeSource);
 
     fetch(`/api/recipes?${params}`)
       .then((r) => r.json())
@@ -88,31 +94,31 @@ function SearchContent() {
       .catch(() => setLoading(false));
   }, [query, activeCategory, activeDifficulty, activeSource]);
 
-  const allCategories = ["الكل", ...categories.map((c) => c.name)];
+  const allCategories = [ALL, ...categories.map((c) => c.name)];
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 pt-3 pb-4 border-b border-espresso/10">
         <div className="flex items-center gap-2 mb-3">
-          <Link href="/" aria-label="رجوع" className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <Link href="/" aria-label={tc("back")} className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk">
             <MaterialIcon icon="arrow_forward" />
           </Link>
-          <h1 className="text-2xl flex-1">البحث</h1>
+          <h1 className="text-2xl flex-1">{t("title")}</h1>
         </div>
         <label className="flex items-center gap-3 bg-surface rounded-xl px-4 py-3 border border-espresso/15 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20">
           <MaterialIcon icon="search" className="text-espresso/50" />
           <input
             dir="auto"
             autoFocus
-            aria-label="ابحث"
+            aria-label={t("searchLabel")}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="bg-transparent border-none focus:ring-0 p-0 w-full text-sm placeholder:text-espresso/50 outline-none"
-            placeholder="ابحث عن وصفات، محمصات، أو خلطات شاي"
+            placeholder={t("placeholder")}
             type="text"
           />
           {query && (
-            <button onClick={() => setQuery("")} aria-label="مسح البحث" className="shrink-0">
+            <button onClick={() => setQuery("")} aria-label={t("clear")} className="shrink-0">
               <MaterialIcon icon="close" className="text-espresso/50" />
             </button>
           )}
@@ -132,14 +138,14 @@ function SearchContent() {
                   : "bg-surface border border-espresso/10 text-espresso/70"
               }`}
             >
-              {cat}
+              {cat === ALL ? t("all") : cat}
             </button>
           ))}
         </div>
 
         {/* Difficulty filter */}
         <div className="flex overflow-x-auto gap-2 mb-3 no-scrollbar -mx-4 px-4">
-          <span className="shrink-0 text-xs font-semibold text-espresso/60 self-center me-1">المستوى</span>
+          <span className="shrink-0 text-xs font-semibold text-espresso/60 self-center me-1">{t("difficultyLabel")}</span>
           {difficultyOptions.map((opt) => (
             <button
               key={opt.value}
@@ -157,7 +163,7 @@ function SearchContent() {
 
         {/* Source filter */}
         <div className="flex overflow-x-auto gap-2 mb-6 no-scrollbar -mx-4 px-4">
-          <span className="shrink-0 text-xs font-semibold text-espresso/60 self-center me-1">المصدر</span>
+          <span className="shrink-0 text-xs font-semibold text-espresso/60 self-center me-1">{t("sourceLabel")}</span>
           {sourceOptions.map((opt) => (
             <button
               key={opt.value}
@@ -176,12 +182,12 @@ function SearchContent() {
         {/* Results */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-label="جارٍ التحميل…" />
+            <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-label={tc("loading")} />
           </div>
         ) : recipes.length === 0 ? (
           <div className="py-16 text-center">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-            <p className="text-sm text-espresso/70">لا توجد وصفات تطابق بحثك. جرّب كلمة أو قسماً مختلفاً.</p>
+            <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-x-4 gap-y-6">
@@ -200,11 +206,11 @@ function SearchContent() {
                   >
                     {item.brand ? (
                       <>
-                        <BrandIcon name="verified" className="text-xs" /> علامة تجارية
+                        <BrandIcon name="verified" className="text-xs" /> {tc("badges.brand")}
                       </>
                     ) : (
                       <>
-                        <MaterialIcon icon="group" className="text-xs" /> مجتمعي
+                        <MaterialIcon icon="group" className="text-xs" /> {tc("badges.community")}
                       </>
                     )}
                   </span>

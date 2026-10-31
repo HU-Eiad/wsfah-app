@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface Conversation {
   id: string;
@@ -17,6 +19,9 @@ interface Conversation {
 }
 
 export default function MessagesPage() {
+  const t = useTranslations("messages");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -39,15 +44,15 @@ export default function MessagesPage() {
     const d = new Date(dateStr);
     const now = new Date();
     const diff = now.getTime() - d.getTime();
-    if (diff < 60000) return "الآن";
-    if (diff < 3600000) return `${Math.floor(diff / 60000)} د`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)} س`;
-    return d.toLocaleDateString("ar-u-nu-latn");
+    if (diff < 60000) return t("time.now");
+    if (diff < 3600000) return t("time.minutes", { count: Math.floor(diff / 60000) });
+    if (diff < 86400000) return t("time.hours", { count: Math.floor(diff / 3600000) });
+    return d.toLocaleDateString(intlLocale(locale));
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background-light flex items-center justify-center" role="status" aria-label="جارٍ التحميل…">
+      <div className="min-h-screen bg-background-light flex items-center justify-center" role="status" aria-label={tc("loading")}>
         <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
       </div>
     );
@@ -56,14 +61,14 @@ export default function MessagesPage() {
   return (
     <div className="min-h-screen bg-background-light text-espresso">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <h1 className="text-2xl flex-1">الرسائل</h1>
+        <h1 className="text-2xl flex-1">{t("title")}</h1>
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-4">
         {conversations.length === 0 ? (
           <div className="text-center py-12">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-            <p className="text-sm text-espresso/70">لا توجد محادثات بعد.</p>
+            <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
           <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10 overflow-hidden">
@@ -87,7 +92,7 @@ export default function MessagesPage() {
                     </div>
                   )}
                   {isUnread(c) && (
-                    <span className="absolute top-0 end-0 size-3 rounded-full bg-crema border-2 border-surface" aria-label="غير مقروءة" />
+                    <span className="absolute top-0 end-0 size-3 rounded-full bg-crema border-2 border-surface" aria-label={t("unread")} />
                   )}
                 </div>
 
@@ -102,7 +107,7 @@ export default function MessagesPage() {
                           : "font-semibold text-espresso/80"
                       }`}
                     >
-                      {c.otherUser?.name || "غير معروف"}
+                      {c.otherUser?.name || t("unknown")}
                     </span>
                     {c.lastMessage && (
                       <span className="text-xs text-espresso/60 shrink-0">

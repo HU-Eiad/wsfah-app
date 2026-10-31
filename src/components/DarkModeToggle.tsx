@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
 
 export default function DarkModeToggle() {
+  const t = useTranslations("darkModeToggle");
   const [dark, setDark] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -33,7 +35,7 @@ export default function DarkModeToggle() {
           <span className="size-9 rounded-full bg-oat-milk flex items-center justify-center text-espresso/70">
             <MaterialIcon icon="light_mode" className="text-xl" />
           </span>
-          <span className="text-sm font-semibold">الوضع الداكن</span>
+          <span className="text-sm font-semibold">{t("label")}</span>
         </div>
         <div className="w-11 h-6 rounded-full bg-oat-milk relative shrink-0">
           <div className="absolute top-0.5 start-0.5 size-5 rounded-full shadow-sm bg-surface" />
@@ -53,7 +55,7 @@ export default function DarkModeToggle() {
         <span className="size-9 rounded-full bg-oat-milk flex items-center justify-center text-espresso/70">
           <MaterialIcon icon={dark ? "dark_mode" : "light_mode"} className="text-xl" />
         </span>
-        <span className="text-sm font-semibold">الوضع الداكن</span>
+        <span className="text-sm font-semibold">{t("label")}</span>
       </div>
       <div className={`w-11 h-6 rounded-full relative shrink-0 transition-colors ${dark ? "bg-primary" : "bg-oat-milk"}`}>
         <div

@@ -1,0 +1,21 @@
+{
+  "tabs": {
+    "store": "المتجر",
+    "recipes": "الوصفات",
+    "gallery": "المعرض"
+  },
+  "emptyProducts": "لا توجد منتجات بعد.",
+  "productName": "اسم المنتج",
+  "price": "السعر",
+  "storeUrl": "رابط المتجر",
+  "storeUrlPlaceholder": "رابط المتجر (https://...)",
+  "buyFromStore": "اشترِ من المتجر",
+  "editProduct": "تعديل المنتج",
+  "emptyRecipes": "لا توجد وصفات بعد.",
+  "addToGallery": "أضف إلى المعرض",
+  "caption": "وصف",
+  "captionPlaceholder": "وصف (اختياري)",
+  "uploading": "جارٍ الرفع…",
+  "uploadImage": "رفع صورة",
+  "emptyGallery": "لا توجد منشورات في المعرض بعد."
+}

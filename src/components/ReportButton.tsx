@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const REASONS = [
-  { value: "spam", label: "بريد مزعج" },
-  { value: "inappropriate", label: "محتوى غير لائق" },
-  { value: "harassment", label: "تحرش" },
-  { value: "misinformation", label: "معلومات مضللة" },
-  { value: "other", label: "أخرى" },
+  { value: "spam", labelKey: "reasons.spam" },
+  { value: "inappropriate", labelKey: "reasons.inappropriate" },
+  { value: "harassment", labelKey: "reasons.harassment" },
+  { value: "misinformation", labelKey: "reasons.misinformation" },
+  { value: "other", labelKey: "reasons.other" },
 ];
 
 interface ReportButtonProps {
@@ -16,6 +17,7 @@ interface ReportButtonProps {
 }
 
 export default function ReportButton({ entityType, entityId }: ReportButtonProps) {
+  const t = useTranslations("reportButton");
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [details, setDetails] = useState("");
@@ -35,7 +37,7 @@ export default function ReportButton({ entityType, entityId }: ReportButtonProps
       });
 
       if (res.ok) {
-        setFeedback({ type: "success", message: "تم إرسال البلاغ. شكراً لك." });
+        setFeedback({ type: "success", message: t("success") });
         setReason("");
         setDetails("");
         setTimeout(() => {
@@ -44,10 +46,10 @@ export default function ReportButton({ entityType, entityId }: ReportButtonProps
         }, 2000);
       } else {
         const data = await res.json();
-        setFeedback({ type: "error", message: data.error || "فشل إرسال البلاغ." });
+        setFeedback({ type: "error", message: data.error || t("errorFailed") });
       }
     } catch {
-      setFeedback({ type: "error", message: "خطأ في الشبكة. يرجى المحاولة مرة أخرى." });
+      setFeedback({ type: "error", message: t("errorNetwork") });
     } finally {
       setSubmitting(false);
     }
@@ -58,14 +60,14 @@ export default function ReportButton({ entityType, entityId }: ReportButtonProps
       <button
         onClick={() => setOpen(!open)}
         className="text-espresso/60 hover:text-red-600 transition-colors text-sm"
-        title="إبلاغ"
+        title={t("report")}
       >
-        إبلاغ
+        {t("report")}
       </button>
 
       {open && (
         <div className="absolute start-0 top-8 z-50 w-72 bg-surface border border-espresso/10 rounded-2xl shadow-sm p-4">
-          <h4 className="font-display text-lg mb-3">الإبلاغ عن محتوى</h4>
+          <h4 className="font-display text-lg mb-3">{t("heading")}</h4>
 
           <div className="space-y-2 mb-3">
             {REASONS.map((r) => (
@@ -92,15 +94,15 @@ export default function ReportButton({ entityType, entityId }: ReportButtonProps
                 >
                   {reason === r.value && <span className="w-2 h-2 rounded-full bg-primary" />}
                 </span>
-                {r.label}
+                {t(r.labelKey)}
               </label>
             ))}
           </div>
 
           <textarea
-            aria-label="تفاصيل إضافية"
+            aria-label={t("detailsLabel")}
             dir="auto"
-            placeholder="تفاصيل إضافية (اختياري)"
+            placeholder={t("detailsPlaceholder")}
             value={details}
             onChange={(e) => setDetails(e.target.value)}
             rows={3}
@@ -125,14 +127,14 @@ export default function ReportButton({ entityType, entityId }: ReportButtonProps
               }}
               className="flex-1 px-3 py-2.5 rounded-xl border border-espresso/15 text-sm font-semibold hover:border-primary/40 transition-colors"
             >
-              إلغاء
+              {t("cancel")}
             </button>
             <button
               onClick={handleSubmit}
               disabled={!reason || submitting}
               className="flex-1 px-3 py-2.5 rounded-xl text-sm font-bold bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 transition-colors"
             >
-              {submitting ? "جارٍ الإرسال…" : "إرسال"}
+              {submitting ? t("submitting") : t("submit")}
             </button>
           </div>
         </div>

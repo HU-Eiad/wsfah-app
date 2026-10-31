@@ -1,0 +1,13 @@
+{
+  "title": "مشاركة محتوى",
+  "postingAs": "النشر باسم <brand>{name}</brand>",
+  "captionPlaceholder": "وصف (اختياري)",
+  "captionLabel": "وصف المنشور",
+  "uploading": "جارٍ الرفع…",
+  "photo": "صورة",
+  "video": "فيديو",
+  "uploadFailed": "فشل رفع الملف",
+  "postSuccess": "تم النشر بنجاح!",
+  "postFailed": "فشل النشر",
+  "genericError": "حدث خطأ ما"
+}

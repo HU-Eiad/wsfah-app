@@ -2,6 +2,7 @@
 
 import { signIn } from "@/lib/auth";
 import { AuthError } from "next-auth";
+import { getTranslations } from "next-intl/server";
 
 function isRedirect(error: unknown): boolean {
   if (error instanceof Error) {
@@ -27,9 +28,10 @@ export async function signupAndLogin(
     if (isRedirect(error)) {
       throw error;
     }
+    const t = await getTranslations("signupActions");
     if (error instanceof AuthError) {
-      return { success: false, error: "Login after signup failed" };
+      return { success: false, error: t("loginAfterSignupFailed") };
     }
-    return { success: false, error: "Something went wrong" };
+    return { success: false, error: t("somethingWrong") };
   }
 }

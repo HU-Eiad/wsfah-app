@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useAds } from "./AdProvider";
 import AdBanner from "./AdBanner";
 
@@ -22,12 +23,13 @@ export default function AdSlot({
   showPlaceholder = false,
 }: AdSlotProps) {
   const { showAds } = useAds();
+  const t = useTranslations("adSlot");
 
   if (!showAds) {
     if (showPlaceholder) {
       return (
         <div className={`flex items-center justify-center py-2 ${className}`}>
-          <span className="text-[11px] text-espresso/50">تجربة بلا إعلانات</span>
+          <span className="text-[11px] text-espresso/50">{t("adFree")}</span>
         </div>
       );
     }

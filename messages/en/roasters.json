@@ -1,0 +1,16 @@
+{
+  "companyType": {
+    "roaster": "Roaster",
+    "cafe": "Café",
+    "tea_brand": "Tea brand",
+    "equipment": "Equipment"
+  },
+  "title": "All brands",
+  "empty": "No brands yet.",
+  "verified": "Verified",
+  "stats": {
+    "products": "Products",
+    "recipes": "Recipes",
+    "gallery": "Gallery"
+  }
+}

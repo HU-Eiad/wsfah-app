@@ -1,0 +1,15 @@
+{
+  "title": "إضافة إلى مجموعة",
+  "close": "إغلاق",
+  "empty": "لا توجد مجموعات بعد",
+  "createFirst": "أنشئ مجموعتك الأولى",
+  "recipeCount": "{count} وصفات",
+  "createNew": "إنشاء مجموعة جديدة",
+  "namePlaceholder": "اسم المجموعة",
+  "descriptionPlaceholder": "الوصف (اختياري)",
+  "makePublic": "جعل المجموعة عامة",
+  "creating": "جارٍ الإنشاء…",
+  "createAndAdd": "إنشاء وإضافة",
+  "updateError": "تعذّر تحديث المجموعة",
+  "createError": "تعذّر إنشاء المجموعة"
+}

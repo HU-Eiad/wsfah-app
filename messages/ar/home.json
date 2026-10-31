@@ -1,0 +1,19 @@
+{
+  "greetingMorning": "صباح الخير، {name}",
+  "greetingEvening": "مساء الخير، {name}",
+  "profile": "الملف الشخصي",
+  "notifications": "الإشعارات",
+  "searchPlaceholder": "ابحث عن وصفة، محمصة، أو شاي",
+  "weeklyPick": "اختيار الأسبوع",
+  "byline": "{author}، {category}",
+  "openRecipe": "افتح الوصفة",
+  "categories": "الأقسام",
+  "featuredRoasters": "محامص مميزة",
+  "trending": "رائج الآن",
+  "companyType": {
+    "roaster": "محمصة",
+    "cafe": "مقهى",
+    "tea_brand": "علامة شاي",
+    "equipment": "معدات"
+  }
+}

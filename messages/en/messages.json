@@ -1,0 +1,11 @@
+{
+  "title": "Messages",
+  "empty": "No conversations yet.",
+  "unread": "Unread",
+  "unknown": "Unknown",
+  "time": {
+    "now": "Now",
+    "minutes": "{count}m",
+    "hours": "{count}h"
+  }
+}

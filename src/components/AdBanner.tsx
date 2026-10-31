@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 
 interface AdBannerProps {
   slot: string; // Google AdSense ad slot ID
   format?: "auto" | "horizontal" | "vertical" | "rectangle";
   className?: string;
-  label?: string; // e.g. "إعلان"
+  label?: string; // defaults to the localized "Ad" label
 }
 
 declare global {
@@ -19,8 +20,9 @@ export default function AdBanner({
   slot,
   format = "auto",
   className = "",
-  label = "إعلان",
+  label,
 }: AdBannerProps) {
+  const t = useTranslations("adBanner");
   const adRef = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
 
@@ -37,7 +39,7 @@ export default function AdBanner({
   return (
     <div className={`ad-container bg-surface border border-espresso/10 rounded-2xl p-3 ${className}`}>
       <p className="text-[11px] text-espresso/60 mb-2 font-semibold">
-        {label}
+        {label ?? t("label")}
       </p>
       <ins
         ref={adRef}

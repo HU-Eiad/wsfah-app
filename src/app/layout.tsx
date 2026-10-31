@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Epilogue, Noto_Sans_Arabic } from "next/font/google";
 import Script from "next/script";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
+import { dirFor, type Locale } from "@/i18n/config";
 import SessionProvider from "@/components/SessionProvider";
 import AdProvider from "@/components/AdProvider";
 import "./globals.css";
@@ -17,18 +20,20 @@ const notoArabic = Noto_Sans_Arabic({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-export const metadata: Metadata = {
-  title: "وصفة - WSFA",
-  description: "اكتشف، حضّر، وشارك أفضل وصفات القهوة والشاي",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("meta");
+  return { title: t("title"), description: t("description") };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = (await getLocale()) as Locale;
+
   return (
-    <html lang="ar" dir="rtl" translate="no" suppressHydrationWarning>
+    <html lang={locale} dir={dirFor(locale)} translate="no" suppressHydrationWarning>
       <head>
         <meta name="google" content="notranslate" />
         <link rel="icon" href="/favicon.png" type="image/png" />
@@ -45,7 +50,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${epilogue.variable} ${notoArabic.variable} font-arabic antialiased`}>
+      <body className={`${epilogue.variable} ${notoArabic.variable} ${locale === "ar" ? "font-arabic" : "font-display"} antialiased`}>
         {process.env.NEXT_PUBLIC_ADSENSE_ID && (
           <Script
             async
@@ -54,9 +59,11 @@ export default function RootLayout({
             strategy="lazyOnload"
           />
         )}
-        <SessionProvider>
-          <AdProvider>{children}</AdProvider>
-        </SessionProvider>
+        <NextIntlClientProvider>
+          <SessionProvider>
+            <AdProvider>{children}</AdProvider>
+          </SessionProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

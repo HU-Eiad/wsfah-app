@@ -1,0 +1,32 @@
+{
+  "appName": "WSFA",
+  "homeAria": "WSFA home",
+  "login": "Log in",
+  "title": "Refund policy",
+  "lead": "Our rules on payments, cancellations, and refund eligibility",
+  "items": {
+    "within14": {
+      "title": "Cancelling within 14 days",
+      "body": "Subscriptions to plans (yearly or monthly) can only be cancelled within 14 days of their first activation, and refunds of the amounts paid are processed within 14 days."
+    },
+    "after14": {
+      "title": "Cancelling after 14 days",
+      "body": "If you cancel a subscription to a paid plan more than 14 days after it was activated, you can keep using the plan and its benefits until the subscription's end date, and the subscription fee cannot be refunded."
+    },
+    "autoRenew": {
+      "title": "Automatic renewal",
+      "body": "When automatic subscription renewal is turned on, the subscription fee is processed automatically as soon as the new subscription invoice is issued."
+    },
+    "afterDelivery": {
+      "title": "No refunds after the service is delivered",
+      "body": "No refund will be issued in cases where the customer changes their mind after the service has been delivered as promised."
+    },
+    "promotions": {
+      "title": "Promotions and discounts",
+      "body": "Approved refunds for services purchased through promotional offers or discounts are processed based on the actual amount the customer paid."
+    }
+  },
+  "helpTitle": "Need help?",
+  "helpBody": "For questions about refunds and payments",
+  "copyright": "© {year} WSFA. All rights reserved."
+}

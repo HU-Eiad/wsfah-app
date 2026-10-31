@@ -1,4 +1,7 @@
-export default function OfflinePage() {
+import { getTranslations } from "next-intl/server";
+
+export default async function OfflinePage() {
+  const t = await getTranslations("offline");
   return (
     <div className="min-h-screen bg-background-light text-espresso flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm text-center">
@@ -10,12 +13,12 @@ export default function OfflinePage() {
               aria-hidden
             />
           </span>
-          <span className="font-display text-2xl font-semibold">وصفة</span>
+          <span className="font-display text-2xl font-semibold">{t("appName")}</span>
         </div>
         <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-        <h1 className="text-2xl mb-3">أنت غير متصل</h1>
+        <h1 className="text-2xl mb-3">{t("title")}</h1>
         <p className="text-sm text-espresso/60 leading-relaxed">
-          اتصل بالإنترنت لمتابعة تصفح وصفة.
+          {t("body")}
         </p>
       </div>
     </div>

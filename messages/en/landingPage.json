@@ -1,0 +1,88 @@
+{
+  "appName": "WSFA",
+  "homeAria": "WSFA home",
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "login": "Log in",
+    "loginShort": "Log in",
+    "signup": "Sign up"
+  },
+  "hero": {
+    "line1": "Brew your cup",
+    "line2": "the right way.",
+    "lead": "Tested recipes with steps and a timer, a journal that keeps every brew, and a community of coffee and tea lovers brewing with you.",
+    "startFree": "Start for free",
+    "browse": "Browse recipes",
+    "ratio": "Ratio 1:15",
+    "coffee": "Coffee",
+    "coffeeValue": "15 g",
+    "water": "Water",
+    "waterValue": "225 ml",
+    "temp": "Temp",
+    "time": "Time"
+  },
+  "features": {
+    "title": "From the first pour to your favorite cup",
+    "brew": {
+      "title": "Brew",
+      "lead": "Every brew in clear steps, from the first pour to the last drop.",
+      "guided": { "title": "Guided brew mode", "desc": "Step by step with a timer for every pour. Filter, espresso, or matcha." },
+      "timer": { "title": "Brew timer", "desc": "Vibration alerts and background notifications, using the recipe's own parameters." },
+      "scale": { "title": "Smart scale", "desc": "Connect Acaia and Timemore scales over Bluetooth and track the weight live." }
+    },
+    "log": {
+      "title": "Log",
+      "lead": "Find out why yesterday's cup was better, and repeat it.",
+      "journal": { "title": "Brew journal", "desc": "Grind, temperature, ratio, and rating for every cup, in one place." },
+      "library": { "title": "Recipe library", "desc": "Coffee, tea, and matcha recipes from the community and verified roasters." },
+      "collections": { "title": "Collections", "desc": "Sort your favorite recipes into collections and come back to them anytime." }
+    },
+    "share": {
+      "title": "Share",
+      "lead": "A community that brews with you, and roasters that reward you for it.",
+      "community": { "title": "Community and gallery", "desc": "Share photos of your brews, follow other brewers, and join brewing groups." },
+      "rewards": { "title": "Rewards and challenges", "desc": "Collect points and stamps, complete challenges, and redeem them for real rewards." },
+      "roasters": { "title": "Roasters and cafés", "desc": "Discover verified roasters and cafés, read reviews, and shop their products." }
+    }
+  },
+  "how": {
+    "title": "How does WSFA work?",
+    "step1": { "title": "Create your account", "desc": "Pick the brew methods and categories you love." },
+    "step2": { "title": "Pick a recipe and brew", "desc": "Follow the steps and the timer, then log the result." },
+    "step3": { "title": "Improve and share", "desc": "Compare your brews, earn rewards, and share with the community." }
+  },
+  "pricing": {
+    "title": "Simple, clear pricing",
+    "lead": "Start for free, and upgrade when you need more."
+  },
+  "roasters": {
+    "badge": "For roasters and brands",
+    "title": "Grow your brand on WSFA",
+    "lead": "Reach coffee and tea lovers. Showcase your products, build a community, and make sales."
+  },
+  "cta": {
+    "title": "Your next cup starts here.",
+    "lead": "Free account, no card required.",
+    "button": "Create a free account"
+  },
+  "footer": {
+    "tagline": "The platform for coffee and tea lovers.",
+    "product": "Product",
+    "recipes": "Recipes",
+    "roasters": "Roasters",
+    "leaderboard": "Leaderboard",
+    "events": "Events",
+    "company": "Company",
+    "about": "About WSFA",
+    "blog": "Blog",
+    "careers": "Careers",
+    "contact": "Contact us",
+    "legal": "Legal",
+    "privacy": "Privacy policy",
+    "terms": "Terms of service",
+    "refund": "Refund policy",
+    "copyright": "© {year} WSFA. All rights reserved.",
+    "mail": "Email"
+  }
+}

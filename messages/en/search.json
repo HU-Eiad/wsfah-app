@@ -1,0 +1,19 @@
+{
+  "all": "All",
+  "difficulty": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "source": {
+    "community": "Community",
+    "brand": "Brand"
+  },
+  "title": "Search",
+  "searchLabel": "Search",
+  "placeholder": "Search recipes, roasters, or tea blends",
+  "clear": "Clear search",
+  "difficultyLabel": "Level",
+  "sourceLabel": "Source",
+  "empty": "No recipes match your search. Try a different word or category."
+}

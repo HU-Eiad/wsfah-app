@@ -8,6 +8,7 @@ import BrandIcon from "@/components/BrandIcon";
 import BottomNav from "@/components/BottomNav";
 import BrewMethodPicker from "@/components/BrewMethodPicker";
 import UpgradeModal from "@/components/UpgradeModal";
+import { useTranslations } from "next-intl";
 
 interface Category {
   id: string;
@@ -31,25 +32,8 @@ const GRIND_SIZES = [
   "Coarse",
 ] as const;
 
-// Display labels only; the stored values stay the English keys above.
-const GRIND_LABELS: Record<string, string> = {
-  "Extra Fine": "ناعم جداً",
-  Fine: "ناعم",
-  "Medium-Fine": "متوسط إلى ناعم",
-  Medium: "متوسط",
-  "Medium-Coarse": "متوسط إلى خشن",
-  Coarse: "خشن",
-};
-
-const INGREDIENT_UNITS: { value: IngredientUnit; label: string }[] = [
-  { value: "g", label: "غ" },
-  { value: "ml", label: "مل" },
-  { value: "oz", label: "oz" },
-  { value: "tsp", label: "ملعقة ص" },
-  { value: "tbsp", label: "ملعقة ك" },
-  { value: "cups", label: "كوب" },
-  { value: "whole", label: "حبة" },
-];
+// Display labels come from messages (createRecipe.units.<value>); stored values stay as-is.
+const INGREDIENT_UNITS: IngredientUnit[] = ["g", "ml", "oz", "tsp", "tbsp", "cups", "whole"];
 
 function formatBrewTime(seconds: number): string {
   if (!seconds || seconds <= 0) return "0:00";
@@ -60,6 +44,8 @@ function formatBrewTime(seconds: number): string {
 
 export default function CreatePage() {
   const router = useRouter();
+  const t = useTranslations("create");
+  const tc = useTranslations("common");
 
   // Basic fields
   const [recipeName, setRecipeName] = useState("");
@@ -185,7 +171,7 @@ export default function CreatePage() {
 
   const handlePublish = async () => {
     if (!recipeName || !category) {
-      setError("Ø§Ø³Ù Ø§ÙÙØµÙØ© ÙØ§ÙÙØ³Ù ÙØ·ÙÙØ¨Ø§Ù");
+      setError(t("errors.required"));
       return;
     }
 
@@ -238,7 +224,7 @@ export default function CreatePage() {
           setShowUpgradeModal(true);
           return;
         }
-        throw new Error(data.error || "ØªØ¹Ø°ÙØ± ÙØ´Ø± Ø§ÙÙØµÙØ©Ø Ø­Ø§ÙÙ ÙØ±Ø© Ø£Ø®Ø±Ù");
+        throw new Error(data.error || t("errors.publishFailed"));
       }
 
       setPublished(true);
@@ -246,7 +232,7 @@ export default function CreatePage() {
         router.push("/profile");
       }, 1500);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Ø­Ø¯Ø« Ø®Ø·Ø£ ØºÙØ± ÙØªÙÙØ¹Ø Ø­Ø§ÙÙ ÙØ±Ø© Ø£Ø®Ø±Ù");
+      setError(err instanceof Error ? err.message : tc("errorGeneric"));
     } finally {
       setPublishing(false);
     }
@@ -267,18 +253,18 @@ export default function CreatePage() {
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link
           href="/"
-          aria-label="إغلاق"
+          aria-label={tc("close")}
           className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk"
         >
           <MaterialIcon icon="close" />
         </Link>
-        <h1 className="text-xl flex-1">إنشاء وصفة</h1>
+        <h1 className="text-xl flex-1">{t("title")}</h1>
         <button
           onClick={handlePublish}
           disabled={publishing}
           className="bg-primary text-on-primary rounded-xl px-4 py-2 font-bold text-sm hover:bg-primary/90 active:scale-95 transition-colors disabled:opacity-50"
         >
-          {publishing ? "…" : "نشر"}
+          {publishing ? "…" : t("publishShort")}
         </button>
       </header>
 
@@ -287,7 +273,7 @@ export default function CreatePage() {
         <div className="mx-4 mt-4 bg-primary/10 rounded-xl p-4 flex items-center gap-3">
           <MaterialIcon icon="check_circle" className="text-primary text-xl" />
           <p className="text-sm font-semibold text-primary">
-            تم نشر الوصفة بنجاح.
+            {t("published")}
           </p>
         </div>
       )}
@@ -323,7 +309,7 @@ export default function CreatePage() {
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
           ) : imageUrl ? (
             <>
-              <img src={imageUrl} alt="صورة الوصفة" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={imageUrl} alt={t("imageAlt")} className="absolute inset-0 w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                 <div className="bg-surface/90 rounded-full p-3">
                   <MaterialIcon icon="edit" className="text-xl text-espresso" />
@@ -336,8 +322,8 @@ export default function CreatePage() {
                 <MaterialIcon icon="add_a_photo" className="text-2xl text-primary" />
               </div>
               <div className="text-center">
-                <p className="text-sm font-bold">إضافة صورة غلاف</p>
-                <p className="text-xs text-espresso/60 mt-1">انقر للرفع</p>
+                <p className="text-sm font-bold">{t("addCover")}</p>
+                <p className="text-xs text-espresso/60 mt-1">{t("tapToUpload")}</p>
               </div>
             </>
           )}
@@ -347,25 +333,25 @@ export default function CreatePage() {
         {/*  BASIC INFO                                                 */}
         {/* ──────────────────────────────────────────────────────────── */}
         <section className={`${sectionClass} space-y-4`}>
-          <h2 className="text-xl">عن الوصفة</h2>
+          <h2 className="text-xl">{t("aboutSection")}</h2>
 
           {/* Recipe Name */}
           <div>
-            <label htmlFor="create-name" className={labelClass}>اسم الوصفة</label>
+            <label htmlFor="create-name" className={labelClass}>{t("nameLabel")}</label>
             <input
               id="create-name"
               dir="auto"
               value={recipeName}
               onChange={(e) => setRecipeName(e.target.value)}
               className={inputClass}
-              placeholder="مثال: قهوة الصباح بالترشيح"
+              placeholder={t("namePlaceholder")}
             />
           </div>
 
           {/* Publish As Toggle - BRAND_ADMIN only */}
           {userRole === "BRAND_ADMIN" && userBrand && (
             <div>
-              <p className={labelClass}>النشر باسم</p>
+              <p className={labelClass}>{t("publishAs")}</p>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
@@ -380,7 +366,7 @@ export default function CreatePage() {
                     icon="group"
                     className={`text-lg ${!publishAsBrand ? "text-primary" : "text-espresso/50"}`}
                   />
-                  <span dir="auto">وصفة مجتمعية</span>
+                  <span dir="auto">{t("communityRecipe")}</span>
                 </button>
                 <button
                   type="button"
@@ -402,7 +388,7 @@ export default function CreatePage() {
                 <div className="mt-2 px-3 py-2 bg-oat-milk rounded-xl flex items-center gap-2">
                   <MaterialIcon icon="info" className="text-sm text-brand-gold" />
                   <p className="text-xs text-espresso/70 leading-relaxed" dir="auto">
-                    سيتم نشر هذه الوصفة تحت <strong>{userBrand.name}</strong> كوصفة رسمية للعلامة التجارية.
+                    {t.rich("brandNotice", { brand: userBrand.name, strong: (chunks) => <strong>{chunks}</strong> })}
                   </p>
                 </div>
               )}
@@ -412,14 +398,14 @@ export default function CreatePage() {
           {/* Category & Difficulty */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="create-category" className={labelClass}>القسم</label>
+              <label htmlFor="create-category" className={labelClass}>{t("categoryLabel")}</label>
               <select
                 id="create-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className={`${inputClass} appearance-none`}
               >
-                <option value="">اختر…</option>
+                <option value="">{t("choose")}</option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.name}>
                     {cat.name}
@@ -428,36 +414,36 @@ export default function CreatePage() {
               </select>
             </div>
             <div>
-              <label htmlFor="create-difficulty" className={labelClass}>الصعوبة</label>
+              <label htmlFor="create-difficulty" className={labelClass}>{t("difficultyLabel")}</label>
               <select
                 id="create-difficulty"
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
                 className={`${inputClass} appearance-none`}
               >
-                <option value="Beginner">مبتدئ</option>
-                <option value="Intermediate">متوسط</option>
-                <option value="Advanced">متقدم</option>
+                <option value="Beginner">{t("difficulty.Beginner")}</option>
+                <option value="Intermediate">{t("difficulty.Intermediate")}</option>
+                <option value="Advanced">{t("difficulty.Advanced")}</option>
               </select>
             </div>
           </div>
 
           {/* Brew Time */}
           <div>
-            <label htmlFor="create-brew-time" className={labelClass}>وقت التحضير</label>
+            <label htmlFor="create-brew-time" className={labelClass}>{t("brewTimeLabel")}</label>
             <input
               id="create-brew-time"
               dir="auto"
               value={brewTime}
               onChange={(e) => setBrewTime(e.target.value)}
               className={inputClass}
-              placeholder="مثال: 10 دقائق"
+              placeholder={t("brewTimePlaceholder")}
             />
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="create-description" className={labelClass}>الوصف</label>
+            <label htmlFor="create-description" className={labelClass}>{t("descriptionLabel")}</label>
             <textarea
               id="create-description"
               dir="auto"
@@ -465,7 +451,7 @@ export default function CreatePage() {
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               className={`${inputClass} resize-none leading-relaxed`}
-              placeholder="أخبرنا قصة وصفتك…"
+              placeholder={t("descriptionPlaceholder")}
             />
           </div>
         </section>
@@ -477,9 +463,9 @@ export default function CreatePage() {
           {/* Section heading */}
           <div className="flex items-start gap-3 mb-4">
             <div className="flex-1">
-              <h2 className="text-xl">معايير التحضير</h2>
+              <h2 className="text-xl">{t("brewParams")}</h2>
               <p className="text-xs text-espresso/60 mt-1">
-                اضبط معايير تحضيرك للكوب المثالي
+                {t("brewParamsHint")}
               </p>
             </div>
             <BrewMethodPicker
@@ -501,7 +487,7 @@ export default function CreatePage() {
               </div>
               <div className="flex-1 min-w-0">
                 <label htmlFor="create-temp" className="text-xs font-semibold text-espresso/60 block mb-1">
-                  الحرارة
+                  {t("temperature")}
                 </label>
                 <input
                   id="create-temp"
@@ -509,7 +495,7 @@ export default function CreatePage() {
                   value={temperature}
                   onChange={(e) => setTemperature(e.target.value)}
                   className={paramInputClass}
-                  placeholder="مثال: 93"
+                  placeholder={t("temperaturePlaceholder")}
                 />
               </div>
             </div>
@@ -521,7 +507,7 @@ export default function CreatePage() {
               </div>
               <div className="flex-1 min-w-0">
                 <label htmlFor="create-ratio" className="text-xs font-semibold text-espresso/60 block mb-1">
-                  نسبة القهوة إلى الماء
+                  {t("ratio")}
                 </label>
                 <input
                   id="create-ratio"
@@ -529,7 +515,7 @@ export default function CreatePage() {
                   value={ratio}
                   onChange={(e) => setRatio(e.target.value)}
                   className={`${paramInputClass} text-end`}
-                  placeholder="مثال: 1:15"
+                  placeholder={t("ratioPlaceholder")}
                 />
               </div>
             </div>
@@ -541,7 +527,7 @@ export default function CreatePage() {
               </div>
               <div className="flex-1 min-w-0">
                 <label htmlFor="create-grind" className="text-xs font-semibold text-espresso/60 block mb-1">
-                  حجم الطحن
+                  {t("grindSize")}
                 </label>
                 <select
                   id="create-grind"
@@ -549,10 +535,10 @@ export default function CreatePage() {
                   onChange={(e) => setGrindSize(e.target.value)}
                   className={`${paramInputClass} appearance-none`}
                 >
-                  <option value="">اختر حجم الطحن…</option>
+                  <option value="">{t("chooseGrind")}</option>
                   {GRIND_SIZES.map((size) => (
                     <option key={size} value={size}>
-                      {GRIND_LABELS[size] || size}
+                      {t(`grind.${size}`)}
                     </option>
                   ))}
                 </select>
@@ -566,7 +552,7 @@ export default function CreatePage() {
               </div>
               <div className="flex-1 min-w-0">
                 <label htmlFor="create-timer" className="text-xs font-semibold text-espresso/60 block mb-1">
-                  مؤقت التحضير (بالثواني)
+                  {t("timerSeconds")}
                 </label>
                 <div className="flex items-center gap-3">
                   <input
@@ -580,7 +566,7 @@ export default function CreatePage() {
                       )
                     }
                     className={`flex-1 ${paramInputClass} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
-                    placeholder="مثال: 240"
+                    placeholder={t("timerPlaceholder")}
                   />
                   {typeof brewTimeSec === "number" && brewTimeSec > 0 && (
                     <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full whitespace-nowrap tabular-nums" dir="ltr">
@@ -598,12 +584,12 @@ export default function CreatePage() {
         {/* ──────────────────────────────────────────────────────────── */}
         <section className={sectionClass}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl">المكونات</h2>
+            <h2 className="text-xl">{t("ingredients")}</h2>
             <button
               onClick={addIngredient}
               className="text-primary text-sm font-semibold flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors"
             >
-              <MaterialIcon icon="add" className="text-base" /> إضافة
+              <MaterialIcon icon="add" className="text-base" /> {t("add")}
             </button>
           </div>
           <div className="space-y-2">
@@ -611,26 +597,26 @@ export default function CreatePage() {
               <div key={idx} className="flex gap-2 items-center bg-oat-milk rounded-xl p-2">
                 <input
                   dir="auto"
-                  aria-label={`اسم المكوّن ${idx + 1}`}
+                  aria-label={t("ingredientName", { number: idx + 1 })}
                   value={ing.name}
                   onChange={(e) =>
                     updateIngredient(idx, "name", e.target.value)
                   }
                   className="flex-1 min-w-0 bg-surface rounded-xl px-3 py-2.5 border border-espresso/10 text-sm placeholder:text-espresso/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  placeholder="المكوّن"
+                  placeholder={t("ingredientPlaceholder")}
                 />
                 <input
                   inputMode="decimal"
-                  aria-label={`كمية المكوّن ${idx + 1}`}
+                  aria-label={t("ingredientAmount", { number: idx + 1 })}
                   value={ing.amount}
                   onChange={(e) =>
                     updateIngredient(idx, "amount", e.target.value)
                   }
                   className="w-20 bg-surface rounded-xl px-3 py-2.5 border border-espresso/10 text-sm placeholder:text-espresso/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  placeholder="الكمية"
+                  placeholder={t("amountPlaceholder")}
                 />
                 <select
-                  aria-label={`وحدة المكوّن ${idx + 1}`}
+                  aria-label={t("ingredientUnit", { number: idx + 1 })}
                   value={ing.unit}
                   onChange={(e) =>
                     updateIngredient(idx, "unit", e.target.value)
@@ -638,15 +624,15 @@ export default function CreatePage() {
                   className="w-20 bg-surface rounded-xl px-2 py-2.5 border border-espresso/10 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 appearance-none text-center"
                 >
                   {INGREDIENT_UNITS.map((u) => (
-                    <option key={u.value} value={u.value}>
-                      {u.label}
+                    <option key={u} value={u}>
+                      {t(`units.${u}`)}
                     </option>
                   ))}
                 </select>
                 {ingredients.length > 1 && (
                   <button
                     onClick={() => removeIngredient(idx)}
-                    aria-label="حذف المكوّن"
+                    aria-label={t("removeIngredient")}
                     className="size-9 shrink-0 rounded-full flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors"
                   >
                     <MaterialIcon icon="delete" className="text-lg" />
@@ -662,12 +648,12 @@ export default function CreatePage() {
         {/* ──────────────────────────────────────────────────────────── */}
         <section className={sectionClass}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl">الخطوات</h2>
+            <h2 className="text-xl">{t("steps")}</h2>
             <button
               onClick={addStep}
               className="text-primary text-sm font-semibold flex items-center gap-1 px-3 py-1.5 rounded-full hover:bg-primary/10 transition-colors"
             >
-              <MaterialIcon icon="add" className="text-base" /> إضافة خطوة
+              <MaterialIcon icon="add" className="text-base" /> {t("addStep")}
             </button>
           </div>
           <div className="space-y-2">
@@ -678,17 +664,17 @@ export default function CreatePage() {
                 </div>
                 <textarea
                   dir="auto"
-                  aria-label={`الخطوة ${idx + 1}`}
+                  aria-label={t("stepLabel", { number: idx + 1 })}
                   value={step}
                   onChange={(e) => updateStep(idx, e.target.value)}
                   rows={2}
                   className="flex-1 min-w-0 bg-surface rounded-xl px-3 py-2.5 border border-espresso/10 text-sm leading-relaxed placeholder:text-espresso/50 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
-                  placeholder={`تعليمات الخطوة ${idx + 1}…`}
+                  placeholder={t("stepPlaceholder", { number: idx + 1 })}
                 />
                 {steps.length > 1 && (
                   <button
                     onClick={() => removeStep(idx)}
-                    aria-label="حذف الخطوة"
+                    aria-label={t("removeStep")}
                     className="size-9 shrink-0 rounded-full flex items-center justify-center text-red-600 hover:bg-red-50 transition-colors mt-1"
                   >
                     <MaterialIcon icon="delete" className="text-lg" />
@@ -704,7 +690,7 @@ export default function CreatePage() {
           <div className="flex items-center justify-center gap-2 py-2">
             <BrandIcon name="verified" className="text-primary text-lg" />
             <span className="text-xs font-bold text-primary">
-              النشر كمبدع موثق
+              {t("publishingAsCreator")}
             </span>
           </div>
         )}
@@ -714,7 +700,7 @@ export default function CreatePage() {
           <div className="flex items-center justify-center gap-2 py-2">
             <MaterialIcon icon="storefront" className="text-brand-gold text-lg" />
             <span className="text-xs font-bold text-brand-gold" dir="auto">
-              النشر تحت {userBrand.name}
+              {t("publishingUnder", { brand: userBrand.name })}
             </span>
           </div>
         )}
@@ -730,10 +716,10 @@ export default function CreatePage() {
           }`}
         >
           {publishing
-            ? "جارٍ النشر…"
+            ? t("publishing")
             : publishAsBrand && userBrand
-              ? `نشر باسم ${userBrand.name}`
-              : "نشر الوصفة"}
+              ? t("publishAsBrand", { brand: userBrand.name })
+              : t("publish")}
         </button>
       </main>
 

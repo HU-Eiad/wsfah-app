@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import { useTranslations, useLocale } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface GroupDetail {
   id: string;
@@ -26,6 +28,9 @@ interface PostData {
 
 export default function GroupDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const t = useTranslations("groupsDetail");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [group, setGroup] = useState<GroupDetail | null>(null);
   const [posts, setPosts] = useState<PostData[]>([]);
   const [isMember, setIsMember] = useState(false);
@@ -106,7 +111,7 @@ export default function GroupDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background-light flex items-center justify-center" role="status" aria-label="جارٍ التحميل…">
+      <div className="min-h-screen bg-background-light flex items-center justify-center" role="status" aria-label={tc("loading")}>
         <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
       </div>
     );
@@ -117,9 +122,9 @@ export default function GroupDetailPage() {
       <div className="min-h-screen bg-background-light text-espresso flex items-center justify-center p-6">
         <div className="text-center">
           <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-          <p className="text-sm text-espresso/70">المجموعة غير موجودة.</p>
+          <p className="text-sm text-espresso/70">{t("notFound")}</p>
           <Link href="/groups" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">
-            كل المجموعات
+            {t("allGroups")}
           </Link>
         </div>
       </div>
@@ -129,7 +134,7 @@ export default function GroupDetailPage() {
   return (
     <div className="min-h-screen bg-background-light text-espresso">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <Link href="/groups" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <Link href="/groups" aria-label={tc("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="arrow_forward" />
         </Link>
         <h1 dir="auto" className="text-xl flex-1 truncate">{group.name}</h1>
@@ -144,10 +149,10 @@ export default function GroupDetailPage() {
           <div className={`flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-espresso/60 ${group.description ? "mt-3" : ""}`}>
             <span className="flex items-center gap-1">
               <MaterialIcon icon="group" className="text-sm" />
-              {group._count.members} {group._count.members === 1 ? "عضو" : "أعضاء"}
+              {t("members", { count: group._count.members })}
             </span>
             <span>
-              أنشأها <span dir="auto">{group.creator.name || "غير معروف"}</span>
+              {t.rich("createdBy", { name: group.creator.name || t("unknown"), creator: (chunks) => <span dir="auto">{chunks}</span> })}
             </span>
           </div>
           <div className="mt-4">
@@ -156,14 +161,14 @@ export default function GroupDetailPage() {
                 onClick={handleLeave}
                 className="border border-red-600/40 text-red-600 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-red-50 transition-colors"
               >
-                مغادرة المجموعة
+                {t("leave")}
               </button>
             ) : (
               <button
                 onClick={handleJoin}
                 className="bg-primary text-on-primary px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors"
               >
-                انضم للمجموعة
+                {t("join")}
               </button>
             )}
           </div>
@@ -175,8 +180,8 @@ export default function GroupDetailPage() {
             <textarea
               value={postBody}
               onChange={(e) => setPostBody(e.target.value)}
-              placeholder="اكتب شيئاً للمجموعة…"
-              aria-label="منشور جديد"
+              placeholder={t("composerPlaceholder")}
+              aria-label={t("composerLabel")}
               dir="auto"
               className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm leading-relaxed placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
               rows={3}
@@ -187,20 +192,20 @@ export default function GroupDetailPage() {
                 disabled={!postBody.trim() || posting}
                 className="mt-2 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-colors"
               >
-                {posting ? "جارٍ النشر…" : "نشر"}
+                {posting ? t("posting") : t("post")}
               </button>
             </div>
           </form>
         )}
 
         {/* Posts */}
-        <h2 className="text-xl mb-4">المنشورات</h2>
+        <h2 className="text-xl mb-4">{t("postsTitle")}</h2>
         <div className="space-y-4">
           {posts.length === 0 ? (
             <div className="text-center py-8">
               <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
               <p className="text-sm text-espresso/70">
-                لا توجد منشورات بعد. كن أول من يشارك شيئاً!
+                {t("postsEmpty")}
               </p>
             </div>
           ) : (
@@ -223,10 +228,10 @@ export default function GroupDetailPage() {
                   )}
                   <div className="min-w-0">
                     <p dir="auto" className="text-sm font-bold truncate">
-                      {post.author.name || "غير معروف"}
+                      {post.author.name || t("unknown")}
                     </p>
                     <p className="text-xs text-espresso/60">
-                      {new Date(post.createdAt).toLocaleDateString("ar-u-nu-latn")}
+                      {new Date(post.createdAt).toLocaleDateString(intlLocale(locale))}
                     </p>
                   </div>
                 </div>

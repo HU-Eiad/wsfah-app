@@ -2,18 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import BrandIcon from "./BrandIcon";
 
 const navItems = [
-  { href: "/home", icon: "nav-home", label: "الرئيسية" },
-  { href: "/search", icon: "nav-search", label: "البحث" },
-  { href: "/create", icon: "nav-create", label: "إنشاء", isFab: true },
-  { href: "/rewards", icon: "nav-rewards", label: "المكافآت" },
-  { href: "/explore", icon: "nav-explore", label: "استكشف" },
+  { href: "/home", icon: "nav-home", key: "home", isFab: false },
+  { href: "/search", icon: "nav-search", key: "search", isFab: false },
+  { href: "/create", icon: "nav-create", key: "create", isFab: true },
+  { href: "/rewards", icon: "nav-rewards", key: "rewards", isFab: false },
+  { href: "/explore", icon: "nav-explore", key: "explore", isFab: false },
 ];
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const t = useTranslations("common.nav");
 
   const isActive = (href: string) => {
     if (href === "/home") return pathname === "/home";
@@ -31,7 +33,7 @@ export default function BottomNav() {
               <span className="size-14 rounded-2xl bg-primary text-on-primary shadow-[0_10px_24px_-10px_rgba(20,53,36,0.7)] flex items-center justify-center active:scale-95 transition-transform">
                 <BrandIcon name={item.icon} className="text-[28px]" />
               </span>
-              <span className="text-[11px] font-semibold text-espresso/70">{item.label}</span>
+              <span className="text-[11px] font-semibold text-espresso/70">{t(item.key)}</span>
             </Link>
           );
         }
@@ -48,7 +50,7 @@ export default function BottomNav() {
               aria-hidden
             />
             <BrandIcon name={item.icon} className="text-2xl" />
-            <span className={`text-[11px] ${active ? "font-bold" : "font-medium"}`}>{item.label}</span>
+            <span className={`text-[11px] ${active ? "font-bold" : "font-medium"}`}>{t(item.key)}</span>
           </Link>
         );
       })}

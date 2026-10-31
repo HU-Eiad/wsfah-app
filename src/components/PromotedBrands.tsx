@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface Promotion {
   id: string;
@@ -23,6 +24,7 @@ interface PromotedBrandsProps {
 
 export default function PromotedBrands({ placement }: PromotedBrandsProps) {
   const [promos, setPromos] = useState<Promotion[]>([]);
+  const t = useTranslations("promotedBrands");
 
   useEffect(() => {
     fetch("/api/promotions")
@@ -39,8 +41,8 @@ export default function PromotedBrands({ placement }: PromotedBrandsProps) {
   if (promos.length === 0) return null;
 
   return (
-    <section className="mb-8" aria-label="علامات مُروَّجة">
-      <p className="text-[11px] text-espresso/60 mb-2">مُروَّج</p>
+    <section className="mb-8" aria-label={t("sectionLabel")}>
+      <p className="text-[11px] text-espresso/60 mb-2">{t("promoted")}</p>
       <div className="flex overflow-x-auto gap-3 no-scrollbar -mx-2 px-2">
         {promos.map((p) => (
           <Link
@@ -68,7 +70,7 @@ export default function PromotedBrands({ placement }: PromotedBrandsProps) {
                   {p.company.name}
                 </h4>
                 <span className="text-[11px] text-espresso/60 ms-auto shrink-0">
-                  إعلان
+                  {t("ad")}
                 </span>
               </div>
               {p.company.description && (

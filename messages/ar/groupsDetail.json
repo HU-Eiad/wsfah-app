@@ -1,0 +1,15 @@
+{
+  "notFound": "المجموعة غير موجودة.",
+  "allGroups": "كل المجموعات",
+  "members": "{count, plural, one {# عضو} other {# أعضاء}}",
+  "createdBy": "أنشأها <creator>{name}</creator>",
+  "unknown": "غير معروف",
+  "leave": "مغادرة المجموعة",
+  "join": "انضم للمجموعة",
+  "composerPlaceholder": "اكتب شيئاً للمجموعة…",
+  "composerLabel": "منشور جديد",
+  "posting": "جارٍ النشر…",
+  "post": "نشر",
+  "postsTitle": "المنشورات",
+  "postsEmpty": "لا توجد منشورات بعد. كن أول من يشارك شيئاً!"
+}

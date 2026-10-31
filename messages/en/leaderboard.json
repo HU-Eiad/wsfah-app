@@ -1,0 +1,14 @@
+{
+  "title": "Leaderboard",
+  "tabs": {
+    "points": "Points",
+    "recipes": "Recipes",
+    "followers": "Followers"
+  },
+  "units": {
+    "points": "{count, plural, one {point} other {points}}",
+    "recipes": "{count, plural, one {recipe} other {recipes}}",
+    "followers": "{count, plural, one {follower} other {followers}}"
+  },
+  "empty": "No users yet."
+}

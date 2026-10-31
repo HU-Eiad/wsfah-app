@@ -1,0 +1,17 @@
+{
+  "back": "Back",
+  "title": "Notifications",
+  "markingAll": "Marking…",
+  "markAllRead": "Mark all as read",
+  "loading": "Loading notifications…",
+  "empty": "No notifications yet. When someone likes your recipe, follows you, or you earn a badge, you'll see it here.",
+  "exploreRecipes": "Explore recipes",
+  "time": {
+    "seconds": "{count}s ago",
+    "minutes": "{count}m ago",
+    "hours": "{count}h ago",
+    "days": "{count}d ago",
+    "months": "{count, plural, one {# month} other {# months}} ago",
+    "years": "{count, plural, one {# year} other {# years}} ago"
+  }
+}

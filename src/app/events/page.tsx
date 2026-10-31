@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MaterialIcon from "@/components/MaterialIcon";
+import { useTranslations, useLocale } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface EventData {
   id: string;
@@ -16,6 +18,9 @@ interface EventData {
 }
 
 export default function EventsPage() {
+  const t = useTranslations("events");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -63,7 +68,7 @@ export default function EventsPage() {
   }
 
   function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString("ar-u-nu-latn", {
+    return new Date(dateStr).toLocaleDateString(intlLocale(locale), {
       weekday: "short",
       month: "short",
       day: "numeric",
@@ -75,14 +80,14 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen bg-background-light text-espresso">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <h1 className="text-2xl flex-1">الفعاليات</h1>
+        <h1 className="text-2xl flex-1">{t("title")}</h1>
         <button
           onClick={() => setShowCreate(!showCreate)}
           aria-expanded={showCreate}
           className="bg-primary text-on-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors flex items-center gap-1.5"
         >
           <MaterialIcon icon={showCreate ? "close" : "add"} className="text-lg" />
-          إنشاء فعالية
+          {t("createEvent")}
         </button>
       </header>
 
@@ -93,19 +98,19 @@ export default function EventsPage() {
             onSubmit={handleCreate}
             className="mb-6 bg-surface rounded-2xl border border-espresso/10 p-4 space-y-3"
           >
-            <h2 className="text-xl mb-1">فعالية جديدة</h2>
+            <h2 className="text-xl mb-1">{t("newEvent")}</h2>
             <input
               type="text"
-              placeholder="عنوان الفعالية"
-              aria-label="عنوان الفعالية"
+              placeholder={t("titlePlaceholder")}
+              aria-label={t("titlePlaceholder")}
               dir="auto"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
             <textarea
-              placeholder="الوصف (اختياري)"
-              aria-label="وصف الفعالية"
+              placeholder={t("descriptionPlaceholder")}
+              aria-label={t("descriptionLabel")}
               dir="auto"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -114,8 +119,8 @@ export default function EventsPage() {
             />
             <input
               type="text"
-              placeholder="الموقع (اختياري)"
-              aria-label="موقع الفعالية"
+              placeholder={t("locationPlaceholder")}
+              aria-label={t("locationLabel")}
               dir="auto"
               value={form.location}
               onChange={(e) => setForm({ ...form, location: e.target.value })}
@@ -124,7 +129,7 @@ export default function EventsPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label htmlFor="event-start" className="block text-xs font-semibold text-espresso/70 mb-1.5">
-                  تاريخ البدء
+                  {t("startDate")}
                 </label>
                 <input
                   id="event-start"
@@ -136,7 +141,7 @@ export default function EventsPage() {
               </div>
               <div>
                 <label htmlFor="event-end" className="block text-xs font-semibold text-espresso/70 mb-1.5">
-                  تاريخ الانتهاء (اختياري)
+                  {t("endDate")}
                 </label>
                 <input
                   id="event-end"
@@ -152,20 +157,20 @@ export default function EventsPage() {
               disabled={creating || !form.title.trim() || !form.startDate}
               className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
-              {creating ? "جارٍ الإنشاء…" : "إنشاء فعالية"}
+              {creating ? t("creating") : t("createEvent")}
             </button>
           </form>
         )}
 
         {/* Event list */}
         {loading ? (
-          <div className="flex justify-center py-12" role="status" aria-label="جارٍ التحميل…">
+          <div className="flex justify-center py-12" role="status" aria-label={tc("loading")}>
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
           </div>
         ) : events.length === 0 ? (
           <div className="text-center py-12">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-            <p className="text-sm text-espresso/70">لا توجد فعاليات قادمة.</p>
+            <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -177,10 +182,10 @@ export default function EventsPage() {
               >
                 <div className="shrink-0 w-14 rounded-xl bg-primary/10 text-primary flex flex-col items-center justify-center py-2" aria-hidden>
                   <span className="font-display text-2xl leading-none">
-                    {new Date(event.startDate).toLocaleDateString("ar-u-nu-latn", { day: "numeric" })}
+                    {new Date(event.startDate).toLocaleDateString(intlLocale(locale), { day: "numeric" })}
                   </span>
                   <span className="text-[11px] font-semibold mt-1">
-                    {new Date(event.startDate).toLocaleDateString("ar-u-nu-latn", { month: "short" })}
+                    {new Date(event.startDate).toLocaleDateString(intlLocale(locale), { month: "short" })}
                   </span>
                 </div>
                 <div className="min-w-0 flex-1">
@@ -193,7 +198,7 @@ export default function EventsPage() {
                     </p>
                   )}
                   <p className="text-xs text-espresso/60 mt-2">
-                    {event._count.rsvps} {event._count.rsvps === 1 ? "حاضر" : "حاضرين"}
+                    {t("attendees", { count: event._count.rsvps })}
                   </p>
                 </div>
               </button>

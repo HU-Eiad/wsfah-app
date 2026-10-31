@@ -1,0 +1,22 @@
+{
+  "notFound": "User not found",
+  "home": "Home",
+  "back": "Back",
+  "title": "Profile",
+  "roles": {
+    "USER": "Home barista",
+    "CREATOR": "Verified creator",
+    "BRAND_ADMIN": "Brand admin"
+  },
+  "stats": {
+    "recipes": "Recipes",
+    "followers": "Followers",
+    "following": "Following",
+    "avgRating": "Avg. rating"
+  },
+  "shareTitle": "Check out {name}'s profile on WSFA",
+  "viewBrand": "View brand",
+  "badges": "Badges",
+  "recipes": "Recipes",
+  "likes": "{count, plural, one {# like} other {# likes}}"
+}

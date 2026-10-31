@@ -1,0 +1,28 @@
+{
+  "ranks": {
+    "All": "الكل",
+    "Bronze": "برونزي",
+    "Silver": "فضي",
+    "Gold": "ذهبي"
+  },
+  "categories": {
+    "All": "الكل",
+    "General": "عام",
+    "Brewing": "تحضير",
+    "Social": "اجتماعي",
+    "Streak": "سلسلة"
+  },
+  "title": "التحديات",
+  "yourRank": "مرتبتك",
+  "memberRank": "عضو {rank}",
+  "points": "{formatted} نقطة",
+  "empty": "لا توجد تحديات بهذا الفلتر حالياً.",
+  "rewardPoints": "<num>{count}</num> نقطة",
+  "goal": "الهدف {count}",
+  "progress": "التقدم",
+  "locked": "حقّق المرتبة {rank} لفتح هذا التحدي",
+  "completed": "مكتمل",
+  "inProgress": "قيد التنفيذ",
+  "joining": "جارٍ الانضمام…",
+  "join": "انضم للتحدي"
+}

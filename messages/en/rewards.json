@@ -1,0 +1,35 @@
+{
+  "title": "Rewards",
+  "notifications": "Notifications",
+  "tiers": {
+    "Bronze": "Bronze",
+    "Silver": "Silver",
+    "Gold": "Gold"
+  },
+  "memberTier": "{tier} member",
+  "rankProgress": "Rank progress",
+  "maxedTier": "You've reached the top rank. You're a Gold member.",
+  "tierProgress": "<current>{points}</current> / <num>{max}</num> pts, <hl>{remaining} pts to {next}</hl>",
+  "totalPoints": "Total points balance",
+  "nextRank": "Next rank: {detail}",
+  "nextRankTop": "You're at the top!",
+  "pointsToGold": "{count} pts to Gold",
+  "pointsToSilver": "{count} pts to Silver",
+  "dailyStreak": "Daily streak",
+  "streakDays": "{current}/{total} days",
+  "streakComplete": "Streak complete! You earned 50 bonus points.",
+  "streakRemaining": "{count, plural, one {# day left to earn} other {# days left to earn}} <hl>50 bonus points</hl>",
+  "activeChallenges": "Active challenges",
+  "noChallenges": "You haven't joined any challenges yet.",
+  "browseChallenges": "Browse challenges",
+  "challengeReward": "Reward: {count} pts",
+  "redeemable": "Rewards to redeem",
+  "noRewards": "No rewards available yet.",
+  "pointsCost": "<num>{formatted}</num> pts",
+  "redeem": {
+    "success": "Reward redeemed!",
+    "failed": "Couldn't redeem the reward",
+    "error": "Something went wrong",
+    "redeeming": "Redeeming…"
+  }
+}

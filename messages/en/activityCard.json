@@ -1,0 +1,17 @@
+{
+  "someone": "Someone",
+  "createdRecipe": "created a new recipe",
+  "likedRecipe": "liked a recipe",
+  "savedRecipe": "saved a recipe",
+  "startedFollowing": "started following",
+  "commentedOnRecipe": "commented on a recipe",
+  "commentedOnPost": "commented on a post",
+  "viewRecipe": "View recipe",
+  "viewPost": "View post",
+  "time": {
+    "now": "Just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago"
+  }
+}

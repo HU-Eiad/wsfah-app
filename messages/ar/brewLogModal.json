@@ -1,0 +1,39 @@
+{
+  "defaultTitleWithRecipe": "تحضير: {name}",
+  "defaultTitle": "تحضيري",
+  "heading": "سجّل تحضيرك",
+  "close": "إغلاق",
+  "tabs": { "brew": "تفاصيل التحضير", "taste": "ملاحظات التذوق" },
+  "titleLabel": "العنوان",
+  "ratingLabel": "التقييم",
+  "ratingOf": "{value} من 5",
+  "coffeeGrams": "القهوة (جم)",
+  "waterMl": "الماء (مل)",
+  "waterTemp": "الحرارة (°م)",
+  "brewTime": "وقت التحضير (ثانية)",
+  "grindSize": "حجم الطحن",
+  "choose": "اختر...",
+  "grind": {
+    "extraFine": "ناعم جداً",
+    "fine": "ناعم",
+    "mediumFine": "متوسط ناعم",
+    "medium": "متوسط",
+    "mediumCoarse": "متوسط خشن",
+    "coarse": "خشن"
+  },
+  "notesLabel": "ملاحظات",
+  "notesPlaceholder": "كيف كانت النتيجة؟ أي تعديلات للمرة القادمة؟",
+  "taste": {
+    "acidity": "الحموضة", "acidityLow": "منخفضة", "acidityHigh": "عالية",
+    "body": "القوام", "bodyLow": "خفيف", "bodyHigh": "كامل",
+    "sweetness": "الحلاوة", "sweetnessLow": "جاف", "sweetnessHigh": "حلو"
+  },
+  "flavorsLabel": "نكهات",
+  "flavors": {
+    "fruity": "فاكهي", "berry": "توت", "citrus": "حمضيات", "tropical": "استوائي",
+    "nutty": "مكسرات", "chocolate": "شوكولاتة", "caramel": "كراميل", "vanilla": "فانيلا",
+    "floral": "زهري", "herbal": "أعشاب", "spicy": "حار", "smoky": "مدخن",
+    "honey": "عسل", "buttery": "زبدة", "earthy": "ترابي", "woody": "خشبي"
+  },
+  "saveLog": "حفظ السجل"
+}

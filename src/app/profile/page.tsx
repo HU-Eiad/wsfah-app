@@ -6,12 +6,14 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
+  const t = await getTranslations("profile");
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
@@ -81,9 +83,9 @@ export default async function ProfilePage() {
 
   // Role badge configuration
   const roleBadgeConfig: Record<string, { label: string; color: string; icon?: string }> = {
-    USER: { label: "باريستا منزلي", color: "bg-green-100 text-green-700 border-green-200" },
-    CREATOR: { label: "مبدع موثق", color: "bg-purple-100 text-purple-700 border-purple-200", icon: "verified" },
-    BRAND_ADMIN: { label: "مدير علامة تجارية", color: "bg-amber-100 text-amber-700 border-amber-200" },
+    USER: { label: t("roles.USER"), color: "bg-green-100 text-green-700 border-green-200" },
+    CREATOR: { label: t("roles.CREATOR"), color: "bg-purple-100 text-purple-700 border-purple-200", icon: "verified" },
+    BRAND_ADMIN: { label: t("roles.BRAND_ADMIN"), color: "bg-amber-100 text-amber-700 border-amber-200" },
   };
 
   const currentRoleBadge = roleBadgeConfig[user.role] || roleBadgeConfig.USER;
@@ -102,11 +104,11 @@ export default async function ProfilePage() {
     <div className="bg-background-light text-espresso min-h-screen flex flex-col max-w-screen-sm mx-auto w-full">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <Link href="/" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <Link href="/" aria-label={t("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h1 className="text-xl flex-1">الملف الشخصي</h1>
-        <Link href="/settings" aria-label="الإعدادات" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <h1 className="text-xl flex-1">{t("title")}</h1>
+        <Link href="/settings" aria-label={t("settings")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="settings" />
         </Link>
       </header>
@@ -142,10 +144,10 @@ export default async function ProfilePage() {
           {/* Stats */}
           <div className="w-full flex divide-x divide-espresso/10 bg-surface rounded-2xl border border-espresso/10 py-3">
             {[
-              { value: String(user.recipes.length), label: "وصفات" },
-              { value: formatCount(user.followers), label: "متابعين" },
-              { value: formatCount(user.following), label: "يتابع" },
-              { value: user.avgRating.toFixed(1), label: "متوسط التقييم", star: true },
+              { value: String(user.recipes.length), label: t("stats.recipes") },
+              { value: formatCount(user.followers), label: t("stats.followers") },
+              { value: formatCount(user.following), label: t("stats.following") },
+              { value: user.avgRating.toFixed(1), label: t("stats.avgRating"), star: true },
             ].map((s) => (
               <div key={s.label} className="flex-1 text-center px-2">
                 <div className="flex items-center justify-center gap-1">
@@ -159,11 +161,11 @@ export default async function ProfilePage() {
 
           <div className="w-full flex gap-3">
             <Link href="/settings" className="flex-1 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center">
-              تعديل الملف
+              {t("editProfile")}
             </Link>
             <ShareButton
               url={`/profile/${user.id}`}
-              title={`تعرّف على ملف ${user.name} في وصفة`}
+              title={t("shareTitle", { name: user.name ?? "" })}
               className="relative border border-espresso/15 rounded-xl px-4 py-3 text-espresso/70 hover:border-primary/40 transition-colors"
             />
           </div>
@@ -178,25 +180,25 @@ export default async function ProfilePage() {
                   <MaterialIcon icon="analytics" className="text-primary text-xl" />
                 </div>
                 <div className="text-start">
-                  <h3 className="font-bold text-sm">تحليلات الوصفات</h3>
-                  <p className="text-xs text-espresso/60">أداء محتواك</p>
+                  <h3 className="font-bold text-sm">{t("analytics.title")}</h3>
+                  <p className="text-xs text-espresso/60">{t("analytics.subtitle")}</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-oat-milk rounded-xl p-3 text-center">
                   <p className="font-display text-lg">{user.recipes.length}</p>
-                  <p className="text-[11px] text-espresso/60 font-medium">إجمالي الوصفات</p>
+                  <p className="text-[11px] text-espresso/60 font-medium">{t("analytics.totalRecipes")}</p>
                 </div>
                 <div className="bg-oat-milk rounded-xl p-3 text-center">
                   <p className="font-display text-lg">{formatCount(totalLikes)}</p>
-                  <p className="text-[11px] text-espresso/60 font-medium">إجمالي الإعجابات</p>
+                  <p className="text-[11px] text-espresso/60 font-medium">{t("analytics.totalLikes")}</p>
                 </div>
                 <div className="bg-oat-milk rounded-xl p-3 text-center">
                   <div className="flex items-center justify-center gap-0.5">
                     <p className="font-display text-lg">{avgRating.toFixed(1)}</p>
                     <MaterialIcon icon="star" className="text-xs text-crema" filled />
                   </div>
-                  <p className="text-[11px] text-espresso/60 font-medium">متوسط التقييم</p>
+                  <p className="text-[11px] text-espresso/60 font-medium">{t("analytics.avgRating")}</p>
                 </div>
               </div>
             </div>
@@ -211,7 +213,7 @@ export default async function ProfilePage() {
                   <MaterialIcon icon="storefront" className="text-brand-gold text-2xl" />
                 </div>
                 <div className="flex-1 min-w-0 text-start">
-                  <h3 className="font-bold text-sm">إدارة علامتي التجارية</h3>
+                  <h3 className="font-bold text-sm">{t("manageBrand")}</h3>
                   <p dir="auto" className="text-xs text-espresso/60 truncate">{company.name}</p>
                 </div>
                 <MaterialIcon icon="chevron_left" className="text-espresso/50 text-xl shrink-0" />
@@ -223,7 +225,7 @@ export default async function ProfilePage() {
         {/* Badges */}
         {user.badges.length > 0 && (
           <section className="px-4 py-6">
-            <h2 className="text-xl mb-4">الشارات</h2>
+            <h2 className="text-xl mb-4">{t("badges")}</h2>
             <div className="flex gap-3 overflow-x-auto no-scrollbar">
               {user.badges.map((ub) => (
                 <div key={ub.id} className="flex flex-col items-center gap-2 shrink-0 min-w-[72px]">

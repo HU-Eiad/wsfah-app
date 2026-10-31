@@ -1,0 +1,59 @@
+{
+  "back": "Back",
+  "title": "Settings",
+  "changePhoto": "Change photo",
+  "roles": {
+    "USER": "Home barista",
+    "CREATOR": "Creator",
+    "BRAND_ADMIN": "Brand admin"
+  },
+  "messages": {
+    "avatarUpdated": "Profile photo updated!",
+    "avatarFailed": "Couldn't update your profile photo.",
+    "noChanges": "No changes to save.",
+    "saveFailed": "Couldn't save your changes.",
+    "profileUpdated": "Profile updated!",
+    "genericError": "Something went wrong. Please try again.",
+    "privacySaved": "Privacy settings saved!",
+    "privacyFailed": "Couldn't save privacy settings."
+  },
+  "account": {
+    "title": "Account",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell us about yourself...",
+    "email": "Email",
+    "phone": "Phone"
+  },
+  "password": {
+    "title": "Change password",
+    "current": "Current password",
+    "currentPlaceholder": "Enter your current password",
+    "new": "New password",
+    "newPlaceholder": "Enter a new password"
+  },
+  "saving": "Saving…",
+  "saveChanges": "Save changes",
+  "privacy": {
+    "title": "Privacy",
+    "followersTitle": "Who can see my followers",
+    "followersHint": "Control who sees your followers list",
+    "everyone": "Everyone",
+    "followers": "Followers",
+    "none": "No one",
+    "likesTitle": "Liked recipes",
+    "likesHint": "Show your liked recipes on your profile",
+    "public": "Public",
+    "private": "Private",
+    "savedTitle": "Saved recipes",
+    "savedHint": "Show your saved recipes on your profile",
+    "save": "Save privacy settings"
+  },
+  "app": {
+    "title": "App",
+    "viewProfile": "View profile",
+    "manageSubscription": "Manage subscription",
+    "signOut": "Sign out"
+  }
+}

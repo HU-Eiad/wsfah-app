@@ -1,7 +1,9 @@
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import { getTranslations } from "next-intl/server";
 
-export default function DesktopOnlyPage() {
+export default async function DesktopOnlyPage() {
+  const t = await getTranslations("desktopOnly");
   return (
     <div className="bg-background-light text-espresso min-h-screen flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm text-center">
@@ -13,11 +15,11 @@ export default function DesktopOnlyPage() {
               aria-hidden
             />
           </span>
-          <span className="font-display text-2xl font-semibold">وصفة</span>
+          <span className="font-display text-2xl font-semibold">{t("appName")}</span>
         </div>
-        <h1 className="text-2xl mb-3">وصفة على هاتفك</h1>
+        <h1 className="text-2xl mb-3">{t("title")}</h1>
         <p className="text-sm text-espresso/60 leading-relaxed mb-8">
-          تطبيق وصفة مصمم لتجربة الموبايل. افتح الرابط من هاتفك أو حمّل التطبيق.
+          {t("body")}
         </p>
         <div className="flex flex-col gap-3">
           <a
@@ -25,18 +27,18 @@ export default function DesktopOnlyPage() {
             className="flex items-center justify-center gap-2 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
           >
             <MaterialIcon icon="android" className="text-lg" />
-            تحميل من Google Play
+            {t("googlePlay")}
           </a>
           <a
             href="https://apps.apple.com/app/wsfa/id0000000000"
             className="flex items-center justify-center gap-2 border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm hover:border-primary/40 transition-colors"
           >
             <MaterialIcon icon="phone_iphone" className="text-lg" />
-            تحميل من App Store
+            {t("appStore")}
           </a>
         </div>
         <Link href="/" className="inline-block mt-6 text-sm text-primary font-semibold hover:underline">
-          العودة للصفحة الرئيسية
+          {t("backHome")}
         </Link>
       </div>
     </div>

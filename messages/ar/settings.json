@@ -1,0 +1,59 @@
+{
+  "back": "رجوع",
+  "title": "الإعدادات",
+  "changePhoto": "تغيير الصورة",
+  "roles": {
+    "USER": "باريستا منزلي",
+    "CREATOR": "مبدع",
+    "BRAND_ADMIN": "مدير علامة تجارية"
+  },
+  "messages": {
+    "avatarUpdated": "تم تحديث صورة الملف الشخصي!",
+    "avatarFailed": "فشل تحديث صورة الملف الشخصي.",
+    "noChanges": "لا توجد تغييرات للحفظ.",
+    "saveFailed": "فشل حفظ التغييرات.",
+    "profileUpdated": "تم تحديث الملف الشخصي بنجاح!",
+    "genericError": "حدث خطأ ما. حاول مرة أخرى.",
+    "privacySaved": "تم حفظ إعدادات الخصوصية!",
+    "privacyFailed": "فشل حفظ إعدادات الخصوصية."
+  },
+  "account": {
+    "title": "الحساب",
+    "name": "الاسم",
+    "namePlaceholder": "اسمك",
+    "bio": "النبذة",
+    "bioPlaceholder": "أخبرنا عن نفسك...",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف"
+  },
+  "password": {
+    "title": "تغيير كلمة المرور",
+    "current": "كلمة المرور الحالية",
+    "currentPlaceholder": "أدخل كلمة المرور الحالية",
+    "new": "كلمة المرور الجديدة",
+    "newPlaceholder": "أدخل كلمة المرور الجديدة"
+  },
+  "saving": "جارٍ الحفظ…",
+  "saveChanges": "حفظ التغييرات",
+  "privacy": {
+    "title": "الخصوصية",
+    "followersTitle": "من يستطيع رؤية متابعيني",
+    "followersHint": "تحكم بمن يرى قائمة متابعيك",
+    "everyone": "الجميع",
+    "followers": "المتابعون",
+    "none": "لا أحد",
+    "likesTitle": "الوصفات المعجب بها",
+    "likesHint": "اعرض وصفاتك المعجب بها في ملفك الشخصي",
+    "public": "عام",
+    "private": "خاص",
+    "savedTitle": "الوصفات المحفوظة",
+    "savedHint": "اعرض وصفاتك المحفوظة في ملفك الشخصي",
+    "save": "حفظ إعدادات الخصوصية"
+  },
+  "app": {
+    "title": "التطبيق",
+    "viewProfile": "عرض الملف الشخصي",
+    "manageSubscription": "إدارة الاشتراك",
+    "signOut": "تسجيل الخروج"
+  }
+}

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useTranslations, useLocale } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface Author {
   id: string;
@@ -24,6 +26,9 @@ interface CommentSectionProps {
 
 export default function CommentSection({ recipeId, postId }: CommentSectionProps) {
   const { data: session } = useSession();
+  const t = useTranslations("commentSection");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [comments, setComments] = useState<Comment[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -128,7 +133,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
   };
 
   const handleDelete = async (commentId: string) => {
-    if (!confirm("هل أنت متأكد من حذف هذا التعليق؟")) return;
+    if (!confirm(t("confirmDelete"))) return;
 
     try {
       setSubmitting(true);
@@ -154,11 +159,11 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "الآن";
-    if (diffMins < 60) return `منذ ${diffMins} د`;
-    if (diffHours < 24) return `منذ ${diffHours} س`;
-    if (diffDays < 7) return `منذ ${diffDays} ي`;
-    return date.toLocaleDateString("ar-u-nu-latn");
+    if (diffMins < 1) return t("justNow");
+    if (diffMins < 60) return t("minutesAgo", { count: diffMins });
+    if (diffHours < 24) return t("hoursAgo", { count: diffHours });
+    if (diffDays < 7) return t("daysAgo", { count: diffDays });
+    return date.toLocaleDateString(intlLocale(locale));
   };
 
   const renderComment = (comment: Comment, isReply = false) => {
@@ -182,7 +187,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
             {isEditing ? (
               <div>
                 <textarea
-                  aria-label="تعديل التعليق"
+                  aria-label={t("editLabel")}
                   dir="auto"
                   value={editBody}
                   onChange={(e) => setEditBody(e.target.value)}
@@ -196,7 +201,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                     disabled={submitting || !editBody.trim()}
                     className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
                   >
-                    حفظ
+                    {tc("save")}
                   </button>
                   <button
                     onClick={() => {
@@ -206,7 +211,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                     disabled={submitting}
                     className="px-4 py-2 border border-espresso/15 rounded-xl text-sm font-semibold hover:border-primary/40 transition-colors disabled:opacity-50"
                   >
-                    إلغاء
+                    {tc("cancel")}
                   </button>
                 </div>
               </div>
@@ -214,7 +219,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
               <div className="bg-oat-milk rounded-2xl px-4 py-3">
                 <div className="flex items-center gap-2 mb-1">
                   <span dir="auto" className="font-semibold text-sm truncate">
-                    {comment.author.name || "مجهول"}
+                    {comment.author.name || tc("unknownUser")}
                   </span>
                   <span className="text-[11px] text-espresso/60 shrink-0">
                     {formatDate(comment.createdAt)}
@@ -233,7 +238,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                     }}
                     className="text-xs font-semibold text-espresso/60 hover:text-primary transition-colors"
                   >
-                    رد
+                    {t("reply")}
                   </button>
                 )}
                 {isOwnComment && (
@@ -245,13 +250,13 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                       }}
                       className="text-xs font-semibold text-espresso/60 hover:text-primary transition-colors"
                     >
-                      تعديل
+                      {tc("edit")}
                     </button>
                     <button
                       onClick={() => handleDelete(comment.id)}
                       className="text-xs font-semibold text-espresso/60 hover:text-red-600 transition-colors"
                     >
-                      حذف
+                      {tc("delete")}
                     </button>
                   </>
                 )}
@@ -271,7 +276,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
   return (
     <div className="mt-8">
       <h2 className="text-xl mb-4">
-        التعليقات ({comments.reduce((acc, c) => acc + 1 + c.replies.length, 0)})
+        {t("title", { count: comments.reduce((acc, c) => acc + 1 + c.replies.length, 0) })}
       </h2>
 
       {session?.user && (
@@ -286,14 +291,14 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
             </div>
             <div className="flex-1">
               <textarea
-                aria-label={replyingTo ? "اكتب رداً" : "اكتب تعليقاً"}
+                aria-label={replyingTo ? t("replyLabel") : t("commentLabel")}
                 dir="auto"
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder={
                   replyingTo
-                    ? "اكتب رداً…"
-                    : "اكتب تعليقاً…"
+                    ? t("replyPlaceholder")
+                    : t("commentPlaceholder")
                 }
                 className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm resize-none placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                 rows={3}
@@ -309,7 +314,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                     }}
                     className="text-sm text-espresso/60 hover:text-espresso transition-colors"
                   >
-                    إلغاء الرد
+                    {t("cancelReply")}
                   </button>
                 )}
                 <button
@@ -317,7 +322,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
                   disabled={submitting || !newComment.trim()}
                   className="ms-auto bg-primary text-on-primary rounded-xl px-5 py-2.5 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {submitting ? "جارٍ النشر…" : "نشر التعليق"}
+                  {submitting ? t("posting") : t("post")}
                 </button>
               </div>
             </div>
@@ -327,11 +332,13 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
 
       {!session?.user && (
         <p className="text-sm text-espresso/70 mb-4">
-          يرجى{" "}
-          <a href="/login" className="text-primary font-semibold hover:underline">
-            تسجيل الدخول
-          </a>{" "}
-          لكتابة تعليق.
+          {t.rich("signInPrompt", {
+            link: (chunks) => (
+              <a href="/login" className="text-primary font-semibold hover:underline">
+                {chunks}
+              </a>
+            ),
+          })}
         </p>
       )}
 
@@ -341,7 +348,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
 
       {loading && (
         <div className="flex justify-center mt-4">
-          <div className="size-6 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-label="جارٍ التحميل…" />
+          <div className="size-6 border-2 border-primary border-t-transparent rounded-full animate-spin" aria-label={tc("loading")} />
         </div>
       )}
 
@@ -350,13 +357,13 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
           onClick={() => fetchComments(nextCursor!)}
           className="mt-4 w-full py-3 text-center text-sm font-semibold text-primary hover:underline"
         >
-          تحميل المزيد من التعليقات
+          {t("loadMore")}
         </button>
       )}
 
       {!loading && comments.length === 0 && (
         <p className="text-center text-sm text-espresso/60 py-8">
-          لا توجد تعليقات بعد. كن أول من يعلّق.
+          {t("empty")}
         </p>
       )}
     </div>

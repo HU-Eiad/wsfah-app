@@ -1,0 +1,21 @@
+{
+  "tabs": {
+    "store": "Store",
+    "recipes": "Recipes",
+    "gallery": "Gallery"
+  },
+  "emptyProducts": "No products yet.",
+  "productName": "Product name",
+  "price": "Price",
+  "storeUrl": "Store link",
+  "storeUrlPlaceholder": "Store link (https://...)",
+  "buyFromStore": "Buy from the store",
+  "editProduct": "Edit product",
+  "emptyRecipes": "No recipes yet.",
+  "addToGallery": "Add to gallery",
+  "caption": "Caption",
+  "captionPlaceholder": "Caption (optional)",
+  "uploading": "Uploading…",
+  "uploadImage": "Upload image",
+  "emptyGallery": "No gallery posts yet."
+}

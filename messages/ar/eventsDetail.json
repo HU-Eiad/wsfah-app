@@ -1,0 +1,13 @@
+{
+  "notFound": "الفعالية غير موجودة.",
+  "allEvents": "كل الفعاليات",
+  "title": "الفعالية",
+  "until": "حتى {date}",
+  "hostedBy": "بواسطة <host>{name}</host>",
+  "unknown": "غير معروف",
+  "attendees": "{count, plural, one {# حاضر} other {# حاضرين}}",
+  "about": "عن الفعالية",
+  "going": "سأحضر",
+  "interested": "مهتم",
+  "cancelRsvp": "إلغاء"
+}

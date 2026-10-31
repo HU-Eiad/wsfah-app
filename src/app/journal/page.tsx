@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 import BrewCalendar from "@/components/BrewCalendar";
 import MaterialIcon from "@/components/MaterialIcon";
 import BrandIcon from "@/components/BrandIcon";
@@ -23,6 +25,8 @@ interface BrewLog {
 }
 
 export default function JournalPage() {
+  const t = useTranslations("journal");
+  const locale = useLocale();
   const [stats, setStats] = useState<Stats | null>(null);
   const [logs, setLogs] = useState<BrewLog[]>([]);
   const [brewDates, setBrewDates] = useState<string[]>([]);
@@ -53,22 +57,22 @@ export default function JournalPage() {
   }
 
   const statCards = [
-    { label: "إجمالي التحضيرات", value: stats?.total ?? 0, brand: "bean" },
-    { label: "هذا الأسبوع", value: stats?.thisWeek ?? 0, icon: "calendar_today" },
-    { label: "هذا الشهر", value: stats?.thisMonth ?? 0, icon: "bar_chart" },
-    { label: "السلسلة", value: `${stats?.streak ?? 0} أيام`, icon: "local_fire_department" },
+    { label: t("stats.total"), value: stats?.total ?? 0, brand: "bean" },
+    { label: t("stats.thisWeek"), value: stats?.thisWeek ?? 0, icon: "calendar_today" },
+    { label: t("stats.thisMonth"), value: stats?.thisMonth ?? 0, icon: "bar_chart" },
+    { label: t("stats.streak"), value: t("stats.streakDays", { count: stats?.streak ?? 0 }), icon: "local_fire_department" },
   ];
 
   return (
     <div className="min-h-screen bg-background-light text-espresso">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <h1 className="text-2xl flex-1">دفتر التحضير</h1>
+        <h1 className="text-2xl flex-1">{t("title")}</h1>
         <Link
           href="/journal/new"
           className="bg-primary text-on-primary rounded-xl px-4 py-2.5 font-bold text-sm hover:bg-primary/90 transition-colors flex items-center gap-1.5"
         >
           <MaterialIcon icon="add" className="text-lg" />
-          سجّل تحضيراً
+          {t("logBrew")}
         </Link>
       </header>
 
@@ -99,18 +103,18 @@ export default function JournalPage() {
         </div>
 
         {/* Recent Logs */}
-        <h2 className="text-xl mb-4">التحضيرات الأخيرة</h2>
+        <h2 className="text-xl mb-4">{t("recent")}</h2>
         {logs.length === 0 ? (
           <div className="text-center py-10 px-6 bg-surface rounded-2xl border border-espresso/10">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
             <p className="text-sm text-espresso/70 leading-relaxed mb-5">
-              لا توجد سجلات بعد. ابدأ بتتبع رحلتك مع القهوة!
+              {t("empty")}
             </p>
             <Link
               href="/journal/new"
               className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
             >
-              سجّل أول تحضير لك
+              {t("logFirst")}
             </Link>
           </div>
         ) : (
@@ -142,7 +146,7 @@ export default function JournalPage() {
                   </div>
                   <div className="text-end shrink-0">
                     <p className="text-xs text-espresso/60">
-                      {new Date(log.brewDate).toLocaleDateString("ar-u-nu-latn")}
+                      {new Date(log.brewDate).toLocaleDateString(intlLocale(locale))}
                     </p>
                     {log.rating && (
                       <div className="flex gap-0.5 mt-1 justify-end">

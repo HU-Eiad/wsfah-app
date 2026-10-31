@@ -1,0 +1,29 @@
+{
+  "categories": {
+    "grinder": "مطحنة",
+    "kettle": "غلاية",
+    "dripper": "قطارة",
+    "scale": "ميزان",
+    "espresso_machine": "ماكينة إسبريسو",
+    "other": "أخرى"
+  },
+  "confirmDelete": "هل تريد إزالة هذه المعدات؟",
+  "back": "رجوع",
+  "title": "معداتي",
+  "add": "إضافة معدات",
+  "empty": "لا توجد معدات بعد. تتبع أدوات التحضير للحصول على اقتراحات وصفات مخصصة.",
+  "summary": "ملخص المعدات",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "editTitle": "تعديل المعدات",
+  "close": "إغلاق",
+  "nameLabel": "الاسم",
+  "namePlaceholder": "مثال: Comandante C40",
+  "categoryLabel": "الفئة",
+  "brandLabel": "العلامة التجارية",
+  "optional": "اختياري",
+  "modelLabel": "الموديل",
+  "notesLabel": "ملاحظات",
+  "notesPlaceholder": "أي ملاحظات...",
+  "update": "تحديث"
+}

@@ -1,0 +1,39 @@
+{
+  "button": "Promote",
+  "title": "Request a promotion",
+  "placementLabel": "Where do you want to be promoted?",
+  "placements": {
+    "home": {
+      "label": "Home page",
+      "desc": "Shown at the top of the home page"
+    },
+    "explore": {
+      "label": "Explore page",
+      "desc": "Banner at the top of the Explore gallery"
+    },
+    "both": {
+      "label": "Both pages",
+      "desc": "Maximum reach on Home and Explore"
+    }
+  },
+  "choosePlan": "Choose a plan",
+  "days": "{count, plural, one {# day} other {# days}}",
+  "discount": "{percent}% off",
+  "messageLabel": "Message to the admin (optional)",
+  "messagePlaceholder": "Tell us about your promotion goals…",
+  "promotionDays": "{count, plural, one {# day of promotion} other {# days of promotion}}",
+  "youSave": "You save {amount}",
+  "howItWorks": {
+    "title": "How does it work?",
+    "review": "An admin will review your request",
+    "visible": "Once approved, your brand appears in the promoted section",
+    "payment": "Payment is arranged after approval"
+  },
+  "success": "Request sent. We'll review it soon.",
+  "conflict": "You already have a promotion request under review.",
+  "submit": "Send promotion request",
+  "errors": {
+    "submitFailed": "Couldn't send the request",
+    "network": "Network error"
+  }
+}

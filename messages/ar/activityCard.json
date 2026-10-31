@@ -1,0 +1,17 @@
+{
+  "someone": "شخص ما",
+  "createdRecipe": "أنشأ وصفة جديدة",
+  "likedRecipe": "أعجب بـ وصفة",
+  "savedRecipe": "حفظ وصفة",
+  "startedFollowing": "بدأ متابعة",
+  "commentedOnRecipe": "علّق على وصفة",
+  "commentedOnPost": "علّق على منشور",
+  "viewRecipe": "عرض الوصفة",
+  "viewPost": "عرض المنشور",
+  "time": {
+    "now": "الآن",
+    "minutesAgo": "منذ {count} د",
+    "hoursAgo": "منذ {count} س",
+    "daysAgo": "منذ {count} ي"
+  }
+}

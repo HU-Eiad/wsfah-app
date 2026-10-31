@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import StoryViewer from "@/components/StoryViewer";
 
 interface Story {
@@ -18,6 +19,7 @@ interface CompanyGroup {
 }
 
 export default function StoriesBar() {
+  const t = useTranslations("storiesBar");
   const [groups, setGroups] = useState<CompanyGroup[]>([]);
   const [activeStories, setActiveStories] = useState<Story[] | null>(null);
 
@@ -37,7 +39,7 @@ export default function StoriesBar() {
           <button
             key={group.company.id}
             onClick={() => setActiveStories(group.stories)}
-            aria-label={`قصص ${group.company.name}`}
+            aria-label={t("storiesOf", { name: group.company.name })}
             className="flex flex-col items-center gap-1.5 shrink-0 w-16"
           >
             <div className="size-[60px] rounded-full ring-2 ring-primary ring-offset-2 ring-offset-background-light">

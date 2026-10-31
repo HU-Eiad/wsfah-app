@@ -1,17 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
 import BrandIcon from "./BrandIcon";
 
+// Stored values stay Arabic (sent to the API); labels come from messages.
 const FLAVOR_OPTIONS = [
-  "فاكهي", "توت", "حمضيات", "استوائي",
-  "مكسرات", "شوكولاتة", "كراميل", "فانيلا",
-  "زهري", "أعشاب", "حار", "مدخن",
-  "عسل", "زبدة", "ترابي", "خشبي",
+  { value: "فاكهي", key: "fruity" }, { value: "توت", key: "berry" }, { value: "حمضيات", key: "citrus" }, { value: "استوائي", key: "tropical" },
+  { value: "مكسرات", key: "nutty" }, { value: "شوكولاتة", key: "chocolate" }, { value: "كراميل", key: "caramel" }, { value: "فانيلا", key: "vanilla" },
+  { value: "زهري", key: "floral" }, { value: "أعشاب", key: "herbal" }, { value: "حار", key: "spicy" }, { value: "مدخن", key: "smoky" },
+  { value: "عسل", key: "honey" }, { value: "زبدة", key: "buttery" }, { value: "ترابي", key: "earthy" }, { value: "خشبي", key: "woody" },
 ];
 
-const GRIND_SIZES = ["ناعم جداً", "ناعم", "متوسط ناعم", "متوسط", "متوسط خشن", "خشن"];
+const GRIND_SIZES = [
+  { value: "ناعم جداً", key: "extraFine" },
+  { value: "ناعم", key: "fine" },
+  { value: "متوسط ناعم", key: "mediumFine" },
+  { value: "متوسط", key: "medium" },
+  { value: "متوسط خشن", key: "mediumCoarse" },
+  { value: "خشن", key: "coarse" },
+];
 
 interface BrewLogModalProps {
   recipeId?: string;
@@ -27,7 +36,8 @@ interface BrewLogModalProps {
 }
 
 export default function BrewLogModal({ recipeId, recipeName, defaultParams, onClose, onSaved }: BrewLogModalProps) {
-  const [title, setTitle] = useState(recipeName ? `تحضير: ${recipeName}` : "تحضيري");
+  const t = useTranslations("brewLogModal");
+  const [title, setTitle] = useState(recipeName ? t("defaultTitleWithRecipe", { name: recipeName }) : t("defaultTitle"));
   const [notes, setNotes] = useState("");
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -94,27 +104,27 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10 sticky top-0 bg-surface z-10">
           <div className="min-w-0">
-            <h3 className="font-display text-xl">سجّل تحضيرك</h3>
+            <h3 className="font-display text-xl">{t("heading")}</h3>
             {recipeName && <p dir="auto" className="text-sm text-espresso/60 truncate">{recipeName}</p>}
           </div>
-          <button onClick={onClose} aria-label="إغلاق" className="size-10 rounded-full hover:bg-oat-milk flex items-center justify-center shrink-0">
+          <button onClick={onClose} aria-label={t("close")} className="size-10 rounded-full hover:bg-oat-milk flex items-center justify-center shrink-0">
             <MaterialIcon icon="close" />
           </button>
         </div>
 
         {/* Tabs */}
         <div className="flex border-b border-espresso/10">
-          {(["brew", "taste"] as const).map((t) => (
+          {(["brew", "taste"] as const).map((tabKey) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
+              key={tabKey}
+              onClick={() => setTab(tabKey)}
               className={`flex-1 py-3 text-sm font-bold border-b-2 transition-colors ${
-                tab === t
+                tab === tabKey
                   ? "text-primary border-primary"
                   : "text-espresso/60 border-transparent hover:text-espresso"
               }`}
             >
-              {t === "brew" ? "تفاصيل التحضير" : "ملاحظات التذوق"}
+              {tabKey === "brew" ? t("tabs.brew") : t("tabs.taste")}
             </button>
           ))}
         </div>
@@ -124,13 +134,13 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
             <>
               {/* Title */}
               <div>
-                <label htmlFor="brewlog-title" className={labelClass}>العنوان</label>
+                <label htmlFor="brewlog-title" className={labelClass}>{t("titleLabel")}</label>
                 <input id="brewlog-title" dir="auto" value={title} onChange={(e) => setTitle(e.target.value)} className={inputClass} />
               </div>
 
               {/* Rating */}
               <div>
-                <p className={labelClass}>التقييم</p>
+                <p className={labelClass}>{t("ratingLabel")}</p>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((v) => (
                     <button
@@ -138,7 +148,7 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
                       onClick={() => setRating(v)}
                       onMouseEnter={() => setHoverRating(v)}
                       onMouseLeave={() => setHoverRating(0)}
-                      aria-label={`${v} من 5`}
+                      aria-label={t("ratingOf", { value: v })}
                       className="p-1"
                     >
                       <MaterialIcon
@@ -156,28 +166,28 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
                 <div>
                   <label htmlFor="brewlog-coffee" className={labelClass}>
                     <BrandIcon name="bean" className="text-base text-primary" />
-                    القهوة (جم)
+                    {t("coffeeGrams")}
                   </label>
                   <input id="brewlog-coffee" type="number" value={coffeeGrams} onChange={(e) => setCoffeeGrams(e.target.value)} placeholder="18" className={inputClass} />
                 </div>
                 <div>
                   <label htmlFor="brewlog-water" className={labelClass}>
                     <BrandIcon name="drop" className="text-base text-primary" />
-                    الماء (مل)
+                    {t("waterMl")}
                   </label>
                   <input id="brewlog-water" type="number" value={waterMl} onChange={(e) => setWaterMl(e.target.value)} placeholder="300" className={inputClass} />
                 </div>
                 <div>
                   <label htmlFor="brewlog-temp" className={labelClass}>
                     <BrandIcon name="thermometer" className="text-base text-primary" />
-                    الحرارة (°م)
+                    {t("waterTemp")}
                   </label>
                   <input id="brewlog-temp" type="number" value={waterTemp} onChange={(e) => setWaterTemp(e.target.value)} placeholder="93" className={inputClass} />
                 </div>
                 <div>
                   <label htmlFor="brewlog-time" className={labelClass}>
                     <BrandIcon name="timer" className="text-base text-primary" />
-                    وقت التحضير (ثانية)
+                    {t("brewTime")}
                   </label>
                   <input id="brewlog-time" type="number" value={brewTime} onChange={(e) => setBrewTime(e.target.value)} placeholder="240" className={inputClass} />
                 </div>
@@ -187,18 +197,18 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
               <div>
                 <label htmlFor="brewlog-grind" className={labelClass}>
                   <BrandIcon name="grind" className="text-base text-primary" />
-                  حجم الطحن
+                  {t("grindSize")}
                 </label>
                 <select id="brewlog-grind" value={grindSize} onChange={(e) => setGrindSize(e.target.value)} className={inputClass}>
-                  <option value="">اختر...</option>
-                  {GRIND_SIZES.map((g) => <option key={g} value={g}>{g}</option>)}
+                  <option value="">{t("choose")}</option>
+                  {GRIND_SIZES.map((g) => <option key={g.value} value={g.value}>{t(`grind.${g.key}`)}</option>)}
                 </select>
               </div>
 
               {/* Notes */}
               <div>
-                <label htmlFor="brewlog-notes" className={labelClass}>ملاحظات</label>
-                <textarea id="brewlog-notes" dir="auto" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="كيف كانت النتيجة؟ أي تعديلات للمرة القادمة؟" className={`${inputClass} leading-relaxed resize-none`} />
+                <label htmlFor="brewlog-notes" className={labelClass}>{t("notesLabel")}</label>
+                <textarea id="brewlog-notes" dir="auto" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder={t("notesPlaceholder")} className={`${inputClass} leading-relaxed resize-none`} />
               </div>
             </>
           ) : (
@@ -206,9 +216,9 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
               {/* Tasting Sliders */}
               <div className="space-y-5">
                 {[
-                  { label: "الحموضة", value: acidity, set: setAcidity, low: "منخفضة", high: "عالية" },
-                  { label: "القوام", value: body, set: setBody, low: "خفيف", high: "كامل" },
-                  { label: "الحلاوة", value: sweetness, set: setSweetness, low: "جاف", high: "حلو" },
+                  { label: t("taste.acidity"), value: acidity, set: setAcidity, low: t("taste.acidityLow"), high: t("taste.acidityHigh") },
+                  { label: t("taste.body"), value: body, set: setBody, low: t("taste.bodyLow"), high: t("taste.bodyHigh") },
+                  { label: t("taste.sweetness"), value: sweetness, set: setSweetness, low: t("taste.sweetnessLow"), high: t("taste.sweetnessHigh") },
                 ].map((s) => (
                   <div key={s.label}>
                     <div className="flex items-center justify-between mb-1">
@@ -235,19 +245,19 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
 
               {/* Flavor Tags */}
               <div>
-                <p className="text-sm font-semibold mb-3">نكهات</p>
+                <p className="text-sm font-semibold mb-3">{t("flavorsLabel")}</p>
                 <div className="flex flex-wrap gap-2">
                   {FLAVOR_OPTIONS.map((f) => (
                     <button
-                      key={f}
-                      onClick={() => toggleFlavor(f)}
+                      key={f.value}
+                      onClick={() => toggleFlavor(f.value)}
                       className={`rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
-                        selectedFlavors.includes(f)
+                        selectedFlavors.includes(f.value)
                           ? "bg-primary text-on-primary"
                           : "bg-surface border border-espresso/10 text-espresso/70 hover:border-primary/40"
                       }`}
                     >
-                      {f}
+                      {t(`flavors.${f.key}`)}
                     </button>
                   ))}
                 </div>
@@ -266,7 +276,7 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
             ) : (
               <>
                 <MaterialIcon icon="save" className="text-lg" />
-                حفظ السجل
+                {t("saveLog")}
               </>
             )}
           </button>

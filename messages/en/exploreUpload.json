@@ -1,0 +1,13 @@
+{
+  "title": "Share content",
+  "postingAs": "Posting as <brand>{name}</brand>",
+  "captionPlaceholder": "Caption (optional)",
+  "captionLabel": "Post caption",
+  "uploading": "Uploading…",
+  "photo": "Photo",
+  "video": "Video",
+  "uploadFailed": "Upload failed",
+  "postSuccess": "Posted successfully!",
+  "postFailed": "Could not publish the post",
+  "genericError": "Something went wrong"
+}

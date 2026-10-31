@@ -1,0 +1,13 @@
+{
+  "prevMonth": "Previous month",
+  "nextMonth": "Next month",
+  "weekdays": {
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat"
+  }
+}

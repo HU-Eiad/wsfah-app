@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import { useTranslations } from "next-intl";
 
 interface UpgradeModalProps {
   open: boolean;
@@ -10,6 +11,8 @@ interface UpgradeModalProps {
 }
 
 export default function UpgradeModal({ open, feature, onClose }: UpgradeModalProps) {
+  const t = useTranslations("upgradeModal");
+  const tc = useTranslations("common");
   if (!open) return null;
 
   return (
@@ -28,14 +31,14 @@ export default function UpgradeModal({ open, feature, onClose }: UpgradeModalPro
 
         {/* Title */}
         <h2 className="font-display text-xl mb-2">
-          لقد وصلت للحد الأقصى
+          {t("title")}
         </h2>
 
         {/* Description */}
         <p className="text-sm text-espresso/70 leading-relaxed mb-6">
           {feature
-            ? `قم بالترقية للحصول على ${feature}`
-            : "قم بالترقية لفتح المزيد من المميزات"}
+            ? t("upgradeFor", { feature })
+            : t("upgradeGeneric")}
         </p>
 
         {/* Buttons */}
@@ -44,13 +47,13 @@ export default function UpgradeModal({ open, feature, onClose }: UpgradeModalPro
             href="/pricing"
             className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors block"
           >
-            عرض الخطط
+            {t("viewPlans")}
           </Link>
           <button
             onClick={onClose}
             className="w-full border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm text-espresso/70 hover:border-primary/40 transition-colors"
           >
-            إلغاء
+            {tc("cancel")}
           </button>
         </div>
       </div>

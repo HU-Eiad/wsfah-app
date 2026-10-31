@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "@/components/MaterialIcon";
 import BottomNav from "@/components/BottomNav";
 
@@ -14,6 +15,7 @@ interface Collection {
 }
 
 export default function CollectionsPage() {
+  const t = useTranslations("collections");
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -58,7 +60,7 @@ export default function CollectionsPage() {
       setShowCreateForm(false);
     } catch (error) {
       console.error("Error creating collection:", error);
-      alert("تعذّر إنشاء المجموعة");
+      alert(t("createError"));
     } finally {
       setCreating(false);
     }
@@ -76,13 +78,13 @@ export default function CollectionsPage() {
     <div className="bg-background-light text-espresso min-h-screen pb-28">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <h1 className="text-2xl flex-1">مجموعاتي</h1>
+        <h1 className="text-2xl flex-1">{t("title")}</h1>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
           className="flex items-center gap-1.5 bg-primary text-on-primary rounded-xl px-4 py-2.5 font-bold text-sm hover:bg-primary/90 transition-colors"
         >
           <MaterialIcon icon="add" className="text-lg" />
-          إنشاء
+          {t("create")}
         </button>
       </header>
 
@@ -92,27 +94,27 @@ export default function CollectionsPage() {
           <div className="p-4">
             <form onSubmit={handleCreate} className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
               <div>
-                <label htmlFor="collection-name" className="block text-xs font-semibold text-espresso/70 mb-2">الاسم</label>
+                <label htmlFor="collection-name" className="block text-xs font-semibold text-espresso/70 mb-2">{t("nameLabel")}</label>
                 <input
                   id="collection-name"
                   type="text"
                   dir="auto"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="اسم المجموعة"
+                  placeholder={t("namePlaceholder")}
                   className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   maxLength={100}
                   required
                 />
               </div>
               <div>
-                <label htmlFor="collection-description" className="block text-xs font-semibold text-espresso/70 mb-2">الوصف (اختياري)</label>
+                <label htmlFor="collection-description" className="block text-xs font-semibold text-espresso/70 mb-2">{t("descriptionLabel")}</label>
                 <textarea
                   id="collection-description"
                   dir="auto"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="عن ماذا هذه المجموعة؟"
+                  placeholder={t("descriptionPlaceholder")}
                   className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm leading-relaxed placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
                   rows={3}
                   maxLength={500}
@@ -127,7 +129,7 @@ export default function CollectionsPage() {
                   className="size-4 rounded accent-primary"
                 />
                 <label htmlFor="isPublic" className="text-sm">
-                  جعل المجموعة عامة
+                  {t("makePublic")}
                 </label>
               </div>
               <div className="flex gap-3">
@@ -136,7 +138,7 @@ export default function CollectionsPage() {
                   disabled={creating || !name.trim()}
                   className="flex-1 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {creating ? "جارٍ الإنشاء…" : "إنشاء مجموعة"}
+                  {creating ? t("creating") : t("createCollection")}
                 </button>
                 <button
                   type="button"
@@ -144,7 +146,7 @@ export default function CollectionsPage() {
                   disabled={creating}
                   className="border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm hover:border-primary/40 transition-colors disabled:opacity-50"
                 >
-                  إلغاء
+                  {t("cancel")}
                 </button>
               </div>
             </form>
@@ -157,7 +159,7 @@ export default function CollectionsPage() {
             <div className="text-center py-12 px-6">
               <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
               <p className="text-sm text-espresso/70 leading-relaxed">
-                لا توجد مجموعات بعد. أنشئ مجموعتك الأولى لتنظيم وصفاتك المفضلة.
+                {t("empty")}
               </p>
             </div>
           ) : (
@@ -179,7 +181,7 @@ export default function CollectionsPage() {
                       {collection.isPublic && (
                         <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[11px] font-bold shrink-0">
                           <MaterialIcon icon="public" className="text-[11px]" />
-                          عامة
+                          {t("public")}
                         </span>
                       )}
                     </div>
@@ -188,7 +190,7 @@ export default function CollectionsPage() {
                         {collection.description}
                       </p>
                     )}
-                    <p className="text-xs text-espresso/60">{collection._count.recipes} وصفات</p>
+                    <p className="text-xs text-espresso/60">{t("recipeCount", { count: collection._count.recipes })}</p>
                   </div>
                   <MaterialIcon icon="chevron_left" className="text-espresso/50 self-center shrink-0" />
                 </Link>

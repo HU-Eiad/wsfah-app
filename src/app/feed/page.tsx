@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ActivityCard from "@/components/ActivityCard";
 import AdSlot from "@/components/AdSlot";
 import BottomNav from "@/components/BottomNav";
+import { useTranslations } from "next-intl";
 
 interface Activity {
   id: string;
@@ -21,6 +22,7 @@ interface Activity {
 }
 
 export default function FeedPage() {
+  const t = useTranslations("feed");
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -66,7 +68,7 @@ export default function FeedPage() {
     <div className="bg-background-light text-espresso min-h-screen pb-28">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <h1 className="text-2xl flex-1">آخر الأخبار</h1>
+        <h1 className="text-2xl flex-1">{t("title")}</h1>
       </header>
 
       {/* Feed */}
@@ -74,9 +76,9 @@ export default function FeedPage() {
         {activities.length === 0 ? (
           <div className="text-center py-16">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-            <p className="text-espresso/70 font-semibold mb-1">لا يوجد نشاط بعد</p>
+            <p className="text-espresso/70 font-semibold mb-1">{t("emptyTitle")}</p>
             <p className="text-sm text-espresso/60 leading-relaxed">
-              تابع مستخدمين لرؤية نشاطهم في صفحتك
+              {t("emptyBody")}
             </p>
           </div>
         ) : (
@@ -100,7 +102,7 @@ export default function FeedPage() {
               onClick={handleLoadMore}
               className="px-5 py-3 border border-espresso/15 rounded-xl font-semibold text-sm hover:border-primary/40 transition-colors"
             >
-              تحميل المزيد
+              {t("loadMore")}
             </button>
           </div>
         )}

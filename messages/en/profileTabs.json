@@ -1,0 +1,12 @@
+{
+  "tabs": {
+    "recipes": "My recipes",
+    "saved": "Saved",
+    "liked": "Liked"
+  },
+  "emptyRecipes": "No recipes yet",
+  "createFirst": "Create your first recipe",
+  "emptySaved": "No saved recipes yet",
+  "emptyLiked": "No liked recipes yet",
+  "exploreRecipes": "Explore recipes"
+}

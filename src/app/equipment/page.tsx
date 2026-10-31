@@ -5,6 +5,7 @@ import MaterialIcon from "@/components/MaterialIcon";
 import BrandIcon from "@/components/BrandIcon";
 import BottomNav from "@/components/BottomNav";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface EquipmentItem {
   id: string;
@@ -16,13 +17,14 @@ interface EquipmentItem {
   notes: string | null;
 }
 
+// Labels: messages equipment.categories.<value>
 const CATEGORIES = [
-  { value: "grinder", label: "مطحنة", icon: "grain" },
-  { value: "kettle", label: "غلاية", icon: "water_drop" },
-  { value: "dripper", label: "قطارة", icon: "filter_alt" },
-  { value: "scale", label: "ميزان", icon: "scale" },
-  { value: "espresso_machine", label: "ماكينة إسبريسو", icon: "coffee_maker" },
-  { value: "other", label: "أخرى", icon: "devices_other" },
+  { value: "grinder", icon: "grain" },
+  { value: "kettle", icon: "water_drop" },
+  { value: "dripper", icon: "filter_alt" },
+  { value: "scale", icon: "scale" },
+  { value: "espresso_machine", icon: "coffee_maker" },
+  { value: "other", icon: "devices_other" },
 ];
 
 /** Equipment category → WSFA brand icon where one matches; others keep MaterialIcon. */
@@ -39,6 +41,7 @@ function CategoryIcon({ value, icon, className = "" }: { value: string; icon: st
 }
 
 export default function EquipmentPage() {
+  const t = useTranslations("equipment");
   const [items, setItems] = useState<EquipmentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -94,7 +97,7 @@ export default function EquipmentPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("هل تريد إزالة هذه المعدات؟")) return;
+    if (!confirm(t("confirmDelete"))) return;
     const res = await fetch(`/api/equipment?id=${id}`, { method: "DELETE" });
     if (res.ok) setItems((prev) => prev.filter((i) => i.id !== id));
   }
@@ -115,11 +118,11 @@ export default function EquipmentPage() {
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <Link href="/profile" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <Link href="/profile" aria-label={t("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h1 className="text-xl flex-1">معداتي</h1>
-        <button onClick={() => { resetForm(); setShowForm(true); }} aria-label="إضافة معدات" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <h1 className="text-xl flex-1">{t("title")}</h1>
+        <button onClick={() => { resetForm(); setShowForm(true); }} aria-label={t("add")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="add" className="text-primary" />
         </button>
       </header>
@@ -133,20 +136,20 @@ export default function EquipmentPage() {
           <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
             <p className="text-sm text-espresso/70 leading-relaxed mb-5">
-              لا توجد معدات بعد. تتبع أدوات التحضير للحصول على اقتراحات وصفات مخصصة.
+              {t("empty")}
             </p>
             <button
               onClick={() => { resetForm(); setShowForm(true); }}
               className="bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
             >
-              إضافة معدات
+              {t("add")}
             </button>
           </div>
         ) : (
           <div className="p-4 space-y-8">
             {/* Summary */}
             <div className="bg-surface rounded-2xl border border-espresso/10 p-4">
-              <h2 className="text-xl mb-4">ملخص المعدات</h2>
+              <h2 className="text-xl mb-4">{t("summary")}</h2>
               <div className="grid grid-cols-3 gap-2">
                 {CATEGORIES.filter((c) => items.some((i) => i.category === c.value)).map((cat) => {
                   const count = items.filter((i) => i.category === cat.value).length;
@@ -154,7 +157,7 @@ export default function EquipmentPage() {
                     <div key={cat.value} className="bg-oat-milk rounded-xl p-3 text-center flex flex-col items-center">
                       <CategoryIcon value={cat.value} icon={cat.icon} className="text-primary text-xl" />
                       <p className="font-display text-lg mt-1">{count}</p>
-                      <p className="text-[11px] text-espresso/60">{cat.label}</p>
+                      <p className="text-[11px] text-espresso/60">{t(`categories.${cat.value}`)}</p>
                     </div>
                   );
                 })}
@@ -168,7 +171,7 @@ export default function EquipmentPage() {
                 <section key={catValue}>
                   <h2 className="text-xl mb-4 flex items-center gap-2">
                     <CategoryIcon value={cat.value} icon={cat.icon} className="text-xl text-primary" />
-                    {cat.label}
+                    {t(`categories.${cat.value}`)}
                   </h2>
                   <div className="bg-surface rounded-2xl border border-espresso/10 divide-y divide-espresso/10">
                     {catItems.map((item) => (
@@ -186,10 +189,10 @@ export default function EquipmentPage() {
                           {item.notes && <p className="text-xs text-espresso/60 leading-relaxed mt-1" dir="auto">{item.notes}</p>}
                         </div>
                         <div className="flex gap-1">
-                          <button onClick={() => startEdit(item)} aria-label="تعديل" className="size-9 rounded-full hover:bg-oat-milk flex items-center justify-center">
+                          <button onClick={() => startEdit(item)} aria-label={t("edit")} className="size-9 rounded-full hover:bg-oat-milk flex items-center justify-center">
                             <MaterialIcon icon="edit" className="text-base text-espresso/60" />
                           </button>
-                          <button onClick={() => handleDelete(item.id)} aria-label="حذف" className="size-9 rounded-full hover:bg-red-50 flex items-center justify-center">
+                          <button onClick={() => handleDelete(item.id)} aria-label={t("delete")} className="size-9 rounded-full hover:bg-red-50 flex items-center justify-center">
                             <MaterialIcon icon="delete" className="text-base text-red-500" />
                           </button>
                         </div>
@@ -208,38 +211,38 @@ export default function EquipmentPage() {
         <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center sm:p-4">
           <div className="bg-surface text-espresso rounded-t-3xl sm:rounded-2xl shadow-sm w-full max-w-md">
             <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10">
-              <h3 className="font-display text-xl">{editId ? "تعديل المعدات" : "إضافة معدات"}</h3>
-              <button onClick={resetForm} aria-label="إغلاق" className="size-10 rounded-full hover:bg-oat-milk flex items-center justify-center">
+              <h3 className="font-display text-xl">{editId ? t("editTitle") : t("add")}</h3>
+              <button onClick={resetForm} aria-label={t("close")} className="size-10 rounded-full hover:bg-oat-milk flex items-center justify-center">
                 <MaterialIcon icon="close" />
               </button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label htmlFor="equipment-name" className={labelClass}>الاسم</label>
-                <input id="equipment-name" dir="auto" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="مثال: Comandante C40" className={inputClass} />
+                <label htmlFor="equipment-name" className={labelClass}>{t("nameLabel")}</label>
+                <input id="equipment-name" dir="auto" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("namePlaceholder")} className={inputClass} />
               </div>
               <div>
-                <label htmlFor="equipment-category" className={labelClass}>الفئة</label>
+                <label htmlFor="equipment-category" className={labelClass}>{t("categoryLabel")}</label>
                 <select id="equipment-category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className={inputClass}>
-                  {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{t(`categories.${c.value}`)}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="equipment-brand" className={labelClass}>العلامة التجارية</label>
-                  <input id="equipment-brand" dir="auto" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder="اختياري" className={inputClass} />
+                  <label htmlFor="equipment-brand" className={labelClass}>{t("brandLabel")}</label>
+                  <input id="equipment-brand" dir="auto" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} placeholder={t("optional")} className={inputClass} />
                 </div>
                 <div>
-                  <label htmlFor="equipment-model" className={labelClass}>الموديل</label>
-                  <input id="equipment-model" dir="auto" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} placeholder="اختياري" className={inputClass} />
+                  <label htmlFor="equipment-model" className={labelClass}>{t("modelLabel")}</label>
+                  <input id="equipment-model" dir="auto" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} placeholder={t("optional")} className={inputClass} />
                 </div>
               </div>
               <div>
-                <label htmlFor="equipment-notes" className={labelClass}>ملاحظات</label>
-                <textarea id="equipment-notes" dir="auto" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} placeholder="أي ملاحظات..." className={`${inputClass} leading-relaxed resize-none`} />
+                <label htmlFor="equipment-notes" className={labelClass}>{t("notesLabel")}</label>
+                <textarea id="equipment-notes" dir="auto" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2} placeholder={t("notesPlaceholder")} className={`${inputClass} leading-relaxed resize-none`} />
               </div>
               <button onClick={handleSave} disabled={!form.name} className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50">
-                {editId ? "تحديث" : "إضافة معدات"}
+                {editId ? t("update") : t("add")}
               </button>
             </div>
           </div>

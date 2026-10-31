@@ -1,0 +1,11 @@
+{
+  "loadFailed": "Couldn't load analytics",
+  "title": "Brand analytics",
+  "loading": "Loading analytics…",
+  "accessDenied": "Access denied",
+  "totalViews": "Total views",
+  "uniqueVisitors": "Unique visitors",
+  "viewsByPage": "Views by page",
+  "recentViews": "Recent views (last 30 days)",
+  "viewsCount": "{count, plural, one {<num>{formatted}</num> view} other {<num>{formatted}</num> views}}"
+}

@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
 import BrandIcon from "./BrandIcon";
 
@@ -34,10 +35,10 @@ type GalleryPost = {
 
 type TabKey = "store" | "recipes" | "gallery";
 
-const tabs: { key: TabKey; label: string; icon: string }[] = [
-  { key: "store", label: "المتجر", icon: "storefront" },
-  { key: "recipes", label: "الوصفات", icon: "menu_book" },
-  { key: "gallery", label: "المعرض", icon: "photo_library" },
+const tabs: { key: TabKey; icon: string }[] = [
+  { key: "store", icon: "storefront" },
+  { key: "recipes", icon: "menu_book" },
+  { key: "gallery", icon: "photo_library" },
 ];
 
 interface BrandTabsProps {
@@ -49,6 +50,8 @@ interface BrandTabsProps {
 }
 
 export default function BrandTabs({ products, recipes, galleryPosts, isOwner, companyId }: BrandTabsProps) {
+  const t = useTranslations("brandTabs");
+  const tc = useTranslations("common");
   const [activeTab, setActiveTab] = useState<TabKey>("store");
   const [localProducts, setLocalProducts] = useState(products);
   const [localGallery, setLocalGallery] = useState(galleryPosts);
@@ -126,7 +129,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
             }`}
           >
             <MaterialIcon icon={tab.icon} className="text-base" />
-            {tab.label}
+            {t(`tabs.${tab.key}`)}
           </button>
         ))}
       </div>
@@ -137,7 +140,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
           {localProducts.length === 0 ? (
             <div className="col-span-2 text-center py-10">
               <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-              <p className="text-sm text-espresso/70">لا توجد منتجات بعد.</p>
+              <p className="text-sm text-espresso/70">{t("emptyProducts")}</p>
             </div>
           ) : (
             localProducts.map((p) => (
@@ -148,32 +151,32 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
                       className={`${inputClass} font-bold`}
-                      placeholder="اسم المنتج"
-                      aria-label="اسم المنتج"
+                      placeholder={t("productName")}
+                      aria-label={t("productName")}
                       dir="auto"
                     />
                     <input
                       value={editPrice}
                       onChange={(e) => setEditPrice(e.target.value)}
                       className={inputClass}
-                      placeholder="السعر"
-                      aria-label="السعر"
+                      placeholder={t("price")}
+                      aria-label={t("price")}
                       inputMode="decimal"
                     />
                     <input
                       value={editUrl}
                       onChange={(e) => setEditUrl(e.target.value)}
                       className={inputClass}
-                      placeholder="رابط المتجر (https://...)"
-                      aria-label="رابط المتجر"
+                      placeholder={t("storeUrlPlaceholder")}
+                      aria-label={t("storeUrl")}
                       dir="ltr"
                     />
                     <div className="flex gap-2">
                       <button onClick={() => handleSaveProduct(p.id)} className="flex-1 bg-primary text-on-primary text-sm font-bold py-2.5 rounded-xl hover:bg-primary/90 transition-colors">
-                        حفظ
+                        {tc("save")}
                       </button>
                       <button onClick={() => setEditingProduct(null)} className="flex-1 border border-espresso/15 text-sm font-semibold py-2.5 rounded-xl hover:border-primary/40 transition-colors">
-                        إلغاء
+                        {tc("cancel")}
                       </button>
                     </div>
                   </div>
@@ -190,7 +193,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                           href={p.externalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          aria-label="اشترِ من المتجر"
+                          aria-label={t("buyFromStore")}
                           className="absolute bottom-2 end-2 size-10 bg-surface/90 rounded-full flex items-center justify-center"
                         >
                           <MaterialIcon icon="shopping_cart" className="text-primary text-xl" />
@@ -203,7 +206,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                       {isOwner && (
                         <button
                           onClick={() => handleEditProduct(p)}
-                          aria-label="تعديل المنتج"
+                          aria-label={t("editProduct")}
                           className="absolute top-2 end-2 size-9 bg-surface/90 rounded-full flex items-center justify-center"
                         >
                           <MaterialIcon icon="edit" className="text-espresso/70 text-base" />
@@ -228,7 +231,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
           {recipes.length === 0 ? (
             <div className="col-span-2 text-center py-10">
               <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-              <p className="text-sm text-espresso/70">لا توجد وصفات بعد.</p>
+              <p className="text-sm text-espresso/70">{t("emptyRecipes")}</p>
             </div>
           ) : (
             recipes.map((r) => (
@@ -240,7 +243,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                     alt=""
                   />
                   <span className="absolute top-3 start-3 bg-brand-gold text-white text-[11px] font-bold px-2 py-1 rounded-md flex items-center gap-1">
-                    <BrandIcon name="verified" className="text-xs" /> علامة تجارية
+                    <BrandIcon name="verified" className="text-xs" /> {tc("badges.brand")}
                   </span>
                 </div>
                 <div>
@@ -269,14 +272,14 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
             <div className="mb-4 bg-surface rounded-2xl border border-espresso/10 p-4 space-y-3">
               <p className="text-sm font-bold flex items-center gap-2">
                 <MaterialIcon icon="add_photo_alternate" className="text-primary" />
-                أضف إلى المعرض
+                {t("addToGallery")}
               </p>
               <input
                 value={galleryCaption}
                 onChange={(e) => setGalleryCaption(e.target.value)}
                 className={inputClass}
-                placeholder="وصف (اختياري)"
-                aria-label="وصف"
+                placeholder={t("captionPlaceholder")}
+                aria-label={t("caption")}
                 dir="auto"
               />
               <input
@@ -294,7 +297,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                 disabled={uploading}
                 className="w-full bg-primary text-on-primary text-sm font-bold py-3 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
-                {uploading ? "جارٍ الرفع…" : "رفع صورة"}
+                {uploading ? t("uploading") : t("uploadImage")}
               </button>
             </div>
           )}
@@ -302,7 +305,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
           {localGallery.length === 0 ? (
             <div className="text-center py-10">
               <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-              <p className="text-sm text-espresso/70">لا توجد منشورات في المعرض بعد.</p>
+              <p className="text-sm text-espresso/70">{t("emptyGallery")}</p>
             </div>
           ) : (
             <div className="columns-2 gap-3 space-y-3">

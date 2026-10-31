@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import MaterialIcon from "@/components/MaterialIcon";
+import { useTranslations } from "next-intl";
 
 interface Group {
   id: string;
@@ -13,6 +14,8 @@ interface Group {
 }
 
 export default function GroupsPage() {
+  const t = useTranslations("groups");
+  const tc = useTranslations("common");
   const [groups, setGroups] = useState<Group[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -67,14 +70,14 @@ export default function GroupsPage() {
   return (
     <div className="min-h-screen bg-background-light text-espresso">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <h1 className="text-2xl flex-1">المجموعات</h1>
+        <h1 className="text-2xl flex-1">{t("title")}</h1>
         <button
           onClick={() => setShowCreate(!showCreate)}
           aria-expanded={showCreate}
           className="bg-primary text-on-primary px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors flex items-center gap-1.5"
         >
           <MaterialIcon icon={showCreate ? "close" : "add"} className="text-lg" />
-          إنشاء مجموعة
+          {t("createGroup")}
         </button>
       </header>
 
@@ -85,19 +88,19 @@ export default function GroupsPage() {
             onSubmit={handleCreate}
             className="mb-6 bg-surface rounded-2xl border border-espresso/10 p-4 space-y-3"
           >
-            <h2 className="text-xl mb-1">مجموعة جديدة</h2>
+            <h2 className="text-xl mb-1">{t("newGroup")}</h2>
             <input
               type="text"
-              placeholder="اسم المجموعة"
-              aria-label="اسم المجموعة"
+              placeholder={t("namePlaceholder")}
+              aria-label={t("namePlaceholder")}
               dir="auto"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
             <textarea
-              placeholder="الوصف (اختياري)"
-              aria-label="وصف المجموعة"
+              placeholder={t("descriptionPlaceholder")}
+              aria-label={t("descriptionLabel")}
               dir="auto"
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -113,7 +116,7 @@ export default function GroupsPage() {
                 className="size-4 accent-primary"
               />
               <label htmlFor="isPublic" className="text-sm text-espresso/70">
-                مجموعة عامة
+                {t("publicGroup")}
               </label>
             </div>
             <button
@@ -121,7 +124,7 @@ export default function GroupsPage() {
               disabled={creating || !form.name.trim()}
               className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-colors"
             >
-              {creating ? "جارٍ الإنشاء…" : "إنشاء"}
+              {creating ? t("creating") : t("create")}
             </button>
           </form>
         )}
@@ -131,8 +134,8 @@ export default function GroupsPage() {
           <MaterialIcon icon="search" className="absolute start-4 top-1/2 -translate-y-1/2 text-espresso/50 pointer-events-none" />
           <input
             type="text"
-            placeholder="ابحث عن مجموعات…"
-            aria-label="ابحث عن مجموعات"
+            placeholder={t("searchPlaceholder")}
+            aria-label={t("searchLabel")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-surface border border-espresso/15 rounded-xl ps-12 pe-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -141,13 +144,13 @@ export default function GroupsPage() {
 
         {/* List */}
         {loading ? (
-          <div className="flex justify-center py-12" role="status" aria-label="جارٍ التحميل…">
+          <div className="flex justify-center py-12" role="status" aria-label={tc("loading")}>
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
           </div>
         ) : groups.length === 0 ? (
           <div className="text-center py-12">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-            <p className="text-sm text-espresso/70">لا توجد مجموعات.</p>
+            <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -165,14 +168,14 @@ export default function GroupsPage() {
                   )}
                   <p className="text-xs text-espresso/60 mt-2 flex items-center gap-1">
                     <MaterialIcon icon="group" className="text-sm" />
-                    {g._count.members} {g._count.members === 1 ? "عضو" : "أعضاء"}
+                    {t("members", { count: g._count.members })}
                   </p>
                 </div>
                 <button
                   onClick={() => handleJoin(g.id)}
                   className="shrink-0 border border-espresso/15 text-primary px-4 py-2 rounded-xl text-sm font-semibold hover:border-primary/40 transition-colors"
                 >
-                  انضم
+                  {t("join")}
                 </button>
               </div>
             ))}

@@ -2,6 +2,7 @@
 
 import { signIn } from "@/lib/auth";
 import { AuthError } from "next-auth";
+import { getTranslations } from "next-intl/server";
 
 function isRedirect(error: unknown): boolean {
   // Next.js 14-16 uses different redirect error shapes
@@ -26,10 +27,11 @@ export async function loginWithCredentials(email: string, password: string) {
     if (isRedirect(error)) {
       throw error; // Re-throw so Next.js handles the redirect
     }
+    const t = await getTranslations("loginActions");
     if (error instanceof AuthError) {
-      return { success: false, error: "Invalid email or password" };
+      return { success: false, error: t("invalidCredentials") };
     }
-    return { success: false, error: "Something went wrong" };
+    return { success: false, error: t("somethingWrong") };
   }
 }
 
@@ -45,9 +47,10 @@ export async function loginWithPhoneOtp(phone: string, otp: string) {
     if (isRedirect(error)) {
       throw error;
     }
+    const t = await getTranslations("loginActions");
     if (error instanceof AuthError) {
-      return { success: false, error: "Invalid OTP code" };
+      return { success: false, error: t("invalidOtp") };
     }
-    return { success: false, error: "Something went wrong" };
+    return { success: false, error: t("somethingWrong") };
   }
 }

@@ -1,0 +1,16 @@
+{
+  "title": "المجموعات",
+  "createGroup": "إنشاء مجموعة",
+  "newGroup": "مجموعة جديدة",
+  "namePlaceholder": "اسم المجموعة",
+  "descriptionPlaceholder": "الوصف (اختياري)",
+  "descriptionLabel": "وصف المجموعة",
+  "publicGroup": "مجموعة عامة",
+  "creating": "جارٍ الإنشاء…",
+  "create": "إنشاء",
+  "searchPlaceholder": "ابحث عن مجموعات…",
+  "searchLabel": "ابحث عن مجموعات",
+  "empty": "لا توجد مجموعات.",
+  "members": "{count, plural, one {# عضو} other {# أعضاء}}",
+  "join": "انضم"
+}

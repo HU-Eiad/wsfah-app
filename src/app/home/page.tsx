@@ -6,11 +6,14 @@ import BrandIcon, { CATEGORY_ICONS } from "@/components/BrandIcon";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const session = await auth();
+  const t = await getTranslations("home");
+  const tc = await getTranslations("common");
 
   const [featuredRecipe, categories, trendingRecipes, currentUser, roasters] = await Promise.all([
     prisma.recipe.findFirst({
@@ -43,19 +46,16 @@ export default async function HomePage() {
     }),
   ]);
 
-  const userName = currentUser?.name?.split(" ")[0] || "ضيف";
+  const userName = currentUser?.name?.split(" ")[0] || tc("guest");
   const userImage = currentUser?.image || "/brand/banners/avatar-placeholder.svg";
   const recipePlaceholder = "/brand/banners/recipe-placeholder.svg";
 
 
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "صباح الخير" : "مساء الخير";
+  const greeting = hour < 12 ? t("greetingMorning", { name: userName }) : t("greetingEvening", { name: userName });
 
-  const typeLabels: Record<string, string> = {
-    roaster: "محمصة",
-    cafe: "مقهى",
-    tea_brand: "علامة شاي",
-  };
+  const typeLabel = (type: string) =>
+    type === "roaster" || type === "cafe" || type === "tea_brand" ? t(`companyType.${type}`) : t("companyType.equipment");
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
@@ -65,16 +65,16 @@ export default async function HomePage() {
           <div className="flex items-center gap-3">
             <Link
               href={session ? "/profile" : "/login"}
-              aria-label="الملف الشخصي"
+              aria-label={t("profile")}
               className="size-12 rounded-full ring-2 ring-primary/40 ring-offset-2 ring-offset-background-light block overflow-hidden"
             >
               <img alt="" className="w-full h-full object-cover" src={userImage} />
             </Link>
             <h1 className="text-2xl leading-tight">
-              {greeting}، {userName}
+              {greeting}
             </h1>
           </div>
-          <Link href="/notifications" aria-label="الإشعارات" className="relative size-11 rounded-full bg-oat-milk flex items-center justify-center">
+          <Link href="/notifications" aria-label={t("notifications")} className="relative size-11 rounded-full bg-oat-milk flex items-center justify-center">
             <MaterialIcon icon="notifications" className="text-espresso/80" />
             <span className="absolute top-2.5 end-2.5 size-2 bg-crema rounded-full" aria-hidden></span>
           </Link>
@@ -83,7 +83,7 @@ export default async function HomePage() {
         {/* Search */}
         <Link href="/search" className="flex items-center gap-3 bg-surface rounded-xl px-4 py-3.5 border border-espresso/10">
           <MaterialIcon icon="search" className="text-espresso/50" />
-          <span className="text-sm text-espresso/55 flex-1">ابحث عن وصفة، محمصة، أو شاي</span>
+          <span className="text-sm text-espresso/55 flex-1">{t("searchPlaceholder")}</span>
           <MaterialIcon icon="tune" className="text-espresso/50 text-xl" />
         </Link>
       </header>
@@ -96,8 +96,8 @@ export default async function HomePage() {
         {featuredRecipe && (
           <section className="mb-10">
             <div className="flex items-baseline justify-between mb-4">
-              <h2 className="text-xl">اختيار الأسبوع</h2>
-              <Link href="/search" className="text-sm font-semibold text-primary">عرض الكل</Link>
+              <h2 className="text-xl">{t("weeklyPick")}</h2>
+              <Link href="/search" className="text-sm font-semibold text-primary">{tc("seeAll")}</Link>
             </div>
             <Link href={`/recipe/${featuredRecipe.slug}`} className="block">
               <article className="relative overflow-hidden rounded-[20px] bg-pine text-paper aspect-[4/5] flex flex-col justify-end">
@@ -111,20 +111,20 @@ export default async function HomePage() {
                   <div className="flex items-center gap-3 mb-3 text-sm text-paper/85">
                     {featuredRecipe.isVerified && (
                       <span className="inline-flex items-center gap-1 bg-paper text-pine text-xs font-bold px-2 py-1 rounded-md">
-                        <BrandIcon name="verified" className="text-sm" /> علامة موثقة
+                        <BrandIcon name="verified" className="text-sm" /> {tc("badges.verified")}
                       </span>
                     )}
                     <span className="inline-flex items-center gap-1">
-                      <BrandIcon name="timer" className="text-base" /> {featuredRecipe.brewTime || "10 د"}
+                      <BrandIcon name="timer" className="text-base" /> {featuredRecipe.brewTime || tc("minutesShort", { count: 10 })}
                     </span>
                   </div>
                   <h3 dir="auto" className="font-display text-3xl leading-snug mb-2">{featuredRecipe.title}</h3>
                   <p className="text-sm text-paper/75 mb-5">
-                    {featuredRecipe.brand?.name || featuredRecipe.author.name}، {featuredRecipe.category}
+                    {t("byline", { author: featuredRecipe.brand?.name || featuredRecipe.author.name || "", category: featuredRecipe.category ?? "" })}
                   </p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs bg-paper/15 px-3 py-1.5 rounded-full">{featuredRecipe.difficulty}</span>
-                    <span className="bg-paper text-pine px-5 py-2.5 rounded-xl font-bold text-sm">افتح الوصفة</span>
+                    <span className="bg-paper text-pine px-5 py-2.5 rounded-xl font-bold text-sm">{t("openRecipe")}</span>
                   </div>
                 </div>
               </article>
@@ -134,7 +134,7 @@ export default async function HomePage() {
 
         {/* Categories */}
         <section className="mb-10 -mx-6">
-          <h2 className="px-6 mb-4 text-xl">الأقسام</h2>
+          <h2 className="px-6 mb-4 text-xl">{t("categories")}</h2>
           <div className="flex overflow-x-auto gap-3 px-6 no-scrollbar">
             {categories.map((cat) => (
               <Link
@@ -159,8 +159,8 @@ export default async function HomePage() {
         {roasters.length > 0 && (
           <section className="mb-10 -mx-6">
             <div className="px-6 mb-4 flex items-baseline justify-between">
-              <h2 className="text-xl">محامص مميزة</h2>
-              <Link href="/roasters" className="text-sm font-semibold text-primary">عرض الكل</Link>
+              <h2 className="text-xl">{t("featuredRoasters")}</h2>
+              <Link href="/roasters" className="text-sm font-semibold text-primary">{tc("seeAll")}</Link>
             </div>
             <div className="flex overflow-x-auto gap-4 px-6 no-scrollbar">
               {roasters.map((r) => (
@@ -176,7 +176,7 @@ export default async function HomePage() {
                   </div>
                   <div className="text-center w-full">
                     <span className="text-xs font-semibold block truncate" dir="auto">{r.name}</span>
-                    <span className="text-[11px] text-espresso/60">{typeLabels[r.type] || "معدات"}</span>
+                    <span className="text-[11px] text-espresso/60">{typeLabel(r.type)}</span>
                   </div>
                 </Link>
               ))}
@@ -188,7 +188,7 @@ export default async function HomePage() {
 
         {/* Trending */}
         <section className="mb-8">
-          <h2 className="text-xl mb-4">رائج الآن</h2>
+          <h2 className="text-xl mb-4">{t("trending")}</h2>
           <div className="grid grid-cols-2 gap-x-4 gap-y-6">
             {trendingRecipes.map((item) => (
               <Link href={`/recipe/${item.slug}`} key={item.id} className="flex flex-col gap-3">
@@ -205,11 +205,11 @@ export default async function HomePage() {
                   >
                     {item.brand ? (
                       <>
-                        <BrandIcon name="verified" className="text-xs" /> علامة تجارية
+                        <BrandIcon name="verified" className="text-xs" /> {tc("badges.brand")}
                       </>
                     ) : (
                       <>
-                        <MaterialIcon icon="group" className="text-xs" /> مجتمعي
+                        <MaterialIcon icon="group" className="text-xs" /> {tc("badges.community")}
                       </>
                     )}
                   </span>

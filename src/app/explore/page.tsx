@@ -7,11 +7,13 @@ import BrandIcon from "@/components/BrandIcon";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { getTranslations } from "next-intl/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function ExplorePage() {
   const session = await auth();
+  const t = await getTranslations("explore");
 
   const posts = await prisma.galleryPost.findMany({
     include: {
@@ -41,7 +43,7 @@ export default async function ExplorePage() {
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <h1 className="text-2xl flex-1">استكشف</h1>
+        <h1 className="text-2xl flex-1">{t("title")}</h1>
       </header>
 
       <main className="flex-1 px-4 pb-28 pt-4">
@@ -59,8 +61,8 @@ export default async function ExplorePage() {
         {posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-            <p className="text-sm font-semibold text-espresso/70">لا يوجد محتوى للاستكشاف بعد</p>
-            <p className="text-xs text-espresso/60 mt-1">ستشارك المحمصات والعلامات التجارية محتواها هنا</p>
+            <p className="text-sm font-semibold text-espresso/70">{t("emptyTitle")}</p>
+            <p className="text-xs text-espresso/60 mt-1">{t("emptyBody")}</p>
           </div>
         ) : (
           <div className="columns-2 gap-3 space-y-3">
@@ -79,7 +81,7 @@ export default async function ExplorePage() {
                     className="w-full object-cover"
                   />
                 ) : post.imageUrl ? (
-                  <img src={post.imageUrl} alt={post.caption || "منشور المعرض"} className="w-full object-cover" />
+                  <img src={post.imageUrl} alt={post.caption || t("postAlt")} className="w-full object-cover" />
                 ) : null}
                 <div className="p-3">
                   {/* Roaster Info - Prominent */}
@@ -93,7 +95,7 @@ export default async function ExplorePage() {
                       <div className="flex-1 min-w-0">
                         <p dir="auto" className="text-xs font-bold truncate">{post.company.name}</p>
                       </div>
-                      <BrandIcon name="verified" className="text-primary text-sm shrink-0" label="موثّق" />
+                      <BrandIcon name="verified" className="text-primary text-sm shrink-0" label={t("verified")} />
                     </div>
                   )}
                   {!post.company && (

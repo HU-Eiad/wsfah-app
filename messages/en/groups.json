@@ -1,0 +1,16 @@
+{
+  "title": "Groups",
+  "createGroup": "Create group",
+  "newGroup": "New group",
+  "namePlaceholder": "Group name",
+  "descriptionPlaceholder": "Description (optional)",
+  "descriptionLabel": "Group description",
+  "publicGroup": "Public group",
+  "creating": "Creating…",
+  "create": "Create",
+  "searchPlaceholder": "Search groups…",
+  "searchLabel": "Search groups",
+  "empty": "No groups found.",
+  "members": "{count, plural, one {# member} other {# members}}",
+  "join": "Join"
+}

@@ -1,0 +1,39 @@
+{
+  "defaultTitleWithRecipe": "Brew: {name}",
+  "defaultTitle": "My brew",
+  "heading": "Log your brew",
+  "close": "Close",
+  "tabs": { "brew": "Brew details", "taste": "Tasting notes" },
+  "titleLabel": "Title",
+  "ratingLabel": "Rating",
+  "ratingOf": "{value} of 5",
+  "coffeeGrams": "Coffee (g)",
+  "waterMl": "Water (ml)",
+  "waterTemp": "Temperature (°C)",
+  "brewTime": "Brew time (sec)",
+  "grindSize": "Grind size",
+  "choose": "Choose...",
+  "grind": {
+    "extraFine": "Extra fine",
+    "fine": "Fine",
+    "mediumFine": "Medium-fine",
+    "medium": "Medium",
+    "mediumCoarse": "Medium-coarse",
+    "coarse": "Coarse"
+  },
+  "notesLabel": "Notes",
+  "notesPlaceholder": "How did it turn out? Anything to tweak next time?",
+  "taste": {
+    "acidity": "Acidity", "acidityLow": "Low", "acidityHigh": "High",
+    "body": "Body", "bodyLow": "Light", "bodyHigh": "Full",
+    "sweetness": "Sweetness", "sweetnessLow": "Dry", "sweetnessHigh": "Sweet"
+  },
+  "flavorsLabel": "Flavors",
+  "flavors": {
+    "fruity": "Fruity", "berry": "Berry", "citrus": "Citrus", "tropical": "Tropical",
+    "nutty": "Nutty", "chocolate": "Chocolate", "caramel": "Caramel", "vanilla": "Vanilla",
+    "floral": "Floral", "herbal": "Herbal", "spicy": "Spicy", "smoky": "Smoky",
+    "honey": "Honey", "buttery": "Buttery", "earthy": "Earthy", "woody": "Woody"
+  },
+  "saveLog": "Save log"
+}

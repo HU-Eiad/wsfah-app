@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
 
 type RecipeCard = {
@@ -33,11 +34,7 @@ const PLACEHOLDER_IMG = "/brand/banners/recipe-placeholder.svg";
 
 type TabKey = "recipes" | "saved" | "liked";
 
-const tabs: { key: TabKey; label: string }[] = [
-  { key: "recipes", label: "وصفاتي" },
-  { key: "saved", label: "المحفوظات" },
-  { key: "liked", label: "الإعجابات" },
-];
+const tabs: TabKey[] = ["recipes", "saved", "liked"];
 
 function RecipeGrid({ items, emptyText, emptyAction }: {
   items: RecipeCard[];
@@ -89,6 +86,7 @@ function RecipeGrid({ items, emptyText, emptyAction }: {
 }
 
 export default function ProfileTabs({ recipes, saves, likes }: ProfileTabsProps) {
+  const t = useTranslations("profileTabs");
   const [activeTab, setActiveTab] = useState<TabKey>("recipes");
 
   const savedRecipes = saves.map((s) => s.recipe);
@@ -100,15 +98,15 @@ export default function ProfileTabs({ recipes, saves, likes }: ProfileTabsProps)
       <div className="flex border-b border-espresso/10 px-4">
         {tabs.map((tab) => (
           <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            key={tab}
+            onClick={() => setActiveTab(tab)}
             className={`flex-1 py-4 text-sm font-bold border-b-2 transition-colors ${
-              activeTab === tab.key
+              activeTab === tab
                 ? "border-primary text-primary"
                 : "border-transparent text-espresso/60 font-medium"
             }`}
           >
-            {tab.label}
+            {t(`tabs.${tab}`)}
           </button>
         ))}
       </div>
@@ -119,24 +117,24 @@ export default function ProfileTabs({ recipes, saves, likes }: ProfileTabsProps)
           <RecipeGrid
             items={recipes}
             emptyIcon="menu_book"
-            emptyText="لا توجد وصفات بعد"
-            emptyAction={{ label: "أنشئ وصفتك الأولى", href: "/create" }}
+            emptyText={t("emptyRecipes")}
+            emptyAction={{ label: t("createFirst"), href: "/create" }}
           />
         )}
         {activeTab === "saved" && (
           <RecipeGrid
             items={savedRecipes}
             emptyIcon="bookmark"
-            emptyText="لا توجد وصفات محفوظة بعد"
-            emptyAction={{ label: "استكشف الوصفات", href: "/search" }}
+            emptyText={t("emptySaved")}
+            emptyAction={{ label: t("exploreRecipes"), href: "/search" }}
           />
         )}
         {activeTab === "liked" && (
           <RecipeGrid
             items={likedRecipes}
             emptyIcon="favorite"
-            emptyText="لا توجد وصفات معجب بها بعد"
-            emptyAction={{ label: "استكشف الوصفات", href: "/search" }}
+            emptyText={t("emptyLiked")}
+            emptyAction={{ label: t("exploreRecipes"), href: "/search" }}
           />
         )}
       </div>

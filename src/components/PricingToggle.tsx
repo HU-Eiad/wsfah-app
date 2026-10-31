@@ -4,10 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import MaterialIcon from "./MaterialIcon";
 import RiyalSign from "./RiyalSign";
+import { useTranslations } from "next-intl";
 
 type Interval = "monthly" | "yearly";
 
 interface Plan {
+  id: string;
   name: string;
   monthly: string;
   yearly: string;
@@ -22,46 +24,36 @@ interface Plan {
   isGold?: boolean;
 }
 
+/** Internal marker for plans priced on request (shown as "custom"). */
+const CUSTOM = "custom";
+
 export function UserPricingToggle() {
+  const t = useTranslations("pricingToggle");
   const plans: Plan[] = [
     {
-      name: "مجاني",
+      id: "free",
+      name: t("free.name"),
       monthly: "0",
       yearly: "0",
-      period: { monthly: "للأبد", yearly: "للأبد" },
-      desc: "كل ما تحتاجه لتبدأ تحضيراً أفضل",
-      features: [
-        "تصفّح جميع الوصفات",
-        "مؤقت التحضير والوضع الموجّه",
-        "حاسبة نسبة التحضير",
-        "إنشاء حتى 3 وصفات",
-        "إعجاب وحفظ حتى 20 وصفة",
-        "بحث أساسي ولوحة المتصدرين",
-      ],
-      cta: "ابدأ الآن",
+      period: { monthly: t("forever"), yearly: t("forever") },
+      desc: t("free.desc"),
+      features: t.raw("free.features") as string[],
+      cta: t("ctaStartNow"),
       href: "/signup",
     },
     {
-      name: "احترافي",
+      id: "pro",
+      name: t("pro.name"),
       monthly: "4.99",
       yearly: "49.99",
-      period: { monthly: "/شهرياً", yearly: "/سنوياً" },
-      desc: "للمحضّرين الجادين الذين يريدون التجربة الكاملة",
-      features: [
-        "كل شيء في المجاني",
-        "وصفات وحفظ بلا حدود",
-        "دفتر تحضير مع تحليلات",
-        "وسم عجلة النكهات",
-        "ملفات تحضير مخصصة",
-        "وصول للوصفات بدون إنترنت",
-        "نسخ وإعادة مزج الوصفات",
-        "المجموعات والمجموعات والرسائل",
-      ],
-      cta: "ابدأ الفترة التجريبية",
+      period: { monthly: t("perMonth"), yearly: t("perYear") },
+      desc: t("pro.desc"),
+      features: t.raw("pro.features") as string[],
+      cta: t("ctaStartTrial"),
       href: { monthly: "/pricing?interval=monthly", yearly: "/pricing?interval=yearly" },
       highlighted: true,
-      badge: "الأكثر شعبية",
-      yearlyBadge: "وفّر 17%",
+      badge: t("badgePopular"),
+      yearlyBadge: t("save17"),
     },
   ];
 
@@ -69,66 +61,45 @@ export function UserPricingToggle() {
 }
 
 export function RoasterPricingToggle() {
+  const t = useTranslations("pricingToggle");
   const plans: Plan[] = [
     {
-      name: "المحمصة - أساسي",
+      id: "roasterBasic",
+      name: t("roasterBasic.name"),
       monthly: "39",
       yearly: "390",
-      period: { monthly: "/شهرياً", yearly: "/سنوياً" },
-      desc: "اعرض علامتك التجارية أمام آلاف المحضّرين",
-      features: [
-        "ملف محمصة موثّق وشارة",
-        "كتالوج منتجات (حتى 50 منتج)",
-        "تقييمات ومراجعات العملاء",
-        "تحليلات أساسية للعلامة التجارية",
-        "ربط الوصفات بمنتجاتك",
-        "صفحة مجموعة مجتمعية",
-      ],
-      cta: "ابدأ الفترة التجريبية",
+      period: { monthly: t("perMonth"), yearly: t("perYear") },
+      desc: t("roasterBasic.desc"),
+      features: t.raw("roasterBasic.features") as string[],
+      cta: t("ctaStartTrial"),
       href: { monthly: "/pricing?interval=monthly", yearly: "/pricing?interval=yearly" },
-      yearlyBadge: "وفّر 17%",
+      yearlyBadge: t("save17"),
       isGold: true,
     },
     {
-      name: "المحمصة - احترافي",
+      id: "roasterPro",
+      name: t("roasterPro.name"),
       monthly: "79",
       yearly: "790",
-      period: { monthly: "/شهرياً", yearly: "/سنوياً" },
-      desc: "وسّع جمهورك وحقق مبيعات فعلية",
-      features: [
-        "كل شيء في المحمصة - أساسي",
-        "كتالوج منتجات بلا حدود",
-        "وصفات مروّجة في الخلاصة",
-        "تحليلات ورؤى متقدمة",
-        "أداة مقارنة التحضير",
-        "سجل إصدارات الوصفات",
-        "استضافة وترويج الفعاليات",
-        "أولوية الظهور في البحث",
-      ],
-      cta: "ابدأ الفترة التجريبية",
+      period: { monthly: t("perMonth"), yearly: t("perYear") },
+      desc: t("roasterPro.desc"),
+      features: t.raw("roasterPro.features") as string[],
+      cta: t("ctaStartTrial"),
       href: { monthly: "/pricing?interval=monthly", yearly: "/pricing?interval=yearly" },
       highlighted: true,
-      badge: "أفضل قيمة",
-      yearlyBadge: "وفّر 17%",
+      badge: t("badgeBestValue"),
+      yearlyBadge: t("save17"),
       isGold: true,
     },
     {
-      name: "الشركات",
-      monthly: "مخصص",
-      yearly: "مخصص",
+      id: "enterprise",
+      name: t("enterprise.name"),
+      monthly: CUSTOM,
+      yearly: CUSTOM,
       period: { monthly: "", yearly: "" },
-      desc: "للمحمصات الكبيرة والسلاسل والموزعين",
-      features: [
-        "كل شيء في المحمصة - احترافي",
-        "إدارة مواقع متعددة",
-        "وصول API وتكاملات",
-        "مدير حساب مخصص",
-        "هوية مخصصة وصفحة هبوط",
-        "استيراد منتجات بالجملة",
-        "حسابات أعضاء الفريق",
-        "أدلة تحضير بعلامتك التجارية",
-      ],
-      cta: "تواصل مع المبيعات",
+      desc: t("enterprise.desc"),
+      features: t.raw("enterprise.features") as string[],
+      cta: t("ctaContactSales"),
       href: "/pricing",
       isGold: true,
     },
@@ -140,19 +111,20 @@ export function RoasterPricingToggle() {
 function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "roaster" }) {
   const [interval, setInterval] = useState<Interval>("monthly");
   const isGold = variant === "roaster";
+  const t = useTranslations("pricingToggle");
 
   return (
     <div>
       {/* Toggle */}
       <div className="flex items-center justify-center gap-3 mb-10">
         <span className={`text-sm font-semibold ${interval === "monthly" ? "text-espresso" : "text-espresso/60"}`}>
-          شهري
+          {t("monthly")}
         </span>
         <button
           onClick={() => setInterval(interval === "monthly" ? "yearly" : "monthly")}
           role="switch"
           aria-checked={interval === "yearly"}
-          aria-label="الفوترة السنوية"
+          aria-label={t("yearlyBillingAria")}
           className={`relative w-14 h-7 rounded-full transition-colors ${
             interval === "yearly" ? (isGold ? "bg-brand-gold" : "bg-primary") : "bg-espresso/20"
           }`}
@@ -164,13 +136,13 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
           />
         </button>
         <span className={`text-sm font-semibold ${interval === "yearly" ? "text-espresso" : "text-espresso/60"}`}>
-          سنوي
+          {t("yearly")}
         </span>
         {interval === "yearly" && (
           <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
             isGold ? "bg-brand-gold/10 text-brand-gold" : "bg-green-100 text-green-700"
           }`}>
-            وفّر 17%
+            {t("save17")}
           </span>
         )}
       </div>
@@ -182,11 +154,11 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
           const period = plan.period[interval];
           const href = typeof plan.href === "string" ? plan.href : plan.href[interval];
           const cta = typeof plan.cta === "string" ? plan.cta : plan.cta[interval];
-          const showYearlySaving = interval === "yearly" && plan.yearlyBadge && price !== "0" && price !== "مخصص";
+          const showYearlySaving = interval === "yearly" && plan.yearlyBadge && price !== "0" && price !== CUSTOM;
 
           return (
             <div
-              key={plan.name}
+              key={plan.id}
               className={`relative rounded-2xl p-8 ${
                 plan.highlighted
                   ? "bg-pine text-paper"
@@ -203,8 +175,8 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
               <div className="mb-6">
                 <h3 className="text-lg font-bold mb-1">{plan.name}</h3>
                 <div className="flex items-baseline gap-1">
-                  <span className="font-display text-4xl">{price}</span>
-                  {price !== "مخصص" && price !== "0" && (
+                  <span className="font-display text-4xl">{price === CUSTOM ? t("custom") : price}</span>
+                  {price !== CUSTOM && price !== "0" && (
                     <RiyalSign className={`text-2xl ${plan.highlighted ? "text-paper/80" : "text-espresso/70"}`} />
                   )}
                   {period && (
@@ -212,9 +184,9 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
                   )}
                 </div>
                 {/* Monthly equivalent for yearly */}
-                {interval === "yearly" && price !== "0" && price !== "مخصص" && (
+                {interval === "yearly" && price !== "0" && price !== CUSTOM && (
                   <p className={`text-xs mt-1 ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>
-                    ≈ {(parseFloat(price) / 12).toFixed(2)} <RiyalSign /> /شهرياً
+                    ≈ {(parseFloat(price) / 12).toFixed(2)} <RiyalSign /> {t("perMonth")}
                   </p>
                 )}
                 <p className={`text-sm mt-2 leading-relaxed ${plan.highlighted ? "text-paper/80" : "text-espresso/70"}`}>{plan.desc}</p>

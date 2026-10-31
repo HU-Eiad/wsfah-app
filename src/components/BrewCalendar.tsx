@@ -1,19 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
+import { intlLocale } from "@/i18n/format";
 
 interface BrewCalendarProps {
   brewDates: string[];
 }
 
-const DAYS = ["أحد", "إثنين", "ثلاثاء", "أربعاء", "خميس", "جمعة", "سبت"];
-const MONTHS = [
-  "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
-  "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر",
-];
+const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
 export default function BrewCalendar({ brewDates }: BrewCalendarProps) {
+  const t = useTranslations("brewCalendar");
+  const locale = useLocale();
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -60,17 +60,17 @@ export default function BrewCalendar({ brewDates }: BrewCalendarProps) {
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={goBack}
-          aria-label="الشهر السابق"
+          aria-label={t("prevMonth")}
           className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk text-espresso/70"
         >
           <MaterialIcon icon="chevron_right" />
         </button>
         <h3 className="font-display text-lg">
-          {MONTHS[month]} {year}
+          {new Date(year, month, 1).toLocaleDateString(intlLocale(locale), { month: "long", year: "numeric" })}
         </h3>
         <button
           onClick={goForward}
-          aria-label="الشهر التالي"
+          aria-label={t("nextMonth")}
           className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk text-espresso/70"
         >
           <MaterialIcon icon="chevron_left" />
@@ -78,9 +78,9 @@ export default function BrewCalendar({ brewDates }: BrewCalendarProps) {
       </div>
 
       <div className="grid grid-cols-7 gap-1">
-        {DAYS.map((d) => (
+        {DAY_KEYS.map((d) => (
           <div key={d} className="text-center text-[11px] font-semibold text-espresso/60 py-1">
-            {d}
+            {t(`weekdays.${d}`)}
           </div>
         ))}
         {cells.map((day, i) => (

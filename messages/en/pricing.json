@@ -1,0 +1,93 @@
+{
+  "title": "Pricing",
+  "custom": "Custom",
+  "forever": "forever",
+  "perMonth": "/month",
+  "perYear": "/year",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "yearlyBillingAria": "Yearly billing",
+  "save17": "Save 17%",
+  "badgePopular": "Most popular",
+  "badgeBestValue": "Best value",
+  "enterpriseMailSubject": "Enterprise subscription",
+  "errorGeneric": "Something went wrong",
+  "paymentConnectionFailed": "Couldn't connect to the payment service",
+  "successTitle": "You're subscribed",
+  "successBody": "Thank you, your subscription is now active",
+  "cancelledTitle": "Payment cancelled",
+  "cancelledBody": "You can try again anytime",
+  "tabUsers": "For brewers",
+  "tabRoasters": "For roasters and brands",
+  "currentPlan": "Your current plan",
+  "startFree": "Start for free",
+  "redirecting": "Redirecting…",
+  "contactSales": "Contact sales",
+  "subscribeNow": "Subscribe now",
+  "securePayment": "Secure payment via StreamPay",
+  "cancelAnytime": "You can cancel your subscription anytime",
+  "mada": "Mada",
+  "plans": {
+    "free": {
+      "name": "Free",
+      "features": [
+        "Browse every recipe",
+        "Basic brew timer",
+        "3 recipes of your own",
+        "Basic search",
+        "View roasters and brands",
+        "Basic profile"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "features": [
+        "Everything in Free",
+        "Unlimited recipes",
+        "Full brew journal",
+        "Collections and saved recipes",
+        "Direct messages",
+        "Groups and events",
+        "Photo gallery",
+        "Brewing equipment"
+      ]
+    },
+    "roasterBasic": {
+      "name": "Roaster - Basic",
+      "features": [
+        "Dedicated brand page",
+        "Publish up to 10 products",
+        "Official brand recipes",
+        "Basic statistics",
+        "Verified badge",
+        "One manager"
+      ]
+    },
+    "roasterPro": {
+      "name": "Roaster - Pro",
+      "features": [
+        "Everything in Basic",
+        "Unlimited products",
+        "Stories",
+        "Coupons and loyalty cards",
+        "Brand rewards",
+        "Advanced analytics",
+        "5 team members",
+        "Priority placement"
+      ]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "features": [
+        "Everything in Pro",
+        "Unlimited team members",
+        "Custom API",
+        "Dedicated account manager",
+        "Custom reports",
+        "Featured promotion",
+        "POS system integration",
+        "24/7 support"
+      ]
+    }
+  }
+}

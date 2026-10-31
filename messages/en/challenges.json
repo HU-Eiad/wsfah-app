@@ -1,0 +1,28 @@
+{
+  "ranks": {
+    "All": "All",
+    "Bronze": "Bronze",
+    "Silver": "Silver",
+    "Gold": "Gold"
+  },
+  "categories": {
+    "All": "All",
+    "General": "General",
+    "Brewing": "Brewing",
+    "Social": "Social",
+    "Streak": "Streak"
+  },
+  "title": "Challenges",
+  "yourRank": "Your rank",
+  "memberRank": "{rank} member",
+  "points": "{formatted} pts",
+  "empty": "No challenges match this filter right now.",
+  "rewardPoints": "<num>{count}</num> pts",
+  "goal": "Goal: {count}",
+  "progress": "Progress",
+  "locked": "Reach {rank} rank to unlock this challenge",
+  "completed": "Completed",
+  "inProgress": "In progress",
+  "joining": "Joining…",
+  "join": "Join challenge"
+}

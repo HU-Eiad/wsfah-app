@@ -1,0 +1,14 @@
+{
+  "errors": {
+    "submitFailed": "Couldn't submit the verification request.",
+    "network": "Network error. Please try again."
+  },
+  "successTitle": "Verification request submitted",
+  "successBody": "Your brand verification request is under review. We'll let you know once a decision is made.",
+  "title": "Verify your brand",
+  "intro": "Submit documents to verify your brand. Enter links to supporting documents (one link per line).",
+  "documentsLabel": "Document links",
+  "documentsHint": "Enter one link per line. Accepted: commercial registration, tax certificate, etc.",
+  "submitting": "Submitting…",
+  "submit": "Submit verification request"
+}

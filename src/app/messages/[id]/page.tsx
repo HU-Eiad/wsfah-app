@@ -3,6 +3,8 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import MaterialIcon from "@/components/MaterialIcon";
+import { useTranslations, useLocale } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface MessageData {
   id: string;
@@ -19,6 +21,9 @@ interface ConversationInfo {
 export default function ConversationPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const t = useTranslations("messagesDetail");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [otherUser, setOtherUser] = useState<{ name: string | null } | null>(null);
   const [input, setInput] = useState("");
@@ -88,13 +93,13 @@ export default function ConversationPage() {
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <button
           onClick={() => router.push("/messages")}
-          aria-label="رجوع"
+          aria-label={tc("back")}
           className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk"
         >
           <MaterialIcon icon="arrow_forward" />
         </button>
         <h1 dir="auto" className="text-xl flex-1 truncate">
-          {otherUser?.name || "محادثة"}
+          {otherUser?.name || t("conversation")}
         </h1>
       </header>
 
@@ -125,7 +130,7 @@ export default function ConversationPage() {
                     isOwn ? "text-on-primary/70" : "text-espresso/60"
                   }`}
                 >
-                  {new Date(msg.createdAt).toLocaleTimeString([], {
+                  {new Date(msg.createdAt).toLocaleTimeString(intlLocale(locale), {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
@@ -146,8 +151,8 @@ export default function ConversationPage() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="اكتب رسالة…"
-          aria-label="اكتب رسالة"
+          placeholder={t("inputPlaceholder")}
+          aria-label={t("inputLabel")}
           dir="auto"
           className="flex-1 min-w-0 bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
@@ -156,7 +161,7 @@ export default function ConversationPage() {
           disabled={!input.trim() || sending}
           className="bg-primary text-on-primary rounded-xl px-5 py-3 text-sm font-bold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          إرسال
+          {t("send")}
         </button>
       </form>
     </div>

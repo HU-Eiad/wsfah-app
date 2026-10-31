@@ -1,0 +1,18 @@
+{
+  "updateError": "Couldn't update the collection",
+  "notFound": "Collection not found",
+  "backToCollections": "Back to collections",
+  "back": "Back",
+  "editCollection": "Edit collection",
+  "nameLabel": "Name",
+  "descriptionLabel": "Description (optional)",
+  "makePublic": "Make collection public",
+  "saving": "Saving…",
+  "saveChanges": "Save changes",
+  "cancel": "Cancel",
+  "publicCollection": "Public collection",
+  "privateCollection": "Private collection",
+  "recipeCount": "{count, plural, one {# recipe} other {# recipes}}",
+  "empty": "No recipes in this collection yet. Add some to get started.",
+  "noRating": "No rating"
+}

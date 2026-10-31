@@ -1,0 +1,5 @@
+{
+  "invalidCredentials": "Invalid email or password",
+  "invalidOtp": "Invalid verification code",
+  "somethingWrong": "Something went wrong. Please try again."
+}

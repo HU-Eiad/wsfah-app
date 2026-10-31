@@ -1,0 +1,14 @@
+{
+  "title": "Brew journal",
+  "logBrew": "Log a brew",
+  "stats": {
+    "total": "Total brews",
+    "thisWeek": "This week",
+    "thisMonth": "This month",
+    "streak": "Streak",
+    "streakDays": "{count, plural, one {# day} other {# days}}"
+  },
+  "recent": "Recent brews",
+  "empty": "No logs yet. Start tracking your coffee journey!",
+  "logFirst": "Log your first brew"
+}

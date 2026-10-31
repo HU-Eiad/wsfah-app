@@ -1,0 +1,43 @@
+{
+  "appName": "وصفة",
+  "back": "رجوع",
+  "close": "إغلاق",
+  "cancel": "إلغاء",
+  "save": "حفظ",
+  "saving": "جارٍ الحفظ…",
+  "delete": "حذف",
+  "edit": "تعديل",
+  "share": "مشاركة",
+  "loading": "جارٍ التحميل…",
+  "seeAll": "عرض الكل",
+  "retry": "حاول مرة أخرى",
+  "guest": "ضيف",
+  "unknownUser": "مجهول",
+  "minutesShort": "{count} د",
+  "points": "{count} نقطة",
+  "errorGeneric": "حدث خطأ غير متوقع، حاول مرة أخرى",
+  "badges": {
+    "brand": "علامة تجارية",
+    "community": "مجتمعي",
+    "verified": "علامة موثقة",
+    "featured": "مميز",
+    "sponsored": "إعلان",
+    "promoted": "مُروَّج"
+  },
+  "currency": {
+    "riyal": "ريال سعودي"
+  },
+  "language": {
+    "label": "اللغة",
+    "current": "العربية",
+    "switchTo": "English",
+    "switchLabel": "Switch to English"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "search": "البحث",
+    "create": "إنشاء",
+    "rewards": "المكافآت",
+    "explore": "استكشف"
+  }
+}

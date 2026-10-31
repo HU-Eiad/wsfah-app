@@ -1,0 +1,11 @@
+{
+  "loadFailed": "تعذّر تحميل التحليلات",
+  "title": "تحليلات العلامة التجارية",
+  "loading": "جارٍ تحميل التحليلات…",
+  "accessDenied": "الوصول مرفوض",
+  "totalViews": "إجمالي المشاهدات",
+  "uniqueVisitors": "الزوار الفريدون",
+  "viewsByPage": "المشاهدات حسب الصفحة",
+  "recentViews": "المشاهدات الأخيرة (آخر 30 يوم)",
+  "viewsCount": "<num>{formatted}</num> مشاهدة"
+}

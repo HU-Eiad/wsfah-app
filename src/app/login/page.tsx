@@ -4,12 +4,15 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import LanguageSwitch from "@/components/LanguageSwitch";
 import { loginWithCredentials, loginWithPhoneOtp } from "./actions";
 
 type Tab = "phone" | "email";
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations("login");
   const [tab, setTab] = useState<Tab>("phone");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -38,7 +41,7 @@ export default function LoginPage() {
       setOtpSent(true);
       if (data.otp_for_testing) setTestOtp(data.otp_for_testing);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to send OTP");
+      setError(err instanceof Error ? err.message : t("sendOtpFailed"));
     } finally {
       setLoading(false);
     }
@@ -50,7 +53,7 @@ export default function LoginPage() {
     try {
       const result = await loginWithPhoneOtp(phone, otp);
       if (result && !result.success) {
-        setError(result.error || "رمز التحقق غير صحيح");
+        setError(result.error || t("invalidOtp"));
         setLoading(false);
       }
       // If successful, server action redirects automatically
@@ -68,7 +71,7 @@ export default function LoginPage() {
     try {
       const result = await loginWithCredentials(email, password);
       if (result && !result.success) {
-        setError(result.error || "البريد الإلكتروني أو كلمة المرور غير صحيحة");
+        setError(result.error || t("invalidCredentials"));
         setLoading(false);
       }
       // If successful, server action redirects automatically
@@ -86,28 +89,32 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background-light text-espresso flex flex-col items-center justify-center px-6 py-12">
       <div className="w-full max-w-sm">
+        {/* Language switch: visitors can change language before signing in */}
+        <div className="flex justify-end mb-4">
+          <LanguageSwitch />
+        </div>
         {/* Brand mark */}
         <div className="text-center mb-10">
-          <Link href="/" aria-label="وصفة، الصفحة الرئيسية" className="inline-flex mb-8">
-            <BrandMark />
+          <Link href="/" aria-label={t("homeAria")} className="inline-flex mb-8">
+            <BrandMark name={t("appName")} />
           </Link>
-          <h1 className="text-2xl">أهلاً بعودتك</h1>
-          <p className="text-sm text-espresso/60 mt-2 leading-relaxed">تسجيل الدخول إلى وصفة</p>
+          <h1 className="text-2xl">{t("title")}</h1>
+          <p className="text-sm text-espresso/60 mt-2 leading-relaxed">{t("subtitle")}</p>
         </div>
 
         {/* Tabs */}
         <div className="flex border-b border-espresso/10 mb-6">
-          {(["phone", "email"] as Tab[]).map((t) => (
+          {(["phone", "email"] as Tab[]).map((tabKey) => (
             <button
-              key={t}
-              onClick={() => { setTab(t); setError(""); }}
+              key={tabKey}
+              onClick={() => { setTab(tabKey); setError(""); }}
               className={`flex-1 py-3 -mb-px text-sm font-semibold transition-colors ${
-                tab === t
+                tab === tabKey
                   ? "text-primary border-b-2 border-primary"
                   : "text-espresso/60 hover:text-espresso"
               }`}
             >
-              {t === "phone" ? "الهاتف" : "البريد الإلكتروني"}
+              {tabKey === "phone" ? t("tabPhone") : t("tabEmail")}
             </button>
           ))}
         </div>
@@ -123,7 +130,7 @@ export default function LoginPage() {
           <div className="space-y-4">
             <div>
               <label htmlFor="login-phone" className={labelCls}>
-                رقم الهاتف
+                {t("phoneLabel")}
               </label>
               <input
                 id="login-phone"
@@ -143,27 +150,27 @@ export default function LoginPage() {
                 disabled={loading || !phone}
                 className={primaryBtnCls}
               >
-                {loading ? "جارٍ الإرسال…" : "إرسال الرمز"}
+                {loading ? t("sending") : t("sendCode")}
               </button>
             ) : (
               <>
                 {testOtp && (
                   <div className="bg-primary/10 rounded-xl p-3">
                     <p className="text-xs text-primary text-center">
-                      رمز تجريبي: <span className="font-mono font-bold">{testOtp}</span>
+                      {t("testCode")} <span className="font-mono font-bold">{testOtp}</span>
                     </p>
                   </div>
                 )}
                 <div>
                   <label htmlFor="login-otp" className={labelCls}>
-                    رمز التحقق
+                    {t("otpLabel")}
                   </label>
                   <input
                     id="login-otp"
                     type="text"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    placeholder="أدخل الرمز المكون من 6 أرقام"
+                    placeholder={t("otpPlaceholder")}
                     maxLength={6}
                     className={`${inputCls} text-center tracking-[0.5em] font-mono`}
                   />
@@ -173,13 +180,13 @@ export default function LoginPage() {
                   disabled={loading || otp.length !== 6}
                   className={primaryBtnCls}
                 >
-                  {loading ? "جارٍ التحقق…" : "تحقق وسجّل الدخول"}
+                  {loading ? t("verifying") : t("verifyAndLogin")}
                 </button>
                 <button
                   onClick={() => { setOtpSent(false); setOtp(""); setTestOtp(""); }}
                   className="w-full text-center text-xs text-espresso/60 hover:text-primary py-1"
                 >
-                  إعادة إرسال الرمز
+                  {t("resendCode")}
                 </button>
               </>
             )}
@@ -191,7 +198,7 @@ export default function LoginPage() {
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div>
               <label htmlFor="login-email" className={labelCls}>
-                البريد الإلكتروني
+                {t("emailLabel")}
               </label>
               <input
                 id="login-email"
@@ -205,14 +212,14 @@ export default function LoginPage() {
             </div>
             <div>
               <label htmlFor="login-password" className={labelCls}>
-                كلمة المرور
+                {t("passwordLabel")}
               </label>
               <input
                 id="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="أدخل كلمة المرور"
+                placeholder={t("passwordPlaceholder")}
                 className={inputCls}
               />
             </div>
@@ -221,7 +228,7 @@ export default function LoginPage() {
               disabled={loading || !email || !password}
               className={primaryBtnCls}
             >
-              {loading ? "جارٍ تسجيل الدخول…" : "تسجيل الدخول"}
+              {loading ? t("loggingIn") : t("login")}
             </button>
           </form>
         )}
@@ -229,7 +236,7 @@ export default function LoginPage() {
         {/* Divider */}
         <div className="flex items-center gap-4 my-6">
           <div className="flex-1 h-px bg-espresso/10" />
-          <span className="text-xs text-espresso/50">أو</span>
+          <span className="text-xs text-espresso/50">{t("or")}</span>
           <div className="flex-1 h-px bg-espresso/10" />
         </div>
 
@@ -256,19 +263,19 @@ export default function LoginPage() {
               fill="#EA4335"
             />
           </svg>
-          المتابعة مع Google
+          {t("continueGoogle")}
         </button>
 
         {/* Forgot password */}
         <Link href="/forgot-password" className="block text-center text-sm text-espresso/60 mt-6 hover:text-primary">
-          نسيت كلمة المرور؟
+          {t("forgotPassword")}
         </Link>
 
         {/* Sign up link */}
         <p className="text-center text-sm text-espresso/60 mt-4">
-          ليس لديك حساب؟{" "}
+          {t("noAccount")}{" "}
           <Link href="/signup" className="text-primary font-semibold">
-            إنشاء حساب
+            {t("signup")}
           </Link>
         </p>
       </div>
@@ -284,7 +291,7 @@ const primaryBtnCls =
 const googleBtnCls =
   "w-full py-3 rounded-xl bg-surface border border-espresso/15 font-semibold text-sm flex items-center justify-center gap-3 hover:border-primary/40 transition-colors";
 
-function BrandMark() {
+function BrandMark({ name }: { name: string }) {
   return (
     <span className="flex items-center gap-2.5">
       <span className="size-10 rounded-xl bg-forest text-paper flex items-center justify-center">
@@ -294,7 +301,7 @@ function BrandMark() {
           aria-hidden
         />
       </span>
-      <span className="font-display text-2xl font-semibold">وصفة</span>
+      <span className="font-display text-2xl font-semibold">{name}</span>
     </span>
   );
 }

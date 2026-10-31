@@ -1,0 +1,15 @@
+{
+  "title": "Add to collection",
+  "close": "Close",
+  "empty": "No collections yet",
+  "createFirst": "Create your first collection",
+  "recipeCount": "{count, plural, one {# recipe} other {# recipes}}",
+  "createNew": "New collection",
+  "namePlaceholder": "Collection name",
+  "descriptionPlaceholder": "Description (optional)",
+  "makePublic": "Make collection public",
+  "creating": "Creating…",
+  "createAndAdd": "Create and add",
+  "updateError": "Couldn't update the collection",
+  "createError": "Couldn't create the collection"
+}

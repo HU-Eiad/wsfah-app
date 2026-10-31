@@ -1,0 +1,15 @@
+{
+  "useTemplate": "استخدم القالب",
+  "title": "طريقة التحضير",
+  "close": "إغلاق",
+  "templates": {
+    "v60": { "name": "V60 ترشيح", "grindSize": "متوسط ناعم", "description": "نكهات نظيفة ومشرقة" },
+    "aeropress": { "name": "ايروبريس", "grindSize": "ناعم", "description": "ناعم ومركز" },
+    "frenchPress": { "name": "فرنش بريس", "grindSize": "خشن", "description": "قوام كامل وغني" },
+    "espresso": { "name": "إسبريسو", "grindSize": "ناعم جداً", "description": "مكثف مع كريما" },
+    "coldBrew": { "name": "كولد برو", "temperature": "حرارة الغرفة", "grindSize": "خشن", "description": "ناعم وحلو، 12 ساعة" },
+    "chemex": { "name": "كيمكس", "grindSize": "متوسط خشن", "description": "نظيف وحلو" },
+    "mokaPot": { "name": "موكا بوت", "temperature": "حرارة متوسطة", "grindSize": "ناعم", "description": "قوي، على الموقد" },
+    "turkish": { "name": "تركي", "temperature": "حرارة هادئة", "grindSize": "ناعم جداً", "description": "تقليدي، بدون فلتر" }
+  }
+}

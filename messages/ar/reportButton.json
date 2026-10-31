@@ -1,0 +1,19 @@
+{
+  "report": "إبلاغ",
+  "heading": "الإبلاغ عن محتوى",
+  "reasons": {
+    "spam": "بريد مزعج",
+    "inappropriate": "محتوى غير لائق",
+    "harassment": "تحرش",
+    "misinformation": "معلومات مضللة",
+    "other": "أخرى"
+  },
+  "detailsLabel": "تفاصيل إضافية",
+  "detailsPlaceholder": "تفاصيل إضافية (اختياري)",
+  "success": "تم إرسال البلاغ. شكراً لك.",
+  "errorFailed": "فشل إرسال البلاغ.",
+  "errorNetwork": "خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
+  "cancel": "إلغاء",
+  "submit": "إرسال",
+  "submitting": "جارٍ الإرسال…"
+}

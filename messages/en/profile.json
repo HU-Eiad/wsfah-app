@@ -1,0 +1,27 @@
+{
+  "back": "Back",
+  "title": "Profile",
+  "settings": "Settings",
+  "roles": {
+    "USER": "Home barista",
+    "CREATOR": "Verified creator",
+    "BRAND_ADMIN": "Brand admin"
+  },
+  "stats": {
+    "recipes": "Recipes",
+    "followers": "Followers",
+    "following": "Following",
+    "avgRating": "Avg. rating"
+  },
+  "editProfile": "Edit profile",
+  "shareTitle": "Check out {name}'s profile on WSFA",
+  "analytics": {
+    "title": "Recipe analytics",
+    "subtitle": "How your content is doing",
+    "totalRecipes": "Total recipes",
+    "totalLikes": "Total likes",
+    "avgRating": "Avg. rating"
+  },
+  "manageBrand": "Manage my brand",
+  "badges": "Badges"
+}

@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import { useTranslations, useLocale } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface EventDetail {
   id: string;
@@ -20,6 +22,9 @@ interface EventDetail {
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const t = useTranslations("eventsDetail");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [event, setEvent] = useState<EventDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [rsvpLoading, setRsvpLoading] = useState(false);
@@ -66,7 +71,7 @@ export default function EventDetailPage() {
   }
 
   function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString("ar-u-nu-latn", {
+    return new Date(dateStr).toLocaleDateString(intlLocale(locale), {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -78,7 +83,7 @@ export default function EventDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background-light flex items-center justify-center" role="status" aria-label="جارٍ التحميل…">
+      <div className="min-h-screen bg-background-light flex items-center justify-center" role="status" aria-label={tc("loading")}>
         <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
       </div>
     );
@@ -89,9 +94,9 @@ export default function EventDetailPage() {
       <div className="min-h-screen bg-background-light text-espresso flex items-center justify-center p-6">
         <div className="text-center">
           <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-          <p className="text-sm text-espresso/70">الفعالية غير موجودة.</p>
+          <p className="text-sm text-espresso/70">{t("notFound")}</p>
           <Link href="/events" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">
-            كل الفعاليات
+            {t("allEvents")}
           </Link>
         </div>
       </div>
@@ -103,10 +108,10 @@ export default function EventDetailPage() {
   return (
     <div className="min-h-screen bg-background-light text-espresso">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <Link href="/events" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <Link href="/events" aria-label={tc("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h1 className="text-xl flex-1">الفعالية</h1>
+        <h1 className="text-xl flex-1">{t("title")}</h1>
       </header>
 
       <div className="max-w-3xl mx-auto px-4 py-5">
@@ -121,10 +126,10 @@ export default function EventDetailPage() {
         <div className="flex items-start gap-4">
           <div className="shrink-0 w-16 rounded-2xl bg-primary/10 text-primary flex flex-col items-center justify-center py-2.5" aria-hidden>
             <span className="font-display text-3xl leading-none">
-              {start.toLocaleDateString("ar-u-nu-latn", { day: "numeric" })}
+              {start.toLocaleDateString(intlLocale(locale), { day: "numeric" })}
             </span>
             <span className="text-xs font-semibold mt-1">
-              {start.toLocaleDateString("ar-u-nu-latn", { month: "short" })}
+              {start.toLocaleDateString(intlLocale(locale), { month: "short" })}
             </span>
           </div>
           <h2 dir="auto" className="text-2xl leading-snug flex-1 pt-1">{event.title}</h2>
@@ -137,7 +142,7 @@ export default function EventDetailPage() {
               <p className="font-semibold">{formatDate(event.startDate)}</p>
               {event.endDate && (
                 <p className="text-xs text-espresso/60 mt-0.5">
-                  حتى {formatDate(event.endDate)}
+                  {t("until", { date: formatDate(event.endDate) })}
                 </p>
               )}
             </div>
@@ -151,20 +156,20 @@ export default function EventDetailPage() {
           <div className="flex items-start gap-3">
             <MaterialIcon icon="person" className="text-xl text-primary shrink-0" />
             <p className="text-espresso/70">
-              بواسطة <span dir="auto" className="font-semibold text-espresso">{event.host.name || "غير معروف"}</span>
+              {t.rich("hostedBy", { name: event.host.name || t("unknown"), host: (chunks) => <span dir="auto" className="font-semibold text-espresso">{chunks}</span> })}
             </p>
           </div>
           <div className="flex items-start gap-3">
             <MaterialIcon icon="group" className="text-xl text-primary shrink-0" />
             <p className="text-espresso/70">
-              {event._count.rsvps} {event._count.rsvps === 1 ? "حاضر" : "حاضرين"}
+              {t("attendees", { count: event._count.rsvps })}
             </p>
           </div>
         </div>
 
         {event.description && (
           <section className="mt-6">
-            <h2 className="text-xl mb-3">عن الفعالية</h2>
+            <h2 className="text-xl mb-3">{t("about")}</h2>
             <p dir="auto" className="text-sm text-espresso/70 leading-relaxed whitespace-pre-wrap">
               {event.description}
             </p>
@@ -182,7 +187,7 @@ export default function EventDetailPage() {
                 : "border-espresso/15 font-semibold hover:border-primary/40"
             }`}
           >
-            {event.userRsvp === "GOING" ? "سأحضر" : "سأحضر"}
+            {event.userRsvp === "GOING" ? t("going") : t("going")}
           </button>
           <button
             onClick={() => handleRsvp("INTERESTED")}
@@ -193,7 +198,7 @@ export default function EventDetailPage() {
                 : "border-espresso/15 font-semibold hover:border-primary/40"
             }`}
           >
-            مهتم
+            {t("interested")}
           </button>
           {event.userRsvp && (
             <button
@@ -201,7 +206,7 @@ export default function EventDetailPage() {
               disabled={rsvpLoading}
               className="px-5 py-3 rounded-xl text-sm border transition-colors disabled:opacity-50 border-red-600/40 text-red-600 font-semibold hover:bg-red-50"
             >
-              إلغاء
+              {t("cancelRsvp")}
             </button>
           )}
         </div>

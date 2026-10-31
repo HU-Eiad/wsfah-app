@@ -1,0 +1,15 @@
+{
+  "notFound": "Group not found.",
+  "allGroups": "All groups",
+  "members": "{count, plural, one {# member} other {# members}}",
+  "createdBy": "Created by <creator>{name}</creator>",
+  "unknown": "Unknown",
+  "leave": "Leave group",
+  "join": "Join group",
+  "composerPlaceholder": "Write something to the group…",
+  "composerLabel": "New post",
+  "posting": "Posting…",
+  "post": "Post",
+  "postsTitle": "Posts",
+  "postsEmpty": "No posts yet. Be the first to share something!"
+}

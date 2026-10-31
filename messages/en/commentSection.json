@@ -1,0 +1,20 @@
+{
+  "title": "Comments ({count})",
+  "confirmDelete": "Delete this comment?",
+  "justNow": "Just now",
+  "minutesAgo": "{count}m ago",
+  "hoursAgo": "{count}h ago",
+  "daysAgo": "{count}d ago",
+  "editLabel": "Edit comment",
+  "reply": "Reply",
+  "replyLabel": "Write a reply",
+  "commentLabel": "Write a comment",
+  "replyPlaceholder": "Write a reply…",
+  "commentPlaceholder": "Write a comment…",
+  "cancelReply": "Cancel reply",
+  "post": "Post comment",
+  "posting": "Posting…",
+  "signInPrompt": "Please <link>sign in</link> to leave a comment.",
+  "loadMore": "Load more comments",
+  "empty": "No comments yet. Be the first to comment."
+}

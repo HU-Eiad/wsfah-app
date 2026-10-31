@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { use } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "@/components/MaterialIcon";
 import BottomNav from "@/components/BottomNav";
 
@@ -34,6 +35,7 @@ interface Collection {
 
 export default function CollectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const t = useTranslations("collectionDetail");
   const [collection, setCollection] = useState<Collection | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -94,7 +96,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
       setShowEditForm(false);
     } catch (error) {
       console.error("Error updating collection:", error);
-      alert("تعذّر تحديث المجموعة");
+      alert(t("updateError"));
     } finally {
       setEditing(false);
     }
@@ -113,8 +115,8 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
       <div className="bg-background-light min-h-screen flex items-center justify-center">
         <div className="text-center px-6">
           <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-          <p className="text-sm text-espresso/70 mb-4">المجموعة غير موجودة</p>
-          <Link href="/collections" className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">العودة للمجموعات</Link>
+          <p className="text-sm text-espresso/70 mb-4">{t("notFound")}</p>
+          <Link href="/collections" className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">{t("backToCollections")}</Link>
         </div>
       </div>
     );
@@ -127,7 +129,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
     <div className="bg-background-light text-espresso min-h-screen pb-28">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <Link href="/collections" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk shrink-0">
+        <Link href="/collections" aria-label={t("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk shrink-0">
           <MaterialIcon icon="arrow_forward" />
         </Link>
         <h1 className="text-xl flex-1 truncate" dir="auto">
@@ -136,7 +138,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
         {isOwner && (
           <button
             onClick={() => setShowEditForm(!showEditForm)}
-            aria-label="تعديل المجموعة"
+            aria-label={t("editCollection")}
             className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk shrink-0"
           >
             <MaterialIcon icon="edit" />
@@ -150,7 +152,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
           <div className="p-4">
             <form onSubmit={handleUpdate} className="bg-surface rounded-2xl border border-espresso/10 p-4 space-y-4">
               <div>
-                <label htmlFor="collection-name" className="block text-xs font-semibold text-espresso/70 mb-2">الاسم</label>
+                <label htmlFor="collection-name" className="block text-xs font-semibold text-espresso/70 mb-2">{t("nameLabel")}</label>
                 <input
                   id="collection-name"
                   type="text"
@@ -163,7 +165,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
                 />
               </div>
               <div>
-                <label htmlFor="collection-description" className="block text-xs font-semibold text-espresso/70 mb-2">الوصف (اختياري)</label>
+                <label htmlFor="collection-description" className="block text-xs font-semibold text-espresso/70 mb-2">{t("descriptionLabel")}</label>
                 <textarea
                   id="collection-description"
                   dir="auto"
@@ -183,7 +185,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
                   className="size-4 rounded accent-primary"
                 />
                 <label htmlFor="isPublic" className="text-sm">
-                  جعل المجموعة عامة
+                  {t("makePublic")}
                 </label>
               </div>
               <div className="flex gap-3">
@@ -192,7 +194,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
                   disabled={editing || !name.trim()}
                   className="flex-1 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {editing ? "جارٍ الحفظ…" : "حفظ التغييرات"}
+                  {editing ? t("saving") : t("saveChanges")}
                 </button>
                 <button
                   type="button"
@@ -200,7 +202,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
                   disabled={editing}
                   className="border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm hover:border-primary/40 transition-colors disabled:opacity-50"
                 >
-                  إلغاء
+                  {t("cancel")}
                 </button>
               </div>
             </form>
@@ -220,16 +222,16 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
             {collection.isPublic ? (
               <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1.5 rounded-full text-xs font-bold">
                 <MaterialIcon icon="public" className="text-xs" />
-                مجموعة عامة
+                {t("publicCollection")}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 bg-oat-milk text-espresso/70 px-3 py-1.5 rounded-full text-xs font-bold">
                 <MaterialIcon icon="lock" className="text-xs" />
-                مجموعة خاصة
+                {t("privateCollection")}
               </span>
             )}
             <span className="text-xs text-espresso/60">
-              {collection.recipes.length} وصفات
+              {t("recipeCount", { count: collection.recipes.length })}
             </span>
           </div>
 
@@ -238,7 +240,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
             <div className="text-center py-12 px-6">
               <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
               <p className="text-sm text-espresso/70 leading-relaxed">
-                لا توجد وصفات في هذه المجموعة بعد. أضف وصفات إليها للبدء.
+                {t("empty")}
               </p>
             </div>
           ) : (
@@ -267,7 +269,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
                       <span aria-hidden>•</span>
                       <span className="flex items-center gap-0.5">
                         <MaterialIcon icon="star" className="text-[11px] text-crema" filled />
-                        {recipe.rating > 0 ? recipe.rating.toFixed(1) : "بدون تقييم"}
+                        {recipe.rating > 0 ? recipe.rating.toFixed(1) : t("noRating")}
                       </span>
                       <span aria-hidden>•</span>
                       <span className="flex items-center gap-0.5">

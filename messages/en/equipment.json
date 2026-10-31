@@ -1,0 +1,29 @@
+{
+  "categories": {
+    "grinder": "Grinder",
+    "kettle": "Kettle",
+    "dripper": "Dripper",
+    "scale": "Scale",
+    "espresso_machine": "Espresso machine",
+    "other": "Other"
+  },
+  "confirmDelete": "Remove this equipment?",
+  "back": "Back",
+  "title": "My equipment",
+  "add": "Add equipment",
+  "empty": "No equipment yet. Track your brewing gear to get personalized recipe suggestions.",
+  "summary": "Equipment summary",
+  "edit": "Edit",
+  "delete": "Delete",
+  "editTitle": "Edit equipment",
+  "close": "Close",
+  "nameLabel": "Name",
+  "namePlaceholder": "e.g. Comandante C40",
+  "categoryLabel": "Category",
+  "brandLabel": "Brand",
+  "optional": "Optional",
+  "modelLabel": "Model",
+  "notesLabel": "Notes",
+  "notesPlaceholder": "Any notes...",
+  "update": "Update"
+}

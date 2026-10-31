@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "@/components/MaterialIcon";
 
 interface Story {
@@ -17,6 +18,8 @@ interface StoryViewerProps {
 }
 
 export default function StoryViewer({ stories, onClose }: StoryViewerProps) {
+  const t = useTranslations("storyViewer");
+  const tc = useTranslations("common");
   const [index, setIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -84,7 +87,7 @@ export default function StoryViewer({ stories, onClose }: StoryViewerProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black text-paper flex flex-col" role="dialog" aria-modal="true" aria-label="القصص">
+    <div className="fixed inset-0 z-50 bg-black text-paper flex flex-col" role="dialog" aria-modal="true" aria-label={t("dialogLabel")}>
       {/* Progress bars */}
       <div className="flex gap-1 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] pb-2">
         {stories.map((s, i) => (
@@ -129,7 +132,7 @@ export default function StoryViewer({ stories, onClose }: StoryViewerProps) {
         <button
           onClick={onClose}
           className="size-10 rounded-full flex items-center justify-center text-paper hover:bg-paper/15 transition-colors"
-          aria-label="إغلاق"
+          aria-label={tc("close")}
         >
           <MaterialIcon icon="close" />
         </button>
@@ -150,7 +153,7 @@ export default function StoryViewer({ stories, onClose }: StoryViewerProps) {
           <img
             key={current.id}
             src={current.mediaUrl}
-            alt={current.caption || "قصة"}
+            alt={current.caption || t("storyAlt")}
             className="absolute inset-0 w-full h-full object-contain"
           />
         )}

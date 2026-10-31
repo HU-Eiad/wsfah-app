@@ -1,0 +1,19 @@
+{
+  "greetingMorning": "Good morning, {name}",
+  "greetingEvening": "Good evening, {name}",
+  "profile": "Profile",
+  "notifications": "Notifications",
+  "searchPlaceholder": "Search recipes, roasters or tea",
+  "weeklyPick": "Pick of the week",
+  "byline": "{author} · {category}",
+  "openRecipe": "Open recipe",
+  "categories": "Categories",
+  "featuredRoasters": "Featured roasters",
+  "trending": "Trending now",
+  "companyType": {
+    "roaster": "Roaster",
+    "cafe": "Café",
+    "tea_brand": "Tea brand",
+    "equipment": "Equipment"
+  }
+}

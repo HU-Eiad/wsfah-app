@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "@/components/MaterialIcon";
 
 interface Collection {
@@ -15,6 +16,7 @@ interface AddToCollectionModalProps {
 }
 
 export default function AddToCollectionModal({ recipeId, onClose }: AddToCollectionModalProps) {
+  const t = useTranslations("addToCollectionModal");
   const [collections, setCollections] = useState<Collection[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -77,7 +79,7 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
       }
     } catch (error) {
       console.error("Error toggling collection:", error);
-      alert("تعذّر تحديث المجموعة");
+      alert(t("updateError"));
     } finally {
       setUpdating((prev) => {
         const next = new Set(prev);
@@ -113,7 +115,7 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
       setShowCreateForm(false);
     } catch (error) {
       console.error("Error creating collection:", error);
-      alert("تعذّر إنشاء المجموعة");
+      alert(t("createError"));
     } finally {
       setCreating(false);
     }
@@ -127,10 +129,10 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
       <div className="bg-surface text-espresso rounded-t-3xl sm:rounded-2xl shadow-sm w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10">
-          <h2 className="font-display text-xl">إضافة إلى مجموعة</h2>
+          <h2 className="font-display text-xl">{t("title")}</h2>
           <button
             onClick={onClose}
-            aria-label="إغلاق"
+            aria-label={t("close")}
             className="flex items-center justify-center rounded-full size-10 hover:bg-oat-milk"
           >
             <MaterialIcon icon="close" />
@@ -146,12 +148,12 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
           ) : collections.length === 0 ? (
             <div className="text-center py-6">
               <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-              <p className="text-sm text-espresso/70 mb-4">لا توجد مجموعات بعد</p>
+              <p className="text-sm text-espresso/70 mb-4">{t("empty")}</p>
               <button
                 onClick={() => setShowCreateForm(true)}
                 className="bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
               >
-                أنشئ مجموعتك الأولى
+                {t("createFirst")}
               </button>
             </div>
           ) : (
@@ -176,7 +178,7 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
                         {collection.name}
                       </span>
                       <span className="text-xs text-espresso/60">
-                        {collection._count.recipes} وصفات
+                        {t("recipeCount", { count: collection._count.recipes })}
                       </span>
                     </div>
                     {isUpdating && (
@@ -191,16 +193,16 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
           {/* Create New Collection Form */}
           {showCreateForm && (
             <div className="mt-5 pt-5 border-t border-espresso/10">
-              <h3 className="font-bold text-sm mb-3">إنشاء مجموعة جديدة</h3>
+              <h3 className="font-bold text-sm mb-3">{t("createNew")}</h3>
               <form onSubmit={handleCreate} className="space-y-3">
                 <div>
                   <input
                     type="text"
                     dir="auto"
-                    aria-label="اسم المجموعة"
+                    aria-label={t("namePlaceholder")}
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
-                    placeholder="اسم المجموعة"
+                    placeholder={t("namePlaceholder")}
                     className={inputClass}
                     maxLength={100}
                     required
@@ -209,10 +211,10 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
                 <div>
                   <textarea
                     dir="auto"
-                    aria-label="الوصف (اختياري)"
+                    aria-label={t("descriptionPlaceholder")}
                     value={newDescription}
                     onChange={(e) => setNewDescription(e.target.value)}
-                    placeholder="الوصف (اختياري)"
+                    placeholder={t("descriptionPlaceholder")}
                     className={`${inputClass} leading-relaxed resize-none`}
                     rows={2}
                     maxLength={500}
@@ -227,7 +229,7 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
                     className="size-4 rounded accent-primary"
                   />
                   <label htmlFor="newIsPublic" className="text-sm">
-                    جعل المجموعة عامة
+                    {t("makePublic")}
                   </label>
                 </div>
                 <button
@@ -235,7 +237,7 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
                   disabled={creating || !newName.trim()}
                   className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {creating ? "جارٍ الإنشاء…" : "إنشاء وإضافة"}
+                  {creating ? t("creating") : t("createAndAdd")}
                 </button>
               </form>
             </div>
@@ -247,7 +249,7 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
               className="w-full mt-4 flex items-center justify-center gap-1.5 border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm text-primary hover:border-primary/40 transition-colors"
             >
               <MaterialIcon icon="add" className="text-lg" />
-              إنشاء مجموعة جديدة
+              {t("createNew")}
             </button>
           )}
         </div>

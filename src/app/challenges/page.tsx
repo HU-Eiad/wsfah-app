@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
 import BottomNav from "@/components/BottomNav";
+import { useTranslations, useLocale } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface UserChallenge {
   id: string;
@@ -31,8 +33,9 @@ interface UserData {
 const RANKS = ["All", "Bronze", "Silver", "Gold"] as const;
 const CATEGORIES = ["All", "General", "Brewing", "Social", "Streak"] as const;
 
-const RANK_LABELS: Record<string, string> = { All: "الكل", Bronze: "برونزي", Silver: "فضي", Gold: "ذهبي" };
-const CATEGORY_LABELS: Record<string, string> = { All: "الكل", General: "عام", Brewing: "تحضير", Social: "اجتماعي", Streak: "سلسلة" };
+// Display labels for the stored rank/category values live in messages ("challenges.ranks.*" / "challenges.categories.*").
+const isRank = (v: string) => (RANKS as readonly string[]).includes(v);
+const isCategory = (v: string) => (CATEGORIES as readonly string[]).includes(v);
 
 const rankColors: Record<string, { bg: string; text: string; border: string; badge: string }> = {
   Bronze: { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", badge: "bg-orange-100 text-orange-600" },
@@ -41,6 +44,11 @@ const rankColors: Record<string, { bg: string; text: string; border: string; bad
 };
 
 export default function ChallengesPage() {
+  const t = useTranslations("challenges");
+  const tc = useTranslations("common");
+  const locale = useLocale();
+  const rankLabel = (rank: string) => (isRank(rank) ? t(`ranks.${rank}`) : rank);
+  const categoryLabel = (cat: string) => (isCategory(cat) ? t(`categories.${cat}`) : cat);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeRank, setActiveRank] = useState<string>("All");
@@ -106,20 +114,20 @@ export default function ChallengesPage() {
       {/* Header */}
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 pt-3 pb-4 border-b border-espresso/10">
         <div className="flex items-center gap-2 mb-4">
-          <Link href="/rewards" aria-label="رجوع" className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
+          <Link href="/rewards" aria-label={tc("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
             <MaterialIcon icon="arrow_forward" />
           </Link>
-          <h1 className="text-xl flex-1">التحديات</h1>
+          <h1 className="text-xl flex-1">{t("title")}</h1>
         </div>
 
         {/* User Rank Badge */}
         <div className="relative overflow-hidden flex items-center gap-3 mb-4 bg-pine text-paper rounded-[20px] p-5 min-h-28">
-          <img src="/brand/banners/challenges-banner.svg" alt="" className="absolute inset-0 w-full h-full object-cover object-left" />
-          <div className="absolute inset-0 bg-gradient-to-l from-pine via-pine/85 to-transparent sm:via-pine/40" aria-hidden />
+          <img src="/brand/banners/challenges-banner.svg" alt="" className="absolute inset-0 w-full h-full object-cover object-left ltr:-scale-x-100" />
+          <div className="absolute inset-0 bg-gradient-to-l ltr:bg-gradient-to-r from-pine via-pine/85 to-transparent sm:via-pine/40" aria-hidden />
           <div className="relative flex-1">
-            <p className="text-xs text-paper/70 font-medium">مرتبتك</p>
-            <p className="font-display text-xl">عضو {RANK_LABELS[userRank] ?? userRank}</p>
-            <p className="text-sm text-paper/80 mt-1 tabular-nums">{user?.points?.toLocaleString("ar-u-nu-latn") || "0"} نقطة</p>
+            <p className="text-xs text-paper/70 font-medium">{t("yourRank")}</p>
+            <p className="font-display text-xl">{t("memberRank", { rank: rankLabel(userRank) })}</p>
+            <p className="text-sm text-paper/80 mt-1 tabular-nums">{t("points", { formatted: user?.points?.toLocaleString(intlLocale(locale)) || "0" })}</p>
           </div>
         </div>
 
@@ -135,7 +143,7 @@ export default function ChallengesPage() {
                   : "bg-surface border border-espresso/10 text-espresso/70"
               }`}
             >
-              {RANK_LABELS[rank]}
+              {rankLabel(rank)}
             </button>
           ))}
         </div>
@@ -152,7 +160,7 @@ export default function ChallengesPage() {
                   : "bg-surface border border-espresso/10 text-espresso/70"
               }`}
             >
-              {CATEGORY_LABELS[cat]}
+              {categoryLabel(cat)}
             </button>
           ))}
         </div>
@@ -166,7 +174,7 @@ export default function ChallengesPage() {
         ) : challenges.length === 0 ? (
           <div className="py-16 text-center">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
-            <p className="text-sm text-espresso/70">لا توجد تحديات بهذا الفلتر حالياً.</p>
+            <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -197,21 +205,24 @@ export default function ChallengesPage() {
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-sm font-bold" dir="auto">{ch.title}</h3>
                           <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${colors.badge}`}>
-                            {RANK_LABELS[ch.rank] || ch.rank}
+                            {rankLabel(ch.rank)}
                           </span>
                         </div>
                         <p className="text-xs text-espresso/70 mb-2 leading-relaxed" dir="auto">{ch.description}</p>
                         <div className="flex flex-wrap items-center gap-3 text-xs text-espresso/60">
                           <span className="flex items-center gap-1">
                             <MaterialIcon icon="stars" className="text-sm text-crema" />
-                            <span className="font-display text-sm text-espresso tabular-nums">{ch.rewardPoints}</span> نقطة
+                            {t.rich("rewardPoints", {
+                              count: ch.rewardPoints,
+                              num: (chunks) => <span className="font-display text-sm text-espresso tabular-nums">{chunks}</span>,
+                            })}
                           </span>
                           <span className="flex items-center gap-1">
                             <MaterialIcon icon="flag" className="text-sm" />
-                            الهدف {ch.maxProgress}
+                            {t("goal", { count: ch.maxProgress })}
                           </span>
                           <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-oat-milk text-espresso/70">
-                            {CATEGORY_LABELS[ch.category] || ch.category}
+                            {categoryLabel(ch.category)}
                           </span>
                         </div>
                       </div>
@@ -221,7 +232,7 @@ export default function ChallengesPage() {
                     {isJoined && (
                       <div className="mt-3">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-[11px] font-semibold text-espresso/60">التقدم</span>
+                          <span className="text-[11px] font-semibold text-espresso/60">{t("progress")}</span>
                           <span className="text-[11px] font-bold tabular-nums">
                             {userProgress.currentProgress}/{ch.maxProgress}
                           </span>
@@ -240,17 +251,17 @@ export default function ChallengesPage() {
                       {isLocked ? (
                         <p className="text-xs text-espresso/60 font-medium flex items-center gap-1">
                           <MaterialIcon icon="lock" className="text-sm" />
-                          حقّق المرتبة {RANK_LABELS[ch.rank] || ch.rank} لفتح هذا التحدي
+                          {t("locked", { rank: rankLabel(ch.rank) })}
                         </p>
                       ) : isCompleted ? (
                         <div className="flex items-center gap-2 text-green-600">
                           <MaterialIcon icon="check_circle" className="text-lg" />
-                          <span className="text-xs font-bold">مكتمل</span>
+                          <span className="text-xs font-bold">{t("completed")}</span>
                         </div>
                       ) : isJoined ? (
                         <div className="flex items-center gap-2 text-primary">
                           <MaterialIcon icon="trending_up" className="text-lg" />
-                          <span className="text-xs font-bold">قيد التنفيذ</span>
+                          <span className="text-xs font-bold">{t("inProgress")}</span>
                         </div>
                       ) : (
                         <button
@@ -258,7 +269,7 @@ export default function ChallengesPage() {
                           disabled={joining === ch.id}
                           className="bg-primary text-on-primary text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-primary/90 active:scale-95 transition-colors disabled:opacity-50"
                         >
-                          {joining === ch.id ? "جارٍ الانضمام…" : "انضم للتحدي"}
+                          {joining === ch.id ? t("joining") : t("join")}
                         </button>
                       )}
                     </div>

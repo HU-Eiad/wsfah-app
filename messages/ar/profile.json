@@ -1,0 +1,27 @@
+{
+  "back": "رجوع",
+  "title": "الملف الشخصي",
+  "settings": "الإعدادات",
+  "roles": {
+    "USER": "باريستا منزلي",
+    "CREATOR": "مبدع موثق",
+    "BRAND_ADMIN": "مدير علامة تجارية"
+  },
+  "stats": {
+    "recipes": "وصفات",
+    "followers": "متابعين",
+    "following": "يتابع",
+    "avgRating": "متوسط التقييم"
+  },
+  "editProfile": "تعديل الملف",
+  "shareTitle": "تعرّف على ملف {name} في وصفة",
+  "analytics": {
+    "title": "تحليلات الوصفات",
+    "subtitle": "أداء محتواك",
+    "totalRecipes": "إجمالي الوصفات",
+    "totalLikes": "إجمالي الإعجابات",
+    "avgRating": "متوسط التقييم"
+  },
+  "manageBrand": "إدارة علامتي التجارية",
+  "badges": "الشارات"
+}

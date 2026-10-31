@@ -1,0 +1,15 @@
+{
+  "title": "الفعاليات",
+  "createEvent": "إنشاء فعالية",
+  "newEvent": "فعالية جديدة",
+  "titlePlaceholder": "عنوان الفعالية",
+  "descriptionPlaceholder": "الوصف (اختياري)",
+  "descriptionLabel": "وصف الفعالية",
+  "locationPlaceholder": "الموقع (اختياري)",
+  "locationLabel": "موقع الفعالية",
+  "startDate": "تاريخ البدء",
+  "endDate": "تاريخ الانتهاء (اختياري)",
+  "creating": "جارٍ الإنشاء…",
+  "empty": "لا توجد فعاليات قادمة.",
+  "attendees": "{count, plural, one {# حاضر} other {# حاضرين}}"
+}

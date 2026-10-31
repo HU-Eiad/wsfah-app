@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 interface FollowButtonProps {
   userId: string;
@@ -8,6 +9,7 @@ interface FollowButtonProps {
 }
 
 export default function FollowButton({ userId, className = "" }: FollowButtonProps) {
+  const t = useTranslations("followButton");
   const [isFollowing, setIsFollowing] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +48,7 @@ export default function FollowButton({ userId, className = "" }: FollowButtonPro
           : "bg-primary text-on-primary border-transparent font-bold hover:bg-primary/90"
       } ${className}`}
     >
-      {loading ? "…" : isFollowing ? "متابَع" : "متابعة"}
+      {loading ? "…" : isFollowing ? t("following") : t("follow")}
     </button>
   );
 }

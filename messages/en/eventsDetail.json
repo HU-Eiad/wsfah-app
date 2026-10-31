@@ -1,0 +1,13 @@
+{
+  "notFound": "Event not found.",
+  "allEvents": "All events",
+  "title": "Event",
+  "until": "Until {date}",
+  "hostedBy": "Hosted by <host>{name}</host>",
+  "unknown": "Unknown",
+  "attendees": "{count, plural, one {# attendee} other {# attendees}}",
+  "about": "About this event",
+  "going": "Going",
+  "interested": "Interested",
+  "cancelRsvp": "Cancel RSVP"
+}

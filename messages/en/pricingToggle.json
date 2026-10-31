@@ -1,0 +1,81 @@
+{
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "yearlyBillingAria": "Yearly billing",
+  "save17": "Save 17%",
+  "custom": "Custom",
+  "forever": "forever",
+  "perMonth": "/month",
+  "perYear": "/year",
+  "ctaStartNow": "Get started",
+  "ctaStartTrial": "Start free trial",
+  "ctaContactSales": "Contact sales",
+  "badgePopular": "Most popular",
+  "badgeBestValue": "Best value",
+  "free": {
+    "name": "Free",
+    "desc": "Everything you need to start brewing better",
+    "features": [
+      "Browse every recipe",
+      "Brew timer and guided mode",
+      "Brew ratio calculator",
+      "Create up to 3 recipes",
+      "Like and save up to 20 recipes",
+      "Basic search and leaderboard"
+    ]
+  },
+  "pro": {
+    "name": "Pro",
+    "desc": "For serious brewers who want the full experience",
+    "features": [
+      "Everything in Free",
+      "Unlimited recipes and saves",
+      "Brew journal with analytics",
+      "Flavor wheel tagging",
+      "Custom brew profiles",
+      "Offline access to recipes",
+      "Copy and remix recipes",
+      "Collections, groups, and messages"
+    ]
+  },
+  "roasterBasic": {
+    "name": "Roaster - Basic",
+    "desc": "Put your brand in front of thousands of brewers",
+    "features": [
+      "Verified roaster profile and badge",
+      "Product catalog (up to 50 products)",
+      "Customer ratings and reviews",
+      "Basic brand analytics",
+      "Link recipes to your products",
+      "Community group page"
+    ]
+  },
+  "roasterPro": {
+    "name": "Roaster - Pro",
+    "desc": "Grow your audience and drive real sales",
+    "features": [
+      "Everything in Roaster - Basic",
+      "Unlimited product catalog",
+      "Promoted recipes in the feed",
+      "Advanced analytics and insights",
+      "Brew comparison tool",
+      "Recipe version history",
+      "Host and promote events",
+      "Priority placement in search"
+    ]
+  },
+  "enterprise": {
+    "name": "Enterprise",
+    "desc": "For large roasters, chains, and distributors",
+    "features": [
+      "Everything in Roaster - Pro",
+      "Multi-location management",
+      "API access and integrations",
+      "Dedicated account manager",
+      "Custom branding and landing page",
+      "Bulk product import",
+      "Team member accounts",
+      "Branded brewing guides"
+    ]
+  }
+}

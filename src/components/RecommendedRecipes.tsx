@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
 
 interface Recipe {
@@ -15,6 +16,7 @@ interface Recipe {
 }
 
 export default function RecommendedRecipes() {
+  const t = useTranslations("recommendedRecipes");
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +35,7 @@ export default function RecommendedRecipes() {
 
   return (
     <section className="py-6">
-      <h2 className="text-xl mb-4">موصى بها لك</h2>
+      <h2 className="text-xl mb-4">{t("title")}</h2>
       <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
         {recipes.map((recipe) => (
           <Link

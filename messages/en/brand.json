@@ -1,0 +1,16 @@
+{
+  "companyType": {
+    "roaster": "Roaster",
+    "cafe": "Café",
+    "tea_brand": "Tea brand",
+    "equipment": "Equipment"
+  },
+  "shareTitle": "Discover {name} on WSFA",
+  "verifiedType": "Verified · {type}",
+  "emailBrand": "Email this brand",
+  "stats": {
+    "products": "Products",
+    "recipes": "Recipes",
+    "gallery": "Gallery"
+  }
+}

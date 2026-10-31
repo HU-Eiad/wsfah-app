@@ -12,6 +12,7 @@ import AdSlot from "@/components/AdSlot";
 import BrewMode from "@/components/BrewMode";
 import BrewLogModal from "@/components/BrewLogModal";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface Recipe {
   id: string;
@@ -39,6 +40,8 @@ interface Recipe {
 export default function RecipeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  const t = useTranslations("recipeDetail");
+  const tc = useTranslations("common");
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [cups, setCups] = useState(1);
@@ -267,7 +270,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
       <div className="bg-background-light min-h-screen flex items-center justify-center">
         <div className="text-center">
           <MaterialIcon icon="coffee" className="text-4xl text-primary animate-pulse" />
-          <p className="text-sm text-slate-500 mt-2">جاري تحميل الوصفة...</p>
+          <p className="text-sm text-slate-500 mt-2">{t("loading")}</p>
         </div>
       </div>
     );
@@ -278,8 +281,8 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
       <div className="bg-background-light min-h-screen flex items-center justify-center">
         <div className="text-center">
           <MaterialIcon icon="error_outline" className="text-4xl text-red-400" />
-          <p className="text-sm text-slate-500 mt-2">الوصفة غير موجودة</p>
-          <Link href="/" className="text-primary text-sm font-bold mt-3 block">الرئيسية</Link>
+          <p className="text-sm text-slate-500 mt-2">{t("notFound")}</p>
+          <Link href="/" className="text-primary text-sm font-bold mt-3 block">{tc("nav.home")}</Link>
         </div>
       </div>
     );
@@ -296,18 +299,19 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           <MaterialIcon icon="arrow_forward" />
         </Link>
         <h2 className="text-slate-900 text-lg font-bold leading-tight flex-1 text-center">
-          تفاصيل الوصفة
+          {t("title")}
         </h2>
         <button
           onClick={() => {
             const shareUrl = `${window.location.origin}/recipe/${id}`;
             if (navigator.share) {
-              navigator.share({ title: recipe?.title || "وصفة", url: shareUrl }).catch(() => {});
+              navigator.share({ title: recipe?.title || tc("appName"), url: shareUrl }).catch(() => {});
             } else {
-              navigator.clipboard.writeText(shareUrl).then(() => alert("تم نسخ الرابط!")).catch(() => {});
+              navigator.clipboard.writeText(shareUrl).then(() => alert(t("linkCopied"))).catch(() => {});
             }
           }}
           className="flex cursor-pointer items-center justify-center rounded-full size-10 hover:bg-primary/10 transition-colors"
+          aria-label={tc("share")}
         >
           <MaterialIcon icon="share" className="text-slate-900" />
         </button>
@@ -326,7 +330,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
             <div className="flex items-center gap-2 mb-2">
               {recipe.isFeatured && (
                 <span className="bg-primary text-on-primary text-[11px] font-bold px-2 py-0.5 rounded-full">
-                  مميز
+                  {tc("badges.featured")}
                 </span>
               )}
             </div>
@@ -343,7 +347,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               {recipe.isVerified && (
                 <div className="flex items-center gap-2 text-primary">
                   <MaterialIcon icon="verified" className="text-sm" />
-                  <p className="text-sm font-bold">شارة علامة تجارية موثقة</p>
+                  <p className="text-sm font-bold">{t("verifiedBrand")}</p>
                 </div>
               )}
               <div className="flex items-center gap-4 text-slate-600 text-sm font-medium">
@@ -353,7 +357,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 </div>
                 <div className="flex items-center gap-1">
                   <BrandIcon name="timer" className="text-base" />
-                  <span>{recipe.brewTime || `${Math.ceil(recipe.brewTimeSeconds / 60)} د`}</span>
+                  <span>{recipe.brewTime || tc("minutesShort", { count: Math.ceil(recipe.brewTimeSeconds / 60) })}</span>
                 </div>
               </div>
             </div>
@@ -364,7 +368,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 onClick={toggleLike}
                 disabled={likeBusy}
                 className="flex items-center gap-1.5 cursor-pointer rounded-full h-10 px-3 border border-primary/20 hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-60"
-                aria-label={liked ? "إلغاء الإعجاب" : "أعجبني"}
+                aria-label={liked ? t("unlike") : t("like")}
               >
                 <MaterialIcon
                   icon="favorite"
@@ -377,7 +381,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 onClick={toggleSave}
                 disabled={saveBusy}
                 className="flex items-center justify-center cursor-pointer rounded-full size-10 border border-primary/20 hover:bg-primary/5 active:scale-95 transition-all disabled:opacity-60"
-                aria-label={saved ? "إلغاء الحفظ" : "احفظ الوصفة"}
+                aria-label={saved ? t("unsave") : t("save")}
               >
                 <MaterialIcon
                   icon="bookmark"
@@ -388,7 +392,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               <button
                 onClick={() => setShowCollectionModal(true)}
                 className="flex items-center justify-center cursor-pointer rounded-full size-10 border border-primary/20 hover:bg-primary/5 active:scale-95 transition-all"
-                aria-label="أضف إلى مجموعة"
+                aria-label={t("addToCollection")}
               >
                 <MaterialIcon
                   icon="collections_bookmark"
@@ -408,17 +412,17 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
             />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <p dir="auto" className="font-bold text-sm truncate">{recipe.author.name || "مجهول"}</p>
+                <p dir="auto" className="font-bold text-sm truncate">{recipe.author.name || tc("unknownUser")}</p>
                 {recipe.author.role === "CREATOR" && (
                   <span className="inline-flex items-center gap-0.5 bg-purple-100 text-purple-700 border border-purple-200 px-1.5 py-0.5 rounded-full text-[11px] font-bold shrink-0">
                     <MaterialIcon icon="verified" className="text-[11px]" filled />
-                    مبدع
+                    {t("creator")}
                   </span>
                 )}
                 {recipe.brand && (
                   <span className="inline-flex items-center gap-0.5 bg-amber-100 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full text-[11px] font-bold shrink-0">
                     <MaterialIcon icon="storefront" className="text-[11px]" />
-                    علامة تجارية
+                    {tc("badges.brand")}
                   </span>
                 )}
               </div>
@@ -437,7 +441,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 href={`/brand/${recipe.brand.id}`}
                 className="text-xs font-bold text-primary px-3 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors shrink-0"
               >
-                عرض العلامة التجارية
+                {t("viewBrand")}
               </Link>
             )}
           </div>
@@ -446,9 +450,9 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           <div className="bg-white rounded-xl border border-slate-200 p-4">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h4 className="font-bold text-sm">قيّم هذه الوصفة</h4>
+                <h4 className="font-bold text-sm">{t("rateTitle")}</h4>
                 <p className="text-xs text-slate-500">
-                  {displayRating > 0 ? `${displayRating.toFixed(1)} متوسط` : "كن أول من يقيّم"}
+                  {displayRating > 0 ? t("averageRating", { rating: displayRating.toFixed(1) }) : t("beFirstToRate")}
                 </p>
               </div>
               <div className="flex items-center gap-1 bg-primary/10 px-3 py-1.5 rounded-full">
@@ -478,7 +482,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
             </div>
             {userRating && (
               <p className="text-center text-xs text-slate-500 mt-2">
-                تقييمك {userRating}/5
+                {t("yourRating", { rating: userRating })}
               </p>
             )}
           </div>
@@ -491,14 +495,14 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-primary/10 text-primary font-bold text-sm hover:bg-primary/20 transition-colors"
               >
                 <MaterialIcon icon="edit" className="text-lg" />
-                تعديل الوصفة
+                {t("editRecipe")}
               </Link>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100 transition-colors"
               >
                 <MaterialIcon icon="delete" className="text-lg" />
-                حذف
+                {tc("delete")}
               </button>
             </div>
           )}
@@ -511,14 +515,14 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                   <div className="size-14 rounded-full bg-red-100 flex items-center justify-center">
                     <MaterialIcon icon="delete_forever" className="text-3xl text-red-500" />
                   </div>
-                  <h3 className="text-lg font-bold">حذف الوصفة؟</h3>
-                  <p className="text-sm text-slate-500">لا يمكن التراجع عن هذا الإجراء. سيتم حذف الوصفة وجميع البيانات المرتبطة بها نهائياً.</p>
+                  <h3 className="text-lg font-bold">{t("deleteTitle")}</h3>
+                  <p className="text-sm text-slate-500">{t("deleteBody")}</p>
                   <div className="flex gap-3 w-full">
                     <button
                       onClick={() => setShowDeleteConfirm(false)}
                       className="flex-1 py-3 rounded-xl border border-slate-200 font-bold text-sm hover:bg-slate-50 transition-colors"
                     >
-                      إلغاء
+                      {tc("cancel")}
                     </button>
                     <button
                       onClick={handleDelete}
@@ -528,7 +532,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                       {deleting ? (
                         <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       ) : (
-                        "حذف"
+                        tc("delete")
                       )}
                     </button>
                   </div>
@@ -540,7 +544,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           {/* Story */}
           {recipe.description && (
             <section>
-              <h3 className="text-xl font-bold mb-3">القصة</h3>
+              <h3 className="text-xl font-bold mb-3">{t("story")}</h3>
               <p dir="auto" className="text-slate-600 leading-relaxed">{recipe.description}</p>
             </section>
           )}
@@ -548,8 +552,8 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           {/* Servings */}
           <div className="flex items-center justify-between bg-oat-milk p-4 rounded-xl">
             <div>
-              <p className="text-sm font-bold">عدد الأكواب</p>
-              <p className="text-[11px] text-slate-500">يعدّل كميات المكونات</p>
+              <p className="text-sm font-bold">{t("cups")}</p>
+              <p className="text-[11px] text-slate-500">{t("cupsHint")}</p>
             </div>
             <div className="flex items-center gap-3 bg-background-light p-1 rounded-full border border-primary/20">
               <button
@@ -571,16 +575,16 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           {/* Brewing Parameters */}
           {recipe.brewParams && (
             <section className="bg-surface rounded-[20px] p-6 border border-espresso/10">
-              <h3 className="font-display text-xl mb-5">معايير التحضير</h3>
+              <h3 className="font-display text-xl mb-5">{t("brewParams")}</h3>
               <dl className="grid grid-cols-3 divide-x divide-espresso/10">
                 {[
-                  { icon: "thermometer", label: "الحرارة", value: recipe.brewParams.temperature },
-                  { icon: "scale", label: "النسبة", value: recipe.brewParams.ratio },
-                  { icon: "grind", label: "الطحن", value: recipe.brewParams.grindSize },
+                  { icon: "thermometer", labelKey: "temperature", value: recipe.brewParams.temperature },
+                  { icon: "scale", labelKey: "ratio", value: recipe.brewParams.ratio },
+                  { icon: "grind", labelKey: "grind", value: recipe.brewParams.grindSize },
                 ].map((p) => (
-                  <div key={p.label} className="flex flex-col items-center text-center gap-1.5 px-2">
+                  <div key={p.labelKey} className="flex flex-col items-center text-center gap-1.5 px-2">
                     <BrandIcon name={p.icon} className="text-2xl text-primary" />
-                    <dt className="text-xs text-espresso/60">{p.label}</dt>
+                    <dt className="text-xs text-espresso/60">{t(p.labelKey)}</dt>
                     <dd dir="auto" className="text-base font-bold">{p.value}</dd>
                   </div>
                 ))}
@@ -589,7 +593,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               {/* Timer */}
               <div className="mt-6 pt-6 border-t border-espresso/10">
                 <div className="flex flex-col items-center">
-                  <p className="text-xs font-semibold text-espresso/60 mb-2">مؤقت التحضير</p>
+                  <p className="text-xs font-semibold text-espresso/60 mb-2">{t("brewTimer")}</p>
                   <div className="font-display text-5xl text-espresso mb-4 tabular-nums">
                     {formatTime(timer)}
                   </div>
@@ -605,14 +609,14 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                       className="flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary rounded-full font-bold text-sm active:scale-95 transition-transform"
                     >
                       <MaterialIcon icon={running ? "pause" : "play_arrow"} filled className="text-lg" />
-                      <span>{running ? "إيقاف" : "ابدأ"}</span>
+                      <span>{running ? t("pause") : t("start")}</span>
                     </button>
                     <button
                       onClick={resetTimer}
                       className="flex items-center gap-2 px-6 py-2.5 border border-primary/20 text-slate-600 rounded-full font-bold text-sm hover:bg-primary/5 active:scale-95 transition-transform"
                     >
                       <MaterialIcon icon="restart_alt" className="text-lg" />
-                      <span>إعادة ضبط</span>
+                      <span>{t("reset")}</span>
                     </button>
                   </div>
                 </div>
@@ -628,7 +632,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-on-primary font-bold text-sm hover:opacity-90 transition-opacity active:scale-95"
               >
                 <MaterialIcon icon="play_circle" className="text-xl" filled />
-                ابدأ وضع التحضير
+                {t("startBrewMode")}
               </button>
             )}
             <button
@@ -636,7 +640,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-primary text-primary font-bold text-sm hover:bg-primary/5 transition-colors active:scale-95"
             >
               <MaterialIcon icon="edit_note" className="text-xl" />
-              حضّرتها
+              {t("iBrewedIt")}
             </button>
           </div>
 
@@ -644,9 +648,9 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           {recipe.ingredients.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold">المكونات</h3>
+                <h3 className="text-xl font-bold">{t("ingredients")}</h3>
                 <span className="text-xs font-bold text-primary">
-                  {recipe.ingredients.length} عنصر
+                  {t("itemCount", { count: recipe.ingredients.length })}
                 </span>
               </div>
               <div className="flex flex-col gap-3">
@@ -681,7 +685,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           {/* Steps */}
           {recipe.steps.length > 0 && (
             <section>
-              <h3 className="text-xl font-bold mb-4">الخطوات</h3>
+              <h3 className="text-xl font-bold mb-4">{t("steps")}</h3>
               <div className="flex flex-col gap-8">
                 {recipe.steps.map((s) => (
                   <div key={s.id} className="flex gap-4">
@@ -750,7 +754,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           onClose={() => setShowBrewLog(false)}
           onSaved={() => {
             setShowBrewLog(false);
-            alert("تم تسجيل التحضير! تحقق من دفتر التحضير.");
+            alert(t("brewLogged"));
           }}
         />
       )}

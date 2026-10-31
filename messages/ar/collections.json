@@ -1,0 +1,16 @@
+{
+  "title": "مجموعاتي",
+  "create": "إنشاء",
+  "nameLabel": "الاسم",
+  "namePlaceholder": "اسم المجموعة",
+  "descriptionLabel": "الوصف (اختياري)",
+  "descriptionPlaceholder": "عن ماذا هذه المجموعة؟",
+  "makePublic": "جعل المجموعة عامة",
+  "creating": "جارٍ الإنشاء…",
+  "createCollection": "إنشاء مجموعة",
+  "cancel": "إلغاء",
+  "empty": "لا توجد مجموعات بعد. أنشئ مجموعتك الأولى لتنظيم وصفاتك المفضلة.",
+  "public": "عامة",
+  "recipeCount": "{count} وصفات",
+  "createError": "تعذّر إنشاء المجموعة"
+}

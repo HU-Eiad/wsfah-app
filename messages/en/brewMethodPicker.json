@@ -1,0 +1,15 @@
+{
+  "useTemplate": "Use a template",
+  "title": "Brew method",
+  "close": "Close",
+  "templates": {
+    "v60": { "name": "V60 pour-over", "grindSize": "Medium-fine", "description": "Clean, bright flavors" },
+    "aeropress": { "name": "AeroPress", "grindSize": "Fine", "description": "Smooth and concentrated" },
+    "frenchPress": { "name": "French press", "grindSize": "Coarse", "description": "Full, rich body" },
+    "espresso": { "name": "Espresso", "grindSize": "Extra fine", "description": "Intense, with crema" },
+    "coldBrew": { "name": "Cold brew", "temperature": "Room temperature", "grindSize": "Coarse", "description": "Smooth and sweet, 12 hours" },
+    "chemex": { "name": "Chemex", "grindSize": "Medium-coarse", "description": "Clean and sweet" },
+    "mokaPot": { "name": "Moka pot", "temperature": "Medium heat", "grindSize": "Fine", "description": "Strong, on the stovetop" },
+    "turkish": { "name": "Turkish", "temperature": "Low heat", "grindSize": "Extra fine", "description": "Traditional, unfiltered" }
+  }
+}

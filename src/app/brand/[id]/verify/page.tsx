@@ -4,9 +4,12 @@ import { useState, use } from "react";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
 import BrandIcon from "@/components/BrandIcon";
+import { useTranslations } from "next-intl";
 
 export default function BrandVerifyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const t = useTranslations("brandVerify");
+  const tc = useTranslations("common");
   const [documents, setDocuments] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -37,10 +40,10 @@ export default function BrandVerifyPage({ params }: { params: Promise<{ id: stri
         setSuccess(true);
       } else {
         const data = await res.json();
-        setError(data.error || "فشل تقديم طلب التوثيق.");
+        setError(data.error || t("errors.submitFailed"));
       }
     } catch {
-      setError("خطأ في الشبكة. حاول مرة أخرى.");
+      setError(t("errors.network"));
     } finally {
       setSubmitting(false);
     }
@@ -54,10 +57,10 @@ export default function BrandVerifyPage({ params }: { params: Promise<{ id: stri
             <BrandIcon name="verified" className="text-3xl" />
           </div>
           <h2 className="text-xl mb-2">
-            تم تقديم طلب التوثيق
+            {t("successTitle")}
           </h2>
           <p className="text-espresso/70 text-sm leading-relaxed">
-            تم تقديم طلب توثيق علامتك التجارية وهو قيد المراجعة. سيتم إعلامك عند اتخاذ القرار.
+            {t("successBody")}
           </p>
         </div>
       </div>
@@ -67,10 +70,10 @@ export default function BrandVerifyPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="min-h-screen bg-background-light text-espresso">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <Link href={`/brand/${id}`} aria-label="رجوع" className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk">
+        <Link href={`/brand/${id}`} aria-label={tc("back")} className="size-10 shrink-0 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h1 className="text-xl flex-1">توثيق العلامة التجارية</h1>
+        <h1 className="text-xl flex-1">{t("title")}</h1>
       </header>
 
       <main className="max-w-md mx-auto p-4">
@@ -78,14 +81,14 @@ export default function BrandVerifyPage({ params }: { params: Promise<{ id: stri
           <div className="flex items-start gap-3 mb-5">
             <BrandIcon name="verified" className="text-3xl text-primary shrink-0" />
             <p className="text-sm text-espresso/70 leading-relaxed">
-              قدّم المستندات لتوثيق علامتك التجارية. أدخل روابط المستندات الداعمة (رابط واحد في كل سطر).
+              {t("intro")}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="verify-documents" className="block text-sm font-semibold mb-1.5">
-                روابط المستندات
+                {t("documentsLabel")}
               </label>
               <textarea
                 id="verify-documents"
@@ -97,7 +100,7 @@ export default function BrandVerifyPage({ params }: { params: Promise<{ id: stri
                 className="w-full bg-surface border border-espresso/15 rounded-xl px-4 py-3 text-sm resize-none placeholder:text-espresso/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
               <p className="text-xs text-espresso/60 mt-1.5 leading-relaxed">
-                أدخل رابطاً واحداً في كل سطر. المقبول: رخصة تجارية، شهادة ضريبية، إلخ.
+                {t("documentsHint")}
               </p>
             </div>
 
@@ -108,7 +111,7 @@ export default function BrandVerifyPage({ params }: { params: Promise<{ id: stri
               disabled={submitting}
               className="w-full bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
-              {submitting ? "جارٍ التقديم…" : "تقديم طلب التوثيق"}
+              {submitting ? t("submitting") : t("submit")}
             </button>
           </form>
         </div>

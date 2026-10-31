@@ -1,0 +1,19 @@
+{
+  "all": "الكل",
+  "difficulty": {
+    "beginner": "مبتدئ",
+    "intermediate": "متوسط",
+    "advanced": "متقدم"
+  },
+  "source": {
+    "community": "مجتمع",
+    "brand": "علامة تجارية"
+  },
+  "title": "البحث",
+  "searchLabel": "ابحث",
+  "placeholder": "ابحث عن وصفات، محمصات، أو خلطات شاي",
+  "clear": "مسح البحث",
+  "difficultyLabel": "المستوى",
+  "sourceLabel": "المصدر",
+  "empty": "لا توجد وصفات تطابق بحثك. جرّب كلمة أو قسماً مختلفاً."
+}

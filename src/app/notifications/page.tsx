@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "@/components/MaterialIcon";
 import BottomNav from "@/components/BottomNav";
 
@@ -28,31 +29,32 @@ const NOTIFICATION_ICON_MAP: Record<
   SYSTEM: { icon: "info", color: "text-espresso/70", bg: "bg-oat-milk" },
 };
 
-function relativeTime(dateString: string): string {
+function relativeTime(dateString: string, t: ReturnType<typeof useTranslations>): string {
   const now = Date.now();
   const then = new Date(dateString).getTime();
   const diffSeconds = Math.floor((now - then) / 1000);
 
-  if (diffSeconds < 60) return `منذ ${diffSeconds} ث`;
+  if (diffSeconds < 60) return t("time.seconds", { count: diffSeconds });
 
   const diffMinutes = Math.floor(diffSeconds / 60);
-  if (diffMinutes < 60) return `منذ ${diffMinutes} د`;
+  if (diffMinutes < 60) return t("time.minutes", { count: diffMinutes });
 
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return `منذ ${diffHours} س`;
+  if (diffHours < 24) return t("time.hours", { count: diffHours });
 
   const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 30) return `منذ ${diffDays} ي`;
+  if (diffDays < 30) return t("time.days", { count: diffDays });
 
   const diffMonths = Math.floor(diffDays / 30);
-  if (diffMonths < 12) return `منذ ${diffMonths} شهر`;
+  if (diffMonths < 12) return t("time.months", { count: diffMonths });
 
   const diffYears = Math.floor(diffMonths / 12);
-  return `منذ ${diffYears} سنة`;
+  return t("time.years", { count: diffYears });
 }
 
 export default function NotificationsPage() {
   const router = useRouter();
+  const t = useTranslations("notifications");
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -127,13 +129,13 @@ export default function NotificationsPage() {
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link
           href="/"
-          aria-label="رجوع"
+          aria-label={t("back")}
           className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk"
         >
           <MaterialIcon icon="arrow_forward" />
         </Link>
         <h1 className="text-xl flex-1 flex items-center">
-          الإشعارات
+          {t("title")}
           {unreadCount > 0 && (
             <span className="ms-2 inline-flex items-center justify-center min-w-6 px-2 py-0.5 text-xs font-bold font-sans bg-primary text-on-primary rounded-full">
               {unreadCount}
@@ -151,7 +153,7 @@ export default function NotificationsPage() {
             className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors disabled:opacity-50 flex items-center gap-1"
           >
             <MaterialIcon icon="done_all" className="text-base" />
-            {markingAllRead ? "جارٍ التحديد…" : "تحديد الكل كمقروء"}
+            {markingAllRead ? t("markingAll") : t("markAllRead")}
           </button>
         </div>
       )}
@@ -161,19 +163,19 @@ export default function NotificationsPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-            <p className="text-sm text-espresso/60 font-medium">جارٍ تحميل الإشعارات…</p>
+            <p className="text-sm text-espresso/60 font-medium">{t("loading")}</p>
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
             <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
             <p className="text-sm text-espresso/70 leading-relaxed mb-5">
-              لا توجد إشعارات بعد. عندما يعجب أحد بوصفتك، أو يتابعك، أو تحصل على شارة، ستراها هنا.
+              {t("empty")}
             </p>
             <Link
               href="/"
               className="bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
             >
-              استكشف الوصفات
+              {t("exploreRecipes")}
             </Link>
           </div>
         ) : (
@@ -214,7 +216,7 @@ export default function NotificationsPage() {
                           {notif.title}
                         </p>
                         <span className="text-[11px] text-espresso/60 font-medium shrink-0 mt-0.5">
-                          {relativeTime(notif.createdAt)}
+                          {relativeTime(notif.createdAt, t)}
                         </span>
                       </div>
                       <p dir="auto" className="text-xs text-espresso/70 mt-0.5 leading-relaxed line-clamp-2">

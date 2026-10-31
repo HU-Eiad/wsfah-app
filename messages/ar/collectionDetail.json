@@ -1,0 +1,18 @@
+{
+  "updateError": "تعذّر تحديث المجموعة",
+  "notFound": "المجموعة غير موجودة",
+  "backToCollections": "العودة للمجموعات",
+  "back": "رجوع",
+  "editCollection": "تعديل المجموعة",
+  "nameLabel": "الاسم",
+  "descriptionLabel": "الوصف (اختياري)",
+  "makePublic": "جعل المجموعة عامة",
+  "saving": "جارٍ الحفظ…",
+  "saveChanges": "حفظ التغييرات",
+  "cancel": "إلغاء",
+  "publicCollection": "مجموعة عامة",
+  "privateCollection": "مجموعة خاصة",
+  "recipeCount": "{count} وصفات",
+  "empty": "لا توجد وصفات في هذه المجموعة بعد. أضف وصفات إليها للبدء.",
+  "noRating": "بدون تقييم"
+}

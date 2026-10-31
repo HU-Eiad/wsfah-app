@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import { useTranslations, useLocale } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface User {
   id: string;
@@ -25,6 +27,8 @@ interface ActivityCardProps {
 }
 
 export default function ActivityCard({ activity }: ActivityCardProps) {
+  const t = useTranslations("activityCard");
+  const locale = useLocale();
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -33,15 +37,15 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "الآن";
-    if (diffMins < 60) return `منذ ${diffMins} د`;
-    if (diffHours < 24) return `منذ ${diffHours} س`;
-    if (diffDays < 7) return `منذ ${diffDays} ي`;
-    return date.toLocaleDateString("ar-u-nu-latn");
+    if (diffMins < 1) return t("time.now");
+    if (diffMins < 60) return t("time.minutesAgo", { count: diffMins });
+    if (diffHours < 24) return t("time.hoursAgo", { count: diffHours });
+    if (diffDays < 7) return t("time.daysAgo", { count: diffDays });
+    return date.toLocaleDateString(intlLocale(locale));
   };
 
   const renderActivity = () => {
-    const userName = activity.user.name || "شخص ما";
+    const userName = activity.user.name || t("someone");
     const userAvatar = activity.user.image || "/brand/banners/avatar-placeholder.svg";
 
     switch (activity.type) {
@@ -62,13 +66,13 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               <p className="text-sm text-espresso/70 leading-relaxed">
                 <span dir="auto" className="font-bold text-espresso">{userName}</span>
                 {" "}
-                أنشأ وصفة جديدة
+                {t("createdRecipe")}
               </p>
               <Link
                 href={`/recipe/${activity.entityId}`}
                 className="inline-block mt-1 text-sm font-semibold text-primary hover:underline"
               >
-                عرض الوصفة
+                {t("viewRecipe")}
               </Link>
             </div>
           </div>
@@ -92,15 +96,13 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               <p className="text-sm text-espresso/70 leading-relaxed">
                 <span dir="auto" className="font-bold text-espresso">{userName}</span>
                 {" "}
-                {activity.type === "LIKE" ? "أعجب بـ" : "حفظ"}
-                {" "}
-                وصفة
+                {activity.type === "LIKE" ? t("likedRecipe") : t("savedRecipe")}
               </p>
               <Link
                 href={`/recipe/${activity.entityId}`}
                 className="inline-block mt-1 text-sm font-semibold text-primary hover:underline"
               >
-                عرض الوصفة
+                {t("viewRecipe")}
               </Link>
             </div>
           </div>
@@ -123,7 +125,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               <p className="text-sm text-espresso/70 leading-relaxed">
                 <span dir="auto" className="font-bold text-espresso">{userName}</span>
                 {" "}
-                بدأ متابعة
+                {t("startedFollowing")}
                 {" "}
                 <Link
                   href={`/profile/${activity.userId}`}
@@ -154,14 +156,13 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               <p className="text-sm text-espresso/70 leading-relaxed">
                 <span dir="auto" className="font-bold text-espresso">{userName}</span>
                 {" "}
-                علّق على{" "}
-                {activity.entityType === "recipe" ? "وصفة" : "منشور"}
+                {activity.entityType === "recipe" ? t("commentedOnRecipe") : t("commentedOnPost")}
               </p>
               <Link
                 href={activity.entityType === "recipe" ? `/recipe/${activity.entityId}` : `/explore/${activity.entityId}`}
                 className="inline-block mt-1 text-sm font-semibold text-primary hover:underline"
               >
-                عرض {activity.entityType === "recipe" ? "الوصفة" : "المنشور"}
+                {activity.entityType === "recipe" ? t("viewRecipe") : t("viewPost")}
               </Link>
             </div>
           </div>

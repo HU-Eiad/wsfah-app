@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import MaterialIcon from "@/components/MaterialIcon";
 import BrandIcon from "@/components/BrandIcon";
 
@@ -11,8 +12,9 @@ interface RecipeOption {
 }
 
 export default function NewBrewLogPage() {
+  const t = useTranslations("journalNew");
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background-light flex items-center justify-center"><p className="text-sm text-espresso/60">جارٍ التحميل…</p></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background-light flex items-center justify-center"><p className="text-sm text-espresso/60">{t("loading")}</p></div>}>
       <NewBrewLogInner />
     </Suspense>
   );
@@ -20,6 +22,7 @@ export default function NewBrewLogPage() {
 
 function NewBrewLogInner() {
   const router = useRouter();
+  const t = useTranslations("journalNew");
   const searchParams = useSearchParams();
   const prefilledRecipeId = searchParams.get("recipeId") || "";
 
@@ -74,13 +77,13 @@ function NewBrewLogInner() {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || "تعذّر حفظ سجل التحضير");
+        setError(data.error || t("saveError"));
         return;
       }
 
       router.push("/journal");
     } catch {
-      setError("تعذّر حفظ سجل التحضير");
+      setError(t("saveError"));
     } finally {
       setSubmitting(false);
     }
@@ -93,7 +96,7 @@ function NewBrewLogInner() {
   return (
     <div className="min-h-screen bg-background-light text-espresso">
       <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
-        <h1 className="text-xl flex-1">سجّل تحضيراً</h1>
+        <h1 className="text-xl flex-1">{t("title")}</h1>
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-6">
@@ -108,7 +111,7 @@ function NewBrewLogInner() {
             {/* Title */}
             <div>
               <label htmlFor="log-title" className={labelClass}>
-                العنوان *
+                {t("titleLabel")}
               </label>
               <input
                 id="log-title"
@@ -117,7 +120,7 @@ function NewBrewLogInner() {
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="ترشيح الصباح"
+                placeholder={t("titlePlaceholder")}
                 className={inputClass}
               />
             </div>
@@ -125,7 +128,7 @@ function NewBrewLogInner() {
             {/* Recipe */}
             <div>
               <label htmlFor="log-recipe" className={labelClass}>
-                الوصفة
+                {t("recipeLabel")}
               </label>
               <select
                 id="log-recipe"
@@ -133,7 +136,7 @@ function NewBrewLogInner() {
                 onChange={(e) => setRecipeId(e.target.value)}
                 className={inputClass}
               >
-                <option value="">بدون وصفة</option>
+                <option value="">{t("noRecipe")}</option>
                 {recipes.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.title}
@@ -145,7 +148,7 @@ function NewBrewLogInner() {
             {/* Notes */}
             <div>
               <label htmlFor="log-notes" className={labelClass}>
-                الملاحظات
+                {t("notesLabel")}
               </label>
               <textarea
                 id="log-notes"
@@ -153,21 +156,21 @@ function NewBrewLogInner() {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={4}
-                placeholder="كيف كان الطعم؟ هل تريد تعديل شيء؟"
+                placeholder={t("notesPlaceholder")}
                 className={`${inputClass} leading-relaxed resize-none`}
               />
             </div>
 
             {/* Rating */}
             <div>
-              <p className={labelClass}>التقييم</p>
+              <p className={labelClass}>{t("ratingLabel")}</p>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
                     type="button"
                     onClick={() => setRating(star === rating ? 0 : star)}
-                    aria-label={`${star} من 5`}
+                    aria-label={t("ratingOf", { value: star })}
                     className="p-0.5"
                   >
                     <MaterialIcon
@@ -185,12 +188,12 @@ function NewBrewLogInner() {
 
           {/* Brew Parameters Grid */}
           <section>
-            <h2 className="text-xl mb-4">متغيرات التحضير</h2>
+            <h2 className="text-xl mb-4">{t("paramsTitle")}</h2>
             <div className="bg-surface rounded-2xl border border-espresso/10 p-4 grid grid-cols-2 gap-4">
               <div>
                 <label htmlFor="log-grind" className={labelClass}>
                   <BrandIcon name="grind" className="text-base text-primary" />
-                  حجم الطحن
+                  {t("grindSize")}
                 </label>
                 <input
                   id="log-grind"
@@ -198,14 +201,14 @@ function NewBrewLogInner() {
                   dir="auto"
                   value={grindSize}
                   onChange={(e) => setGrindSize(e.target.value)}
-                  placeholder="متوسط ناعم"
+                  placeholder={t("grindPlaceholder")}
                   className={inputClass}
                 />
               </div>
               <div>
                 <label htmlFor="log-temp" className={labelClass}>
                   <BrandIcon name="thermometer" className="text-base text-primary" />
-                  حرارة الماء (&deg;C)
+                  {t("waterTemp")}
                 </label>
                 <input
                   id="log-temp"
@@ -221,7 +224,7 @@ function NewBrewLogInner() {
               <div>
                 <label htmlFor="log-time" className={labelClass}>
                   <BrandIcon name="timer" className="text-base text-primary" />
-                  وقت التحضير (ثواني)
+                  {t("brewTime")}
                 </label>
                 <input
                   id="log-time"
@@ -237,7 +240,7 @@ function NewBrewLogInner() {
               <div>
                 <label htmlFor="log-coffee" className={labelClass}>
                   <BrandIcon name="bean" className="text-base text-primary" />
-                  القهوة (غرام)
+                  {t("coffeeGrams")}
                 </label>
                 <input
                   id="log-coffee"
@@ -253,7 +256,7 @@ function NewBrewLogInner() {
               <div>
                 <label htmlFor="log-water" className={labelClass}>
                   <BrandIcon name="drop" className="text-base text-primary" />
-                  الماء (مل)
+                  {t("waterMl")}
                 </label>
                 <input
                   id="log-water"
@@ -268,7 +271,7 @@ function NewBrewLogInner() {
               <div>
                 <label htmlFor="log-date" className={labelClass}>
                   <MaterialIcon icon="calendar_today" className="text-base text-primary" />
-                  التاريخ
+                  {t("date")}
                 </label>
                 <input
                   id="log-date"
@@ -288,14 +291,14 @@ function NewBrewLogInner() {
               disabled={submitting}
               className="flex-1 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
-              {submitting ? "جارٍ الحفظ…" : "حفظ سجل التحضير"}
+              {submitting ? t("saving") : t("save")}
             </button>
             <button
               type="button"
               onClick={() => router.back()}
               className="border border-espresso/15 rounded-xl px-5 py-3 font-semibold text-sm hover:border-primary/40 transition-colors"
             >
-              إلغاء
+              {t("cancel")}
             </button>
           </div>
         </form>

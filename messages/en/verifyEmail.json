@@ -1,0 +1,10 @@
+{
+  "appName": "WSFA",
+  "verifying": "Verifying…",
+  "successTitle": "Email confirmed",
+  "successBody": "Your email address has been confirmed",
+  "goHome": "Go to home",
+  "errorTitle": "Invalid link",
+  "errorBody": "This link has expired or is incorrect",
+  "login": "Log in"
+}

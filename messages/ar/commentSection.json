@@ -1,0 +1,20 @@
+{
+  "title": "التعليقات ({count})",
+  "confirmDelete": "هل أنت متأكد من حذف هذا التعليق؟",
+  "justNow": "الآن",
+  "minutesAgo": "منذ {count} د",
+  "hoursAgo": "منذ {count} س",
+  "daysAgo": "منذ {count} ي",
+  "editLabel": "تعديل التعليق",
+  "reply": "رد",
+  "replyLabel": "اكتب رداً",
+  "commentLabel": "اكتب تعليقاً",
+  "replyPlaceholder": "اكتب رداً…",
+  "commentPlaceholder": "اكتب تعليقاً…",
+  "cancelReply": "إلغاء الرد",
+  "post": "نشر التعليق",
+  "posting": "جارٍ النشر…",
+  "signInPrompt": "يرجى <link>تسجيل الدخول</link> لكتابة تعليق.",
+  "loadMore": "تحميل المزيد من التعليقات",
+  "empty": "لا توجد تعليقات بعد. كن أول من يعلّق."
+}

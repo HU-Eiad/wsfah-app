@@ -1,0 +1,15 @@
+{
+  "title": "وضع التحضير",
+  "completeTitle": "اكتمل التحضير!",
+  "logBrew": "سجّل هذا التحضير",
+  "closeLabel": "إغلاق وضع التحضير",
+  "stepOf": "الخطوة {current} من {total}",
+  "stepFallback": "الخطوة {number}",
+  "resetTimer": "إعادة ضبط المؤقت",
+  "pauseTimer": "إيقاف مؤقت",
+  "startTimer": "تشغيل المؤقت",
+  "skip10": "تقديم 10 ثوانٍ",
+  "previous": "السابق",
+  "finish": "إنهاء",
+  "nextStep": "الخطوة التالية"
+}
