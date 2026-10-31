@@ -180,7 +180,7 @@ export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onCo
             </button>
             <button
               onClick={() => setTimer((t) => Math.max(0, t - 10))}
-              aria-label="تقديم ١٠ ثوانٍ"
+              aria-label="تقديم 10 ثوانٍ"
               className="size-12 rounded-full border border-paper/20 flex items-center justify-center hover:bg-paper/10"
             >
               <MaterialIcon icon="fast_forward" className="text-paper/70" />

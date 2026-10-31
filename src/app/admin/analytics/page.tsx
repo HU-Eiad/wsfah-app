@@ -46,19 +46,19 @@ export default function AdminAnalyticsPage() {
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
           <p className="text-sm text-[#eef0e899]">إجمالي الإعجابات</p>
           <p className="text-3xl font-bold text-[#eef0e8] mt-1">
-            {data.totalLikes.toLocaleString()}
+            {data.totalLikes.toLocaleString("en-US")}
           </p>
         </div>
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
           <p className="text-sm text-[#eef0e899]">إجمالي التعليقات</p>
           <p className="text-3xl font-bold text-[#eef0e8] mt-1">
-            {data.totalComments.toLocaleString()}
+            {data.totalComments.toLocaleString("en-US")}
           </p>
         </div>
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
           <p className="text-sm text-[#eef0e899]">إجمالي المتابعات</p>
           <p className="text-3xl font-bold text-[#eef0e8] mt-1">
-            {data.totalFollows.toLocaleString()}
+            {data.totalFollows.toLocaleString("en-US")}
           </p>
         </div>
       </div>

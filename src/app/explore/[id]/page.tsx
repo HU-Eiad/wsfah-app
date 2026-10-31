@@ -192,7 +192,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
           <div className="ms-auto">
             <span className="text-xs text-espresso/60">
-              {new Date(post.createdAt).toLocaleDateString("ar")}
+              {new Date(post.createdAt).toLocaleDateString("ar-u-nu-latn")}
             </span>
           </div>
         </div>

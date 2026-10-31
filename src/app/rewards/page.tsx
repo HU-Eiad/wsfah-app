@@ -229,10 +229,10 @@ export default function RewardsPage() {
                     <span className="text-amber-700 font-bold">وصلت لأعلى مرتبة، أنت عضو ذهبي.</span>
                   ) : (
                     <>
-                      <span className="text-espresso font-bold tabular-nums">{user.points.toLocaleString()}</span>
+                      <span className="text-espresso font-bold tabular-nums">{user.points.toLocaleString("en-US")}</span>
                       {" / "}
-                      <span className="tabular-nums">{currentTier.max.toLocaleString()}</span> نقطة،{" "}
-                      <span className="text-primary font-bold">{(currentTier.max - user.points).toLocaleString()} نقطة للمرتبة {nextTierName ? tierLabels[nextTierName] : ""}</span>
+                      <span className="tabular-nums">{currentTier.max.toLocaleString("en-US")}</span> نقطة،{" "}
+                      <span className="text-primary font-bold">{(currentTier.max - user.points).toLocaleString("en-US")} نقطة للمرتبة {nextTierName ? tierLabels[nextTierName] : ""}</span>
                     </>
                   )}
                 </p>
@@ -260,7 +260,7 @@ export default function RewardsPage() {
             <div>
               <p className="text-on-primary/75 text-sm font-semibold">رصيد النقاط الإجمالي</p>
               <p className="font-display text-4xl leading-tight mt-1 tabular-nums">
-                {user.points.toLocaleString()}
+                {user.points.toLocaleString("en-US")}
               </p>
             </div>
             <BrandIcon name="bean" className="text-4xl opacity-60" />
@@ -381,7 +381,7 @@ export default function RewardsPage() {
                         </span>
                       ) : (
                         <span className="flex items-center justify-center gap-1">
-                          <span className="font-display text-base tabular-nums">{rw.pointsCost.toLocaleString()}</span> نقطة
+                          <span className="font-display text-base tabular-nums">{rw.pointsCost.toLocaleString("en-US")}</span> نقطة
                         </span>
                       )}
                     </button>

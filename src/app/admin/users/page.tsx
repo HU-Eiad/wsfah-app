@@ -102,7 +102,7 @@ export default function AdminUsersPage() {
                     ))}
                   </select>
                   <span className="text-[11px] text-[#eef0e899] shrink-0">
-                    {new Date(user.createdAt).toLocaleDateString("ar-SA")}
+                    {new Date(user.createdAt).toLocaleDateString("ar-SA-u-nu-latn")}
                   </span>
                 </div>
               </div>
@@ -148,7 +148,7 @@ export default function AdminUsersPage() {
                       </button>
                     </td>
                     <td className="p-4 text-[#eef0e899] text-xs">
-                      {new Date(user.createdAt).toLocaleDateString("ar-SA")}
+                      {new Date(user.createdAt).toLocaleDateString("ar-SA-u-nu-latn")}
                     </td>
                   </tr>
                 ))}

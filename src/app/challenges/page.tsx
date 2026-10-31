@@ -119,7 +119,7 @@ export default function ChallengesPage() {
           <div className="relative flex-1">
             <p className="text-xs text-paper/70 font-medium">مرتبتك</p>
             <p className="font-display text-xl">عضو {RANK_LABELS[userRank] ?? userRank}</p>
-            <p className="text-sm text-paper/80 mt-1 tabular-nums">{user?.points?.toLocaleString("ar") || "٠"} نقطة</p>
+            <p className="text-sm text-paper/80 mt-1 tabular-nums">{user?.points?.toLocaleString("ar-u-nu-latn") || "0"} نقطة</p>
           </div>
         </div>
 

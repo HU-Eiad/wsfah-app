@@ -81,7 +81,7 @@ export default function AdminDashboard() {
                 </p>
               </div>
               <p className="text-2xl lg:text-4xl font-display" style={{ color: "#eef0e8" }}>
-                {card.value.toLocaleString()}
+                {card.value.toLocaleString("en-US")}
               </p>
             </div>
           </div>
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <p className="text-[11px] shrink-0" style={{ color: "rgba(238, 240, 232, 0.5)" }}>
-                {new Date(user.createdAt).toLocaleDateString("ar-SA")}
+                {new Date(user.createdAt).toLocaleDateString("ar-SA-u-nu-latn")}
               </p>
             </div>
           ))}

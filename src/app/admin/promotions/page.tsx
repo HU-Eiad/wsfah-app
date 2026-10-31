@@ -195,7 +195,7 @@ export default function AdminPromotionsPage() {
                       </span>
                       <span className="flex items-center gap-1">
                         <span className="material-symbols-outlined text-base">schedule</span>
-                        {new Date(p.createdAt).toLocaleDateString()}
+                        {new Date(p.createdAt).toLocaleDateString("ar-u-nu-latn")}
                       </span>
                       {p.priority > 0 && (
                         <span className="flex items-center gap-1 text-green-600 dark:text-green-400">

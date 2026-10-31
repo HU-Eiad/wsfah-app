@@ -74,7 +74,7 @@ export default function AdminModerationPage() {
                     <p className="text-sm text-[#eef0e8cc] mt-2">{report.details}</p>
                   )}
                   <p className="text-xs text-[#eef0e880] mt-2">
-                    {new Date(report.createdAt).toLocaleString()}
+                    {new Date(report.createdAt).toLocaleString("en-US")}
                   </p>
                 </div>
                 <div className="flex gap-2 ms-4">

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
 
   if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
     return NextResponse.json({
-      error: "كلمة المرور يجب أن تكون ٨ أحرف على الأقل وتحتوي على حرف كبير وصغير ورقم",
+      error: "كلمة المرور يجب أن تكون 8 أحرف على الأقل وتحتوي على حرف كبير وصغير ورقم",
     }, { status: 400 });
   }
 

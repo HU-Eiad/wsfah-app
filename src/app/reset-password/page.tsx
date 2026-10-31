@@ -112,7 +112,7 @@ function ResetPasswordPage() {
                 aria-describedby="reset-password-hint"
               />
               <p id="reset-password-hint" className="text-xs text-espresso/60 mt-1.5 leading-relaxed">
-                ٨ أحرف على الأقل، حرف كبير وصغير ورقم
+                8 أحرف على الأقل، حرف كبير وصغير ورقم
               </p>
             </div>
             <div>

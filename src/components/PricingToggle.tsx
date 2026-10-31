@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import MaterialIcon from "./MaterialIcon";
+import RiyalSign from "./RiyalSign";
 
 type Interval = "monthly" | "yearly";
 
@@ -60,7 +61,7 @@ export function UserPricingToggle() {
       href: { monthly: "/pricing?interval=monthly", yearly: "/pricing?interval=yearly" },
       highlighted: true,
       badge: "الأكثر شعبية",
-      yearlyBadge: "وفّر ١٧%",
+      yearlyBadge: "وفّر 17%",
     },
   ];
 
@@ -85,7 +86,7 @@ export function RoasterPricingToggle() {
       ],
       cta: "ابدأ الفترة التجريبية",
       href: { monthly: "/pricing?interval=monthly", yearly: "/pricing?interval=yearly" },
-      yearlyBadge: "وفّر ١٧%",
+      yearlyBadge: "وفّر 17%",
       isGold: true,
     },
     {
@@ -108,7 +109,7 @@ export function RoasterPricingToggle() {
       href: { monthly: "/pricing?interval=monthly", yearly: "/pricing?interval=yearly" },
       highlighted: true,
       badge: "أفضل قيمة",
-      yearlyBadge: "وفّر ١٧%",
+      yearlyBadge: "وفّر 17%",
       isGold: true,
     },
     {
@@ -169,7 +170,7 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
           <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
             isGold ? "bg-brand-gold/10 text-brand-gold" : "bg-green-100 text-green-700"
           }`}>
-            وفّر ١٧%
+            وفّر 17%
           </span>
         )}
       </div>
@@ -204,7 +205,7 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
                 <div className="flex items-baseline gap-1">
                   <span className="font-display text-4xl">{price}</span>
                   {price !== "مخصص" && price !== "0" && (
-                    <span className={`text-sm font-semibold ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>SAR</span>
+                    <RiyalSign className={`text-2xl ${plan.highlighted ? "text-paper/80" : "text-espresso/70"}`} />
                   )}
                   {period && (
                     <span className={`text-sm font-semibold ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>{period}</span>
@@ -213,7 +214,7 @@ function PricingSection({ plans, variant }: { plans: Plan[]; variant: "user" | "
                 {/* Monthly equivalent for yearly */}
                 {interval === "yearly" && price !== "0" && price !== "مخصص" && (
                   <p className={`text-xs mt-1 ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>
-                    ≈ {(parseFloat(price) / 12).toFixed(2)} SAR /شهرياً
+                    ≈ {(parseFloat(price) / 12).toFixed(2)} <RiyalSign /> /شهرياً
                   </p>
                 )}
                 <p className={`text-sm mt-2 leading-relaxed ${plan.highlighted ? "text-paper/80" : "text-espresso/70"}`}>{plan.desc}</p>

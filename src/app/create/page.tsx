@@ -451,7 +451,7 @@ export default function CreatePage() {
               value={brewTime}
               onChange={(e) => setBrewTime(e.target.value)}
               className={inputClass}
-              placeholder="مثال: ١٠ دقائق"
+              placeholder="مثال: 10 دقائق"
             />
           </div>
 
@@ -509,7 +509,7 @@ export default function CreatePage() {
                   value={temperature}
                   onChange={(e) => setTemperature(e.target.value)}
                   className={paramInputClass}
-                  placeholder="مثال: ٩٣"
+                  placeholder="مثال: 93"
                 />
               </div>
             </div>
@@ -529,7 +529,7 @@ export default function CreatePage() {
                   value={ratio}
                   onChange={(e) => setRatio(e.target.value)}
                   className={`${paramInputClass} text-end`}
-                  placeholder="مثال: ١:١٥"
+                  placeholder="مثال: 1:15"
                 />
               </div>
             </div>
@@ -580,7 +580,7 @@ export default function CreatePage() {
                       )
                     }
                     className={`flex-1 ${paramInputClass} [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none`}
-                    placeholder="مثال: ٢٤٠"
+                    placeholder="مثال: 240"
                   />
                   {typeof brewTimeSec === "number" && brewTimeSec > 0 && (
                     <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full whitespace-nowrap tabular-nums" dir="ltr">

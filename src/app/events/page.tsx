@@ -63,7 +63,7 @@ export default function EventsPage() {
   }
 
   function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString("ar", {
+    return new Date(dateStr).toLocaleDateString("ar-u-nu-latn", {
       weekday: "short",
       month: "short",
       day: "numeric",
@@ -177,10 +177,10 @@ export default function EventsPage() {
               >
                 <div className="shrink-0 w-14 rounded-xl bg-primary/10 text-primary flex flex-col items-center justify-center py-2" aria-hidden>
                   <span className="font-display text-2xl leading-none">
-                    {new Date(event.startDate).toLocaleDateString("ar", { day: "numeric" })}
+                    {new Date(event.startDate).toLocaleDateString("ar-u-nu-latn", { day: "numeric" })}
                   </span>
                   <span className="text-[11px] font-semibold mt-1">
-                    {new Date(event.startDate).toLocaleDateString("ar", { month: "short" })}
+                    {new Date(event.startDate).toLocaleDateString("ar-u-nu-latn", { month: "short" })}
                   </span>
                 </div>
                 <div className="min-w-0 flex-1">

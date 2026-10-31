@@ -37,7 +37,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
     if (diffMins < 60) return `منذ ${diffMins} د`;
     if (diffHours < 24) return `منذ ${diffHours} س`;
     if (diffDays < 7) return `منذ ${diffDays} ي`;
-    return date.toLocaleDateString("ar");
+    return date.toLocaleDateString("ar-u-nu-latn");
   };
 
   const renderActivity = () => {

@@ -43,7 +43,7 @@ async function main() {
   // ──── الشارات ────
   const badgeData = [
     { name: "محضّر متميز", icon: "emoji_events", color: "#FFD700" },
-    { name: "سلسلة ٧ أيام", icon: "local_fire_department", color: "#FF6B35" },
+    { name: "سلسلة 7 أيام", icon: "local_fire_department", color: "#FF6B35" },
     { name: "محارب بيئي", icon: "eco", color: "#4CAF50" },
     { name: "عضو ذهبي", icon: "workspace_premium", color: "#FFC107" },
   ];
@@ -60,7 +60,7 @@ async function main() {
   const challengeData = [
     {
       title: "محضّر الأسبوع",
-      description: "حضّر ٥ وصفات مختلفة هذا الأسبوع",
+      description: "حضّر 5 وصفات مختلفة هذا الأسبوع",
       icon: "coffee",
       rewardPoints: 50,
       maxProgress: 5,
@@ -77,8 +77,8 @@ async function main() {
       category: "Social",
     },
     {
-      title: "سلسلة ٧ أيام",
-      description: "حضّر كوب قهوة لمدة ٧ أيام متتالية",
+      title: "سلسلة 7 أيام",
+      description: "حضّر كوب قهوة لمدة 7 أيام متتالية",
       icon: "local_fire_department",
       rewardPoints: 100,
       maxProgress: 7,
@@ -100,7 +100,7 @@ async function main() {
     { name: "AeroPress", icon: "coffee", temperature: "85°C", ratio: "1:12", grindSize: "متوسط ناعم", brewTimeSec: 120, description: "ناعم ومركز" },
     { name: "French Press", icon: "coffee", temperature: "96°C", ratio: "1:15", grindSize: "خشن", brewTimeSec: 240, description: "قوام كامل وغني" },
     { name: "Espresso", icon: "bolt", temperature: "93°C", ratio: "1:2", grindSize: "ناعم جداً", brewTimeSec: 28, description: "مكثف مع كريما" },
-    { name: "Cold Brew", icon: "ac_unit", temperature: "بارد", ratio: "1:8", grindSize: "خشن", brewTimeSec: 43200, description: "ناعم وحلو، ١٢ ساعة" },
+    { name: "Cold Brew", icon: "ac_unit", temperature: "بارد", ratio: "1:8", grindSize: "خشن", brewTimeSec: 43200, description: "ناعم وحلو، 12 ساعة" },
     { name: "Chemex", icon: "coffee_maker", temperature: "94°C", ratio: "1:16", grindSize: "متوسط خشن", brewTimeSec: 270, description: "نظيف وحلو" },
     { name: "Moka Pot", icon: "coffee", temperature: "على الموقد", ratio: "1:10", grindSize: "ناعم", brewTimeSec: 300, description: "قوي، على الموقد" },
     { name: "Turkish", icon: "coffee", temperature: "على الموقد", ratio: "1:10", grindSize: "ناعم جداً", brewTimeSec: 180, description: "تقليدي، بدون فلتر" },
@@ -116,9 +116,9 @@ async function main() {
 
   // ──── خطط الاشتراك ────
   const planData = [
-    { name: "مجاني", slug: "free", price: 0, currency: "SAR", interval: "monthly", description: "الخطة الأساسية المجانية", features: JSON.stringify(["تصفح الوصفات", "مؤقت تحضير", "٣ وصفات", "بحث أساسي"]), sortOrder: 0 },
+    { name: "مجاني", slug: "free", price: 0, currency: "SAR", interval: "monthly", description: "الخطة الأساسية المجانية", features: JSON.stringify(["تصفح الوصفات", "مؤقت تحضير", "3 وصفات", "بحث أساسي"]), sortOrder: 0 },
     { name: "احترافي", slug: "pro", price: 4.99, currency: "SAR", interval: "monthly", description: "للمحضّرين الجادين", features: JSON.stringify(["وصفات غير محدودة", "دفتر التحضير", "المجموعات", "الرسائل", "المعرض"]), sortOrder: 1 },
-    { name: "احترافي سنوي", slug: "pro-yearly", price: 49.99, currency: "SAR", interval: "yearly", description: "وفّر ١٧٪ مع الاشتراك السنوي", features: JSON.stringify(["كل مميزات الاحترافي", "خصم ١٧٪"]), sortOrder: 2 },
+    { name: "احترافي سنوي", slug: "pro-yearly", price: 49.99, currency: "SAR", interval: "yearly", description: "وفّر 17٪ مع الاشتراك السنوي", features: JSON.stringify(["كل مميزات الاحترافي", "خصم 17٪"]), sortOrder: 2 },
   ];
   for (const plan of planData) {
     await prisma.subscriptionPlan.upsert({

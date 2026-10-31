@@ -183,7 +183,7 @@ export async function POST(req: NextRequest) {
     const paymentLink = await createPaymentLink({
       name: `اشتراك ${planSlug}`,
       description: offerTrial
-        ? `فترة تجريبية ١٤ يوم مجانية ثم اشتراك ${planSlug}`
+        ? `فترة تجريبية 14 يوم مجانية ثم اشتراك ${planSlug}`
         : `اشتراك في خطة ${planSlug}`,
       items: [{ product_id: productId, quantity: 1 }],
       ...(consumerId ? { organization_consumer_id: consumerId } : {}),

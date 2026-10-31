@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import RiyalSign from "@/components/RiyalSign";
 
 interface Plan {
   id: string;
@@ -309,11 +310,11 @@ export default function AdminSubscriptionsPage() {
 
                   {/* Row 2: Dates */}
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#eef0e899]">
-                    <span>بداية: {u.subscriptionStartsAt ? new Date(u.subscriptionStartsAt).toLocaleDateString("ar-SA") : "—"}</span>
+                    <span>بداية: {u.subscriptionStartsAt ? new Date(u.subscriptionStartsAt).toLocaleDateString("ar-SA-u-nu-latn") : "—"}</span>
                     <span>
                       نهاية: {u.subscriptionExpiresAt ? (
                         <span className={isExpired ? "text-red-500 font-medium" : ""}>
-                          {new Date(u.subscriptionExpiresAt).toLocaleDateString("ar-SA")}
+                          {new Date(u.subscriptionExpiresAt).toLocaleDateString("ar-SA-u-nu-latn")}
                           {isExpired && " (منتهي)"}
                         </span>
                       ) : u.subscriptionTier !== "free" ? (
@@ -391,7 +392,7 @@ export default function AdminSubscriptionsPage() {
                         {c.subscriptionTier}
                       </span>
                       <span className="text-xs text-[#eef0e880]">
-                        {c.subscriptionExpiresAt ? new Date(c.subscriptionExpiresAt).toLocaleDateString("ar-SA") : "غير محدد"}
+                        {c.subscriptionExpiresAt ? new Date(c.subscriptionExpiresAt).toLocaleDateString("ar-SA-u-nu-latn") : "غير محدد"}
                       </span>
                     </div>
                   </div>
@@ -532,7 +533,7 @@ export default function AdminSubscriptionsPage() {
                     </div>
                     <div className="flex items-baseline gap-1 mb-3">
                       <span className="text-3xl font-display text-[#eef0e8]">
-                        {p.currency === "USD" ? "$" : p.currency === "EUR" ? "€" : p.currency === "GBP" ? "£" : ""}{p.price}
+                        {p.currency === "USD" ? "$" : p.currency === "EUR" ? "€" : p.currency === "GBP" ? "£" : ""}{p.price}{p.currency === "SAR" && <RiyalSign className="ms-1" />}
                       </span>
                       <span className="text-sm text-[#eef0e880]">/{p.interval === "yearly" ? "سنة" : "شهر"}</span>
                     </div>

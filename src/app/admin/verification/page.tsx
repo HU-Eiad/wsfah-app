@@ -83,7 +83,7 @@ export default function AdminVerificationPage() {
                     </div>
                   )}
                   <p className="text-xs text-[#eef0e880] mt-2">
-                    تاريخ التقديم: {new Date(app.createdAt).toLocaleDateString()}
+                    تاريخ التقديم: {new Date(app.createdAt).toLocaleDateString("ar-u-nu-latn")}
                   </p>
                 </div>
                 <div className="flex gap-2 ms-4">

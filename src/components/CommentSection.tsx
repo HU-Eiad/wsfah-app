@@ -158,7 +158,7 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
     if (diffMins < 60) return `منذ ${diffMins} د`;
     if (diffHours < 24) return `منذ ${diffHours} س`;
     if (diffDays < 7) return `منذ ${diffDays} ي`;
-    return date.toLocaleDateString("ar");
+    return date.toLocaleDateString("ar-u-nu-latn");
   };
 
   const renderComment = (comment: Comment, isReply = false) => {

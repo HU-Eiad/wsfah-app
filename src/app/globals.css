@@ -51,22 +51,20 @@ html.dark {
   /* Darker than crema so white badge text stays readable (AA at small sizes). */
   --color-brand-gold: #9a6222;
   --color-community-teal: #2d6b6b;
-  --font-display: var(--font-kufi), var(--font-plex), sans-serif;
-  --font-arabic: var(--font-plex), sans-serif;
-  --font-sans: var(--font-plex), sans-serif;
+  --font-display: "Epilogue", sans-serif;
+  --font-arabic: "Noto Sans Arabic", sans-serif;
 }
 
 body {
-  font-family: var(--font-plex), sans-serif;
+  font-family: var(--font-display);
   background-color: var(--c-bg);
   color: var(--c-ink);
 }
 
-/* Kufic display face for page and section headings. */
+/* Headings rely on this weight (the redesign removed per-heading font-bold classes). */
 h1,
 h2 {
-  font-family: var(--font-kufi), var(--font-plex), sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
 }
 

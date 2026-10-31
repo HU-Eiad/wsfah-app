@@ -226,7 +226,7 @@ export default function GroupDetailPage() {
                       {post.author.name || "غير معروف"}
                     </p>
                     <p className="text-xs text-espresso/60">
-                      {new Date(post.createdAt).toLocaleDateString("ar")}
+                      {new Date(post.createdAt).toLocaleDateString("ar-u-nu-latn")}
                     </p>
                   </div>
                 </div>

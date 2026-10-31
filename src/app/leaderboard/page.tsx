@@ -118,7 +118,7 @@ export default function LeaderboardPage() {
                   {/* Score */}
                   <div className="text-end shrink-0">
                     <p className={`text-primary ${podium ? "font-display text-xl" : "font-bold text-sm"}`}>
-                      {entry.score.toLocaleString()}
+                      {entry.score.toLocaleString("en-US")}
                     </p>
                     <p className="text-[11px] text-espresso/60">
                       {SCORE_UNITS[activeTab]}

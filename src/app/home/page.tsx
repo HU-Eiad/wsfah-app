@@ -115,7 +115,7 @@ export default async function HomePage() {
                       </span>
                     )}
                     <span className="inline-flex items-center gap-1">
-                      <BrandIcon name="timer" className="text-base" /> {featuredRecipe.brewTime || "١٠ د"}
+                      <BrandIcon name="timer" className="text-base" /> {featuredRecipe.brewTime || "10 د"}
                     </span>
                   </div>
                   <h3 dir="auto" className="font-display text-3xl leading-snug mb-2">{featuredRecipe.title}</h3>

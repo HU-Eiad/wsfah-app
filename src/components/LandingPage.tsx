@@ -35,17 +35,17 @@ const featureGroups = [
 ];
 
 const steps = [
-  { n: "١", title: "أنشئ حسابك", desc: "اختر طرق التحضير والأقسام التي تحبها." },
-  { n: "٢", title: "اختر وصفة وحضّر", desc: "اتبع الخطوات والمؤقت، ثم سجّل النتيجة." },
-  { n: "٣", title: "طوّر وشارك", desc: "قارن تحضيراتك، اكسب المكافآت، وشارك المجتمع." },
+  { n: "1", title: "أنشئ حسابك", desc: "اختر طرق التحضير والأقسام التي تحبها." },
+  { n: "2", title: "اختر وصفة وحضّر", desc: "اتبع الخطوات والمؤقت، ثم سجّل النتيجة." },
+  { n: "3", title: "طوّر وشارك", desc: "قارن تحضيراتك، اكسب المكافآت، وشارك المجتمع." },
 ];
 
 // A real recipe from the default V60 template, shown as the hero's "recipe slip".
 const heroRecipe = [
-  { icon: "bean", label: "البن", value: "١٥ غ" },
-  { icon: "drop", label: "الماء", value: "٢٢٥ مل" },
-  { icon: "thermometer", label: "الحرارة", value: "٩٣°" },
-  { icon: "timer", label: "الوقت", value: "٣:٣٠" },
+  { icon: "bean", label: "البن", value: "15 غ" },
+  { icon: "drop", label: "الماء", value: "225 مل" },
+  { icon: "thermometer", label: "الحرارة", value: "93°" },
+  { icon: "timer", label: "الوقت", value: "3:30" },
 ];
 
 function Wordmark({ size = "md" }: { size?: "md" | "sm" }) {
@@ -125,7 +125,7 @@ export default function LandingPage() {
             <div className="relative -mt-10 ms-auto me-4 md:absolute md:mt-0 md:me-0 md:-bottom-8 md:-start-10 w-60 bg-surface rounded-2xl shadow-[0_18px_40px_-18px_rgba(20,53,36,0.45)] border border-espresso/5 p-5">
               <div className="flex items-baseline justify-between mb-4">
                 <span className="text-lg font-bold">V60</span>
-                <span className="text-xs text-espresso/60">نسبة ١:١٥</span>
+                <span className="text-xs text-espresso/60">نسبة 1:15</span>
               </div>
               <dl className="grid grid-cols-2 gap-x-4 gap-y-3">
                 {heroRecipe.map((r) => (

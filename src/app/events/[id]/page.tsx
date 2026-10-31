@@ -66,7 +66,7 @@ export default function EventDetailPage() {
   }
 
   function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString("ar", {
+    return new Date(dateStr).toLocaleDateString("ar-u-nu-latn", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -121,10 +121,10 @@ export default function EventDetailPage() {
         <div className="flex items-start gap-4">
           <div className="shrink-0 w-16 rounded-2xl bg-primary/10 text-primary flex flex-col items-center justify-center py-2.5" aria-hidden>
             <span className="font-display text-3xl leading-none">
-              {start.toLocaleDateString("ar", { day: "numeric" })}
+              {start.toLocaleDateString("ar-u-nu-latn", { day: "numeric" })}
             </span>
             <span className="text-xs font-semibold mt-1">
-              {start.toLocaleDateString("ar", { month: "short" })}
+              {start.toLocaleDateString("ar-u-nu-latn", { month: "short" })}
             </span>
           </div>
           <h2 dir="auto" className="text-2xl leading-snug flex-1 pt-1">{event.title}</h2>

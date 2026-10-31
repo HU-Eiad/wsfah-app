@@ -85,7 +85,7 @@ export default function BrandAnalyticsPage({
               إجمالي المشاهدات
             </p>
             <p className="font-display text-3xl tabular-nums">
-              {data.totalViews.toLocaleString()}
+              {data.totalViews.toLocaleString("en-US")}
             </p>
           </div>
           <div className="bg-surface rounded-2xl p-4 border border-espresso/10">
@@ -93,7 +93,7 @@ export default function BrandAnalyticsPage({
               الزوار الفريدون
             </p>
             <p className="font-display text-3xl tabular-nums">
-              {data.uniqueVisitors.toLocaleString()}
+              {data.uniqueVisitors.toLocaleString("en-US")}
             </p>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function BrandAnalyticsPage({
                         {item.page}
                       </span>
                       <span className="text-espresso/60 font-semibold tabular-nums">
-                        {item.count.toLocaleString()}
+                        {item.count.toLocaleString("en-US")}
                       </span>
                     </div>
                     <div className="w-full bg-oat-milk rounded-full h-2.5 overflow-hidden">
@@ -143,7 +143,7 @@ export default function BrandAnalyticsPage({
                     {item.date}
                   </span>
                   <span className="font-semibold">
-                    <span className="tabular-nums">{item.count.toLocaleString()}</span> مشاهدة
+                    <span className="tabular-nums">{item.count.toLocaleString("en-US")}</span> مشاهدة
                   </span>
                 </div>
               ))}

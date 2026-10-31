@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     }
 
     if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
-      return NextResponse.json({ error: "كلمة المرور يجب أن تكون ٨ أحرف على الأقل وتحتوي على حرف كبير وصغير ورقم" }, { status: 400 });
+      return NextResponse.json({ error: "كلمة المرور يجب أن تكون 8 أحرف على الأقل وتحتوي على حرف كبير وصغير ورقم" }, { status: 400 });
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });

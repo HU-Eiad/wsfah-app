@@ -142,7 +142,7 @@ export default function JournalPage() {
                   </div>
                   <div className="text-end shrink-0">
                     <p className="text-xs text-espresso/60">
-                      {new Date(log.brewDate).toLocaleDateString()}
+                      {new Date(log.brewDate).toLocaleDateString("ar-u-nu-latn")}
                     </p>
                     {log.rating && (
                       <div className="flex gap-0.5 mt-1 justify-end">

@@ -42,7 +42,7 @@ export default function MessagesPage() {
     if (diff < 60000) return "الآن";
     if (diff < 3600000) return `${Math.floor(diff / 60000)} د`;
     if (diff < 86400000) return `${Math.floor(diff / 3600000)} س`;
-    return d.toLocaleDateString("ar");
+    return d.toLocaleDateString("ar-u-nu-latn");
   }
 
   if (loading) {

@@ -178,7 +178,7 @@ export default function SignupPage() {
                 type="password"
                 value={phonePassword}
                 onChange={(e) => setPhonePassword(e.target.value)}
-                placeholder="٦ أحرف على الأقل"
+                placeholder="6 أحرف على الأقل"
                 className={inputCls}
               />
             </div>
@@ -258,7 +258,7 @@ export default function SignupPage() {
                 type="password"
                 value={emailPassword}
                 onChange={(e) => setEmailPassword(e.target.value)}
-                placeholder="٦ أحرف على الأقل"
+                placeholder="6 أحرف على الأقل"
                 className={inputCls}
               />
             </div>

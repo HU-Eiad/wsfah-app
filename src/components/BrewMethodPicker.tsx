@@ -32,7 +32,7 @@ const DEFAULT_TEMPLATES = [
   { name: "ايروبريس", icon: "coffee_maker", temperature: "85°C", ratio: "1:12", grindSize: "ناعم", brewTimeSec: 120, description: "ناعم ومركز" },
   { name: "فرنش بريس", icon: "coffee", temperature: "96°C", ratio: "1:15", grindSize: "خشن", brewTimeSec: 240, description: "قوام كامل وغني" },
   { name: "إسبريسو", icon: "local_cafe", temperature: "93°C", ratio: "1:2", grindSize: "ناعم جداً", brewTimeSec: 28, description: "مكثف مع كريما" },
-  { name: "كولد برو", icon: "ac_unit", temperature: "حرارة الغرفة", ratio: "1:8", grindSize: "خشن", brewTimeSec: 43200, description: "ناعم وحلو، ١٢ ساعة" },
+  { name: "كولد برو", icon: "ac_unit", temperature: "حرارة الغرفة", ratio: "1:8", grindSize: "خشن", brewTimeSec: 43200, description: "ناعم وحلو، 12 ساعة" },
   { name: "كيمكس", icon: "science", temperature: "92°C", ratio: "1:16", grindSize: "متوسط خشن", brewTimeSec: 270, description: "نظيف وحلو" },
   { name: "موكا بوت", icon: "local_fire_department", temperature: "حرارة متوسطة", ratio: "1:7", grindSize: "ناعم", brewTimeSec: 300, description: "قوي، على الموقد" },
   { name: "تركي", icon: "emoji_food_beverage", temperature: "حرارة هادئة", ratio: "1:10", grindSize: "ناعم جداً", brewTimeSec: 180, description: "تقليدي، بدون فلتر" },

@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
+import RiyalSign from "@/components/RiyalSign";
 import BottomNav from "@/components/BottomNav";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +30,7 @@ const USER_PLANS = [
     features: [
       "تصفح جميع الوصفات",
       "مؤقت تحضير أساسي",
-      "٣ وصفات خاصة بك",
+      "3 وصفات خاصة بك",
       "بحث أساسي",
       "عرض المحمصات والعلامات",
       "ملف شخصي أساسي",
@@ -44,7 +45,7 @@ const USER_PLANS = [
     period: { monthly: "/شهرياً", yearly: "/سنوياً" },
     highlighted: true,
     badge: "الأكثر شعبية",
-    yearlyBadge: "وفّر ١٧%",
+    yearlyBadge: "وفّر 17%",
     features: [
       "كل مميزات المجاني",
       "وصفات غير محدودة",
@@ -66,10 +67,10 @@ const ROASTER_PLANS = [
     yearly: "390",
     currency: "SAR",
     period: { monthly: "/شهرياً", yearly: "/سنوياً" },
-    yearlyBadge: "وفّر ١٧%",
+    yearlyBadge: "وفّر 17%",
     features: [
       "صفحة علامة تجارية مخصصة",
-      "نشر حتى ١٠ منتجات",
+      "نشر حتى 10 منتجات",
       "وصفات رسمية للعلامة",
       "إحصائيات أساسية",
       "شارة موثق",
@@ -85,7 +86,7 @@ const ROASTER_PLANS = [
     period: { monthly: "/شهرياً", yearly: "/سنوياً" },
     highlighted: true,
     badge: "أفضل قيمة",
-    yearlyBadge: "وفّر ١٧%",
+    yearlyBadge: "وفّر 17%",
     features: [
       "كل مميزات الأساسي",
       "منتجات غير محدودة",
@@ -93,7 +94,7 @@ const ROASTER_PLANS = [
       "كوبونات وبطاقات ولاء",
       "مكافآت العلامة التجارية",
       "تحليلات متقدمة",
-      "٥ أعضاء فريق",
+      "5 أعضاء فريق",
       "أولوية في الظهور",
     ],
   },
@@ -112,7 +113,7 @@ const ROASTER_PLANS = [
       "تقارير مخصصة",
       "ترويج مميز",
       "تكامل مع أنظمة POS",
-      "دعم فني ٢٤/٧",
+      "دعم فني 24/7",
     ],
   },
 ];
@@ -236,7 +237,7 @@ function PricingPage() {
           </span>
           {interval === "yearly" && (
             <span className="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">
-              وفّر ١٧%
+              وفّر 17%
             </span>
           )}
         </div>
@@ -285,11 +286,13 @@ function PricingPage() {
 
                 <div className="flex items-baseline gap-1 mb-4">
                   <span className="font-display text-3xl">{price}</span>
-                  {plan.currency && (
+                  {plan.currency === "SAR" ? (
+                    <RiyalSign className={`text-xl ${plan.highlighted ? "text-paper/80" : "text-espresso/70"}`} />
+                  ) : plan.currency ? (
                     <span className={`text-sm font-medium ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>
                       {plan.currency}
                     </span>
-                  )}
+                  ) : null}
                   {period && (
                     <span className={`text-sm ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>{period}</span>
                   )}
@@ -298,7 +301,7 @@ function PricingPage() {
                 {/* Show monthly equivalent for yearly */}
                 {interval === "yearly" && slug !== "free" && slug !== "enterprise" && plan.currency && (
                   <p className={`text-xs -mt-3 mb-4 ${plan.highlighted ? "text-paper/70" : "text-espresso/60"}`}>
-                    ≈ {(parseFloat(price) / 12).toFixed(2)} {plan.currency} /شهرياً
+                    ≈ {(parseFloat(price) / 12).toFixed(2)} {plan.currency === "SAR" ? <RiyalSign /> : plan.currency} /شهرياً
                   </p>
                 )}
 
