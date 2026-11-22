@@ -127,7 +127,7 @@ export default function ConversationPage() {
   return (
     <div className="min-h-screen bg-background-light text-espresso flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+      <header className="sticky top-0 z-30 glass-bar px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <button
           onClick={() => router.push("/messages")}
           aria-label={tc("back")}
@@ -182,7 +182,7 @@ export default function ConversationPage() {
       {/* Input */}
       <form
         onSubmit={handleSend}
-        className="sticky bottom-0 bg-background-light/95 backdrop-blur-md border-t border-espresso/10 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex gap-2"
+        className="sticky bottom-0 glass-bar border-t border-espresso/10 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex gap-2"
       >
         <input
           type="text"

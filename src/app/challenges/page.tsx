@@ -113,7 +113,7 @@ export default function ChallengesPage() {
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 pt-3 pb-4 border-b border-espresso/10">
+      <header className="sticky top-0 z-30 glass-bar px-4 pt-3 pb-4 border-b border-espresso/10">
         <div className="flex items-center gap-2 mb-4">
           <Link href="/rewards" aria-label={tc("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
             <MaterialIcon icon="arrow_forward" />

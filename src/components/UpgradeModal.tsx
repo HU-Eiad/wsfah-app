@@ -17,11 +17,11 @@ export default function UpgradeModal({ open, feature, onClose }: UpgradeModalPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 glass-scrim"
       onClick={onClose}
     >
       <div
-        className="bg-surface text-espresso rounded-2xl w-full max-w-sm p-6 text-center shadow-sm"
+        className="glass-panel text-espresso rounded-2xl w-full max-w-sm p-6 text-center"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Icon */}

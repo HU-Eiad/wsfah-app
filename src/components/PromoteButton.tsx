@@ -97,8 +97,8 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center sm:p-4">
-          <div className="bg-surface rounded-t-3xl sm:rounded-2xl shadow-sm w-full max-w-md max-h-[85vh] overflow-y-auto">
+        <div className="fixed inset-0 z-[100] glass-scrim flex items-end sm:items-center justify-center sm:p-4">
+          <div className="glass-panel rounded-t-3xl sm:rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-espresso/10">
               <div>

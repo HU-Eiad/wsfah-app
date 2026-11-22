@@ -69,7 +69,7 @@ export default async function LandingPage() {
   return (
     <div className="bg-background-light text-espresso min-h-screen">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-background-light/85 backdrop-blur-xl border-b border-espresso/5">
+      <nav className="sticky top-0 z-50 glass-bar border-b border-espresso/5">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" aria-label={t("homeAria")}>
             <Wordmark name={t("appName")} />

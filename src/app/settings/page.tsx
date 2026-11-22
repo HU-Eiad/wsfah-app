@@ -254,7 +254,7 @@ export default function SettingsPage() {
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+      <header className="sticky top-0 z-30 glass-bar px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link
           href="/profile"
           aria-label={t("back")}
@@ -619,14 +619,14 @@ export default function SettingsPage() {
 
       {showDelete && (
         <div
-          className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-6"
+          className="fixed inset-0 z-[100] glass-scrim flex items-center justify-center p-6"
           onClick={closeDeleteDialog}
         >
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-account-title"
-            className="bg-surface rounded-2xl p-6 max-w-sm w-full"
+            className="glass-panel rounded-2xl p-6 max-w-sm w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <form

@@ -247,7 +247,7 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
-      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+      <header className="sticky top-0 z-30 glass-bar px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link
           href={`/recipe/${id}`}
           aria-label={tc("close")}

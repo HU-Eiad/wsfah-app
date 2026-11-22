@@ -33,7 +33,7 @@ export default async function LegalPage({
 
   return (
     <div className="bg-background-light text-espresso min-h-screen">
-      <nav className="sticky top-0 z-50 bg-background-light/85 backdrop-blur-xl border-b border-espresso/10">
+      <nav className="sticky top-0 z-50 glass-bar border-b border-espresso/10">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" aria-label={tl("homeAria")}>
             <Wordmark name={tl("appName")} />

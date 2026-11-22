@@ -143,7 +143,7 @@ export default function GroupDetailPage() {
 
   return (
     <div className="min-h-screen bg-background-light text-espresso">
-      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+      <header className="sticky top-0 z-30 glass-bar px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link href="/groups" aria-label={tc("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="arrow_forward" />
         </Link>

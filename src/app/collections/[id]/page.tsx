@@ -130,7 +130,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="bg-background-light text-espresso min-h-screen pb-28">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+      <header className="sticky top-0 z-30 glass-bar px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link href="/collections" aria-label={t("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk shrink-0">
           <MaterialIcon icon="arrow_forward" />
         </Link>

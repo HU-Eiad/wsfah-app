@@ -111,9 +111,9 @@ export default function BrewMethodPicker({ onSelect }: BrewMethodPickerProps) {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-surface text-espresso rounded-2xl shadow-sm w-full max-w-lg max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10 sticky top-0 bg-surface z-10 rounded-t-2xl">
+        <div className="fixed inset-0 z-[100] glass-scrim flex items-end sm:items-center justify-center p-4">
+          <div className="glass-panel text-espresso rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10 sticky top-0 glass-bar z-10 rounded-t-2xl">
               <h3 className="font-display text-xl">{t("title")}</h3>
               <button onClick={() => setOpen(false)} aria-label={t("close")} className="size-10 rounded-full hover:bg-oat-milk flex items-center justify-center">
                 <MaterialIcon icon="close" />

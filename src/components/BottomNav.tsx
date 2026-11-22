@@ -23,7 +23,7 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 mx-auto max-w-(--app-width) bg-surface/95 backdrop-blur-lg border-t border-espresso/10 px-4 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] flex items-end justify-around z-40">
+    <nav className="fixed bottom-0 left-0 right-0 mx-auto max-w-(--app-width) glass-bar border-t border-espresso/10 px-4 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] flex items-end justify-around z-40">
       {navItems.map((item) => {
         const active = isActive(item.href);
 

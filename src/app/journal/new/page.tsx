@@ -99,7 +99,7 @@ function NewBrewLogInner() {
 
   return (
     <div className="min-h-screen bg-background-light text-espresso">
-      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+      <header className="sticky top-0 z-30 glass-bar px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <h1 className="text-xl flex-1">{t("title")}</h1>
       </header>
 

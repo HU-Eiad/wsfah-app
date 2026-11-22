@@ -99,10 +99,10 @@ export default function BrewLogModal({ recipeId, recipeName, defaultParams, onCl
   const labelClass = "flex items-center gap-1.5 text-xs font-semibold text-espresso/70 mb-2";
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center sm:p-4">
-      <div className="bg-surface text-espresso rounded-t-3xl sm:rounded-2xl shadow-sm w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] glass-scrim flex items-end sm:items-center justify-center sm:p-4">
+      <div className="glass-panel text-espresso rounded-t-3xl sm:rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10 sticky top-0 bg-surface z-10">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10 sticky top-0 glass-bar z-10">
           <div className="min-w-0">
             <h3 className="font-display text-xl">{t("heading")}</h3>
             {recipeName && <p dir="auto" className="text-sm text-espresso/60 truncate">{recipeName}</p>}

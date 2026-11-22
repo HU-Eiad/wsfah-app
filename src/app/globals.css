@@ -22,6 +22,13 @@
   --c-primary: var(--wsfa-forest);
   --c-on-primary: var(--wsfa-paper);
   --c-line: rgba(42, 29, 22, 0.1);
+  /* Subtle glass (chrome only: bars, nav, sheets). */
+  --glass-bg: rgba(238, 240, 232, 0.62);
+  --glass-panel: rgba(250, 251, 247, 0.82);
+  --glass-line: rgba(255, 255, 255, 0.55);
+  --glass-shadow: 0 8px 32px -12px rgba(20, 53, 36, 0.18);
+  --wash-a: rgba(127, 168, 138, 0.22);
+  --wash-b: rgba(201, 138, 61, 0.14);
 }
 
 html.dark {
@@ -32,6 +39,12 @@ html.dark {
   --c-primary: #8fbf9a;
   --c-on-primary: #0e1a13;
   --c-line: rgba(233, 230, 218, 0.1);
+  --glass-bg: rgba(14, 26, 19, 0.6);
+  --glass-panel: rgba(22, 38, 29, 0.84);
+  --glass-line: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.5);
+  --wash-a: rgba(143, 191, 154, 0.1);
+  --wash-b: rgba(201, 138, 61, 0.07);
   color-scheme: dark;
 }
 
@@ -66,14 +79,48 @@ body {
 :root {
   --app-width: 480px;
 }
+/* Soft forest/crema wash behind app screens, so the glass bars have something
+   to frost. Page roots inside the frame become transparent to show it. */
+body:has(.app-frame)::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vmax 45vmax at 85% -5%, var(--wash-a), transparent 70%),
+    radial-gradient(55vmax 40vmax at 0% 100%, var(--wash-b), transparent 70%),
+    var(--c-bg);
+}
+.app-frame > .bg-background-light {
+  background-color: transparent;
+}
 @media (min-width: 640px) {
   .app-frame {
     max-width: var(--app-width);
     margin-inline: auto;
     min-height: 100vh;
     border-inline: 1px solid var(--c-line);
-    background-color: var(--c-bg);
   }
+}
+
+@utility glass-bar {
+  background-color: var(--glass-bg);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border-color: var(--glass-line);
+}
+@utility glass-panel {
+  background-color: var(--glass-panel);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--glass-shadow);
+}
+@utility glass-scrim {
+  background-color: rgba(14, 26, 19, 0.35);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
 /* Headings rely on this weight (the redesign removed per-heading font-bold classes). */

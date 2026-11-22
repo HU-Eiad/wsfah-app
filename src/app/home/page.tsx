@@ -64,7 +64,7 @@ export default async function HomePage() {
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-6 pt-6 pb-4">
+      <header className="sticky top-0 z-30 glass-bar px-6 pt-6 pb-4">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <Link

@@ -118,7 +118,7 @@ export default function EquipmentPage() {
   return (
     <div className="bg-background-light text-espresso min-h-screen flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-background-light/85 backdrop-blur-md px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
+      <header className="sticky top-0 z-30 glass-bar px-4 py-3 flex items-center gap-2 border-b border-espresso/10">
         <Link href="/profile" aria-label={t("back")} className="size-10 rounded-full flex items-center justify-center hover:bg-oat-milk">
           <MaterialIcon icon="arrow_forward" />
         </Link>
@@ -209,8 +209,8 @@ export default function EquipmentPage() {
 
       {/* Add/Edit Modal */}
       {showForm && (
-        <div className="fixed inset-0 z-[100] bg-black/50 flex items-end sm:items-center justify-center sm:p-4">
-          <div className="bg-surface text-espresso rounded-t-3xl sm:rounded-2xl shadow-sm w-full max-w-md">
+        <div className="fixed inset-0 z-[100] glass-scrim flex items-end sm:items-center justify-center sm:p-4">
+          <div className="glass-panel text-espresso rounded-t-3xl sm:rounded-2xl w-full max-w-md">
             <div className="flex items-center justify-between px-5 py-4 border-b border-espresso/10">
               <h3 className="font-display text-xl">{editId ? t("editTitle") : t("add")}</h3>
               <button onClick={resetForm} aria-label={t("close")} className="size-10 rounded-full hover:bg-oat-milk flex items-center justify-center">

@@ -291,7 +291,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
       <div className="bg-background-light min-h-screen flex items-center justify-center">
         <div className="text-center">
           <MaterialIcon icon="coffee" className="text-4xl text-primary animate-pulse" />
-          <p className="text-sm text-slate-500 mt-2">{t("loading")}</p>
+          <p className="text-sm text-espresso/60 mt-2">{t("loading")}</p>
         </div>
       </div>
     );
@@ -302,7 +302,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
       <div className="bg-background-light min-h-screen flex items-center justify-center">
         <div className="text-center">
           <MaterialIcon icon="error_outline" className="text-4xl text-red-400" />
-          <p className="text-sm text-slate-500 mt-2">{t("notFound")}</p>
+          <p className="text-sm text-espresso/60 mt-2">{t("notFound")}</p>
           <Link href="/home" className="text-primary text-sm font-bold mt-3 block">{tc("nav.home")}</Link>
         </div>
       </div>
@@ -310,17 +310,17 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="bg-background-light text-slate-900 min-h-screen">
+    <div className="bg-background-light text-espresso min-h-screen">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 flex items-center bg-background-light/80 backdrop-blur-md p-4 justify-between border-b border-primary/10">
+      <nav className="sticky top-0 z-50 flex items-center glass-bar p-4 justify-between border-b border-primary/10">
         <Link
           href="/home"
           aria-label={tc("back")}
-          className="text-slate-900 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 cursor-pointer"
+          className="text-espresso flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 cursor-pointer"
         >
           <MaterialIcon icon="arrow_forward" />
         </Link>
-        <h2 className="text-slate-900 text-lg font-bold leading-tight flex-1 text-center">
+        <h2 className="text-espresso text-lg font-bold leading-tight flex-1 text-center">
           {t("title")}
         </h2>
         <button
@@ -335,7 +335,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           className="flex cursor-pointer items-center justify-center rounded-full size-10 hover:bg-primary/10 transition-colors"
           aria-label={tc("share")}
         >
-          <MaterialIcon icon="share" className="text-slate-900" />
+          <MaterialIcon icon="share" className="text-espresso" />
         </button>
       </nav>
 
@@ -378,7 +378,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                   <p className="text-sm font-bold">{t("verifiedBrand")}</p>
                 </div>
               )}
-              <div className="flex items-center gap-4 text-slate-600 text-sm font-medium">
+              <div className="flex items-center gap-4 text-espresso/70 text-sm font-medium">
                 <div className="flex items-center gap-1">
                   <MaterialIcon icon="signal_cellular_alt" className="text-base" />
                   <span>{recipe.difficulty}</span>
@@ -401,9 +401,9 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 <MaterialIcon
                   icon="favorite"
                   filled={liked}
-                  className={`text-xl transition-colors ${liked ? "text-red-500" : "text-slate-400"}`}
+                  className={`text-xl transition-colors ${liked ? "text-red-500" : "text-espresso/45"}`}
                 />
-                <span className="text-sm font-bold text-slate-700 tabular-nums">{likeCount}</span>
+                <span className="text-sm font-bold text-espresso/80 tabular-nums">{likeCount}</span>
               </button>
               <button
                 onClick={toggleSave}
@@ -414,7 +414,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 <MaterialIcon
                   icon="bookmark"
                   filled={saved}
-                  className={`text-xl transition-colors ${saved ? "text-primary" : "text-slate-400"}`}
+                  className={`text-xl transition-colors ${saved ? "text-primary" : "text-espresso/45"}`}
                 />
               </button>
               <button
@@ -424,14 +424,14 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               >
                 <MaterialIcon
                   icon="collections_bookmark"
-                  className="text-xl text-slate-400"
+                  className="text-xl text-espresso/45"
                 />
               </button>
             </div>
           </div>
 
           {/* Author Card */}
-          <div className="flex items-center gap-3 p-4 bg-white rounded-xl border border-slate-200">
+          <div className="flex items-center gap-3 p-4 bg-surface rounded-xl border border-espresso/10">
             <div
               className="size-12 rounded-full bg-cover bg-center border-2 border-primary/20 shrink-0"
               style={{
@@ -454,7 +454,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-500 flex items-center gap-1">
+              <p className="text-xs text-espresso/60 flex items-center gap-1">
                 {recipe.brand?.name || recipe.category}
                 {recipe.author.avgRating > 0 && (
                   <span className="flex items-center gap-0.5 ms-1">
@@ -475,11 +475,11 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           </div>
 
           {/* Rating Section */}
-          <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <div className="bg-surface rounded-xl border border-espresso/10 p-4">
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h4 className="font-bold text-sm">{t("rateTitle")}</h4>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-espresso/60">
                   {displayRating > 0 ? t("averageRating", { rating: displayRating.toFixed(1) }) : t("beFirstToRate")}
                 </p>
               </div>
@@ -509,7 +509,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               ))}
             </div>
             {userRating && (
-              <p className="text-center text-xs text-slate-500 mt-2">
+              <p className="text-center text-xs text-espresso/60 mt-2">
                 {t("yourRating", { rating: userRating })}
               </p>
             )}
@@ -537,18 +537,18 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
 
           {/* Delete Confirmation Modal */}
           {showDeleteConfirm && (
-            <div className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-6">
-              <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
+            <div className="fixed inset-0 z-[100] glass-scrim flex items-center justify-center p-6">
+              <div className="glass-panel rounded-2xl p-6 max-w-sm w-full">
                 <div className="flex flex-col items-center text-center gap-4">
                   <div className="size-14 rounded-full bg-red-100 flex items-center justify-center">
                     <MaterialIcon icon="delete_forever" className="text-3xl text-red-500" />
                   </div>
                   <h3 className="text-lg font-bold">{t("deleteTitle")}</h3>
-                  <p className="text-sm text-slate-500">{t("deleteBody")}</p>
+                  <p className="text-sm text-espresso/60">{t("deleteBody")}</p>
                   <div className="flex gap-3 w-full">
                     <button
                       onClick={() => setShowDeleteConfirm(false)}
-                      className="flex-1 py-3 rounded-xl border border-slate-200 font-bold text-sm hover:bg-slate-50 transition-colors"
+                      className="flex-1 py-3 rounded-xl border border-espresso/15 font-bold text-sm hover:bg-oat-milk transition-colors"
                     >
                       {tc("cancel")}
                     </button>
@@ -573,7 +573,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           {recipe.description && (
             <section>
               <h3 className="text-xl font-bold mb-3">{t("story")}</h3>
-              <p dir="auto" className="text-slate-600 leading-relaxed">{recipe.description}</p>
+              <p dir="auto" className="text-espresso/70 leading-relaxed">{recipe.description}</p>
             </section>
           )}
 
@@ -584,7 +584,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                 <MaterialIcon icon="lock" className="text-3xl text-primary" filled />
               </div>
               <h3 className="font-display text-xl">{t("lockedTitle")}</h3>
-              <p className="text-sm text-slate-600 leading-relaxed max-w-sm">{t("lockedBody")}</p>
+              <p className="text-sm text-espresso/70 leading-relaxed max-w-sm">{t("lockedBody")}</p>
               <Link
                 href="/pricing"
                 className="mt-2 w-full max-w-xs flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-on-primary font-bold text-sm hover:opacity-90 transition-opacity active:scale-95"
@@ -608,7 +608,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           <div className="flex items-center justify-between bg-oat-milk p-4 rounded-xl">
             <div>
               <p className="text-sm font-bold">{t("cups")}</p>
-              <p className="text-[11px] text-slate-500">{t("cupsHint")}</p>
+              <p className="text-[11px] text-espresso/60">{t("cupsHint")}</p>
             </div>
             <div className="flex items-center gap-3 bg-background-light p-1 rounded-full border border-primary/20">
               <button
@@ -668,7 +668,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                     </button>
                     <button
                       onClick={resetTimer}
-                      className="flex items-center gap-2 px-6 py-2.5 border border-primary/20 text-slate-600 rounded-full font-bold text-sm hover:bg-primary/5 active:scale-95 transition-transform"
+                      className="flex items-center gap-2 px-6 py-2.5 border border-primary/20 text-espresso/70 rounded-full font-bold text-sm hover:bg-primary/5 active:scale-95 transition-transform"
                     >
                       <MaterialIcon icon="restart_alt" className="text-lg" />
                       <span>{t("reset")}</span>
@@ -710,7 +710,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               </div>
               <div className="flex flex-col gap-3">
                 {recipe.ingredients.map((ing) => (
-                  <div key={ing.id} className="flex items-center justify-between p-4 bg-slate-100 rounded-lg">
+                  <div key={ing.id} className="flex items-center justify-between p-4 bg-oat-milk rounded-lg">
                     <div className="flex items-center gap-3">
                       {ing.imageUrl && (
                         <div
@@ -719,10 +719,10 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                         />
                       )}
                       <div>
-                        <p className="text-xs font-bold text-slate-700">
+                        <p className="text-xs font-bold text-espresso/80">
                           {(ing.baseAmount * cups).toFixed(ing.baseAmount % 1 === 0 ? 0 : 1)}{ing.unit}
                         </p>
-                        <span dir="auto" className="text-[11px] text-slate-500">{ing.name}</span>
+                        <span dir="auto" className="text-[11px] text-espresso/60">{ing.name}</span>
                       </div>
                     </div>
                   </div>
@@ -750,7 +750,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                     </div>
                     <div className="flex-1 pb-4">
                       <h4 dir="auto" className="font-bold mb-2">{s.title}</h4>
-                      <p dir="auto" className="text-sm text-slate-600 mb-3 leading-relaxed">{scaleText(s.description)}</p>
+                      <p dir="auto" className="text-sm text-espresso/70 mb-3 leading-relaxed">{scaleText(s.description)}</p>
                       {s.imageUrl && (
                         <div
                           className="w-full aspect-video rounded-xl bg-cover bg-center"
