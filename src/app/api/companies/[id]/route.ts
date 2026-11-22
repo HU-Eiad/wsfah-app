@@ -1,6 +1,6 @@
+import { getAuthSession } from "@/lib/auth-mobile";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 
 export async function GET(
   _req: Request,
@@ -14,8 +14,10 @@ export async function GET(
       owner: {
         select: { id: true, name: true, image: true }, // public endpoint: no owner email
       },
-      products: true,
+      products: { take: 100, orderBy: { createdAt: "desc" } },
       recipes: {
+        take: 100,
+        orderBy: { createdAt: "desc" },
         include: {
           author: { select: { id: true, name: true, image: true } },
         },
@@ -34,7 +36,7 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

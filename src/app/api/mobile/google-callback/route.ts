@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { signMobileToken, signLoginTicket, verifyOAuthState } from "@/lib/jwt";
+import { signLoginTicket, verifyOAuthState } from "@/lib/jwt";
 import { findOrCreateGoogleUser } from "@/lib/google-mobile";
 
 const APP_CALLBACK = "wsfa://auth/callback";
@@ -14,14 +14,10 @@ export async function GET(req: NextRequest) {
 
   if (!code) return appRedirect({ error: "no_code" });
 
-  // New app builds always send a signed state carrying their PKCE challenge.
-  // A state that is present but invalid is rejected; a missing state is the legacy flow.
-  let codeChallenge: string | null = null;
-  if (state) {
-    const s = await verifyOAuthState(state);
-    if (!s) return appRedirect({ error: "invalid_state" });
-    codeChallenge = s.codeChallenge;
-  }
+  // The signed state proves we started this flow and carries the app's PKCE challenge.
+  const s = state ? await verifyOAuthState(state) : null;
+  if (!s) return appRedirect({ error: "invalid_state" });
+  const codeChallenge = s.codeChallenge;
 
   try {
     const redirectUri = `${process.env.AUTH_URL || process.env.NEXTAUTH_URL || "https://wsfa.app"}/api/mobile/google-callback`;
@@ -52,17 +48,10 @@ export async function GET(req: NextRequest) {
       { email: String(userInfo.email), name: userInfo.name || null, picture: userInfo.picture || null },
       "google-mobile"
     );
-    if (user.status === "SUSPENDED") return appRedirect({ error: "suspended" });
+    if (user.status === "SUSPENDED" || user.status === "DELETED") return appRedirect({ error: "suspended" });
 
-    if (codeChallenge) {
-      // Short-lived ticket; only the app holding the PKCE verifier can redeem it.
-      return appRedirect({ ticket: await signLoginTicket(user.id, codeChallenge) });
-    }
-
-    // Legacy flow for app builds released before the ticket exchange.
-    // TODO: remove once the new app build is live in the stores.
-    const token = await signMobileToken({ id: user.id, role: user.role, tokenVersion: user.tokenVersion });
-    return appRedirect({ token });
+    // Short-lived ticket; only the app holding the PKCE verifier can redeem it.
+    return appRedirect({ ticket: await signLoginTicket(user.id, codeChallenge) });
   } catch {
     return appRedirect({ error: "server_error" });
   }

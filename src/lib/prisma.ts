@@ -1,18 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient;
-  _dbSynced?: boolean;
-};
-
-export const prisma = globalForPrisma.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
-
-// One-time schema sync + connectivity test
-if (!globalForPrisma._dbSynced) {
-  globalForPrisma._dbSynced = true;
-  const cols = [
+/**
+ * Additive schema changes applied at startup (idempotent). Every query waits for
+ * this to finish, so no request can hit a column/table that isn't there yet.
+ * Statements must stay additive (ADD COLUMN / CREATE TABLE IF NOT EXISTS).
+ */
+const cols = [
     `ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "subscriptionStartsAt" TIMESTAMP`,
     `ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "subscriptionExpiresAt" TIMESTAMP`,
     `ALTER TABLE "UserChallenge" ADD COLUMN IF NOT EXISTS "completedAt" TIMESTAMP`,
@@ -28,16 +21,41 @@ if (!globalForPrisma._dbSynced) {
     `CREATE TABLE IF NOT EXISTS "ProcessedPayment" ("id" TEXT NOT NULL PRIMARY KEY, "kind" TEXT NOT NULL, "userId" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
   ];
 
-  (async () => {
+async function syncSchema(base: PrismaClient) {
+  try {
+    await base.$queryRaw`SELECT 1`;
+    console.log("[db] Connected to PostgreSQL.");
+  } catch (err) {
+    console.error("[db] FAILED to connect:", err);
+    return; // queries will surface their own connection errors
+  }
+  for (const sql of cols) {
     try {
-      await prisma.$queryRaw`SELECT 1`;
-      console.log("[db] Connected to PostgreSQL.");
-      for (const sql of cols) {
-        try { await prisma.$executeRawUnsafe(sql); } catch {}
-      }
-      console.log("[db] Schema sync done.");
+      await base.$executeRawUnsafe(sql);
     } catch (err) {
-      console.error("[db] FAILED to connect:", err);
+      console.error(`[db] Schema sync statement failed: ${sql}`, err);
     }
-  })();
+  }
+  console.log("[db] Schema sync done.");
 }
+
+function createClient() {
+  const base = new PrismaClient();
+  const ready = syncSchema(base);
+  return base.$extends({
+    query: {
+      async $allOperations({ args, query }) {
+        await ready;
+        return query(args);
+      },
+    },
+  });
+}
+
+type ExtendedClient = ReturnType<typeof createClient>;
+
+const globalForPrisma = globalThis as unknown as { prisma?: ExtendedClient };
+
+export const prisma: ExtendedClient = globalForPrisma.prisma ?? createClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

@@ -1,5 +1,7 @@
 "use client";
 
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import { use } from "react";
 import Link from "next/link";
@@ -107,7 +109,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     return (
       <div className="bg-background-light text-espresso min-h-screen flex items-center justify-center p-6">
         <div className="text-center">
-          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
           <p className="text-sm text-espresso/70">{t("notFound")}</p>
           <Link href="/explore" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">{t("backToExplore")}</Link>
         </div>
@@ -138,9 +140,12 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         {/* Author Header */}
         <div className="flex items-center gap-3 p-4">
           <Link href={profileLink} className="shrink-0">
-            <img
+            <SafeImage
               src={displayAvatar}
               alt={displayName}
+              width={44}
+              height={44}
+              sizes="44px"
               className="size-11 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
             />
           </Link>
@@ -171,7 +176,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
               className="w-full max-h-[70vh] object-contain mx-auto"
             />
           ) : (
-            <img src={post.imageUrl} alt={post.caption || ""} className="w-full max-h-[70vh] object-contain mx-auto" />
+            <SafeImage src={post.imageUrl} alt={post.caption || ""} width={0} height={0} sizes="(min-width: 672px) 672px, 100vw" className="w-full h-auto max-h-[70vh] object-contain mx-auto" />
           )}
         </div>
 

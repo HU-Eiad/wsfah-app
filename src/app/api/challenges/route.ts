@@ -27,8 +27,8 @@ export async function GET(req: Request) {
   });
 
   // Transform: rename `users` array to `userChallenge` object for mobile app
-  const result = challenges.map((c: any) => {
-    const uc = c.users?.[0] || null;
+  const result = challenges.map((c) => {
+    const uc = ("users" in c && Array.isArray(c.users) ? c.users[0] : null) || null;
     return {
       ...c,
       userChallenge: uc

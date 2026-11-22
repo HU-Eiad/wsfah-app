@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface Promotion {
   id: string;
@@ -18,7 +20,15 @@ interface Promotion {
   requester: { id: string; name: string | null; image: string | null };
 }
 
+async function loadPromos(): Promise<Promotion[] | null> {
+  const res = await fetch("/api/promotions?all=1");
+  return res.ok ? res.json() : null;
+}
+
 export default function AdminPromotionsPage() {
+  const t = useTranslations("adminPromotions");
+  const ta = useTranslations("admin");
+  const locale = intlLocale(useLocale());
   const [promos, setPromos] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("ALL");
@@ -31,15 +41,28 @@ export default function AdminPromotionsPage() {
   });
 
   const fetchPromos = useCallback(async () => {
-    const res = await fetch("/api/promotions?all=1");
-    if (res.ok) {
-      const data = await res.json();
-      setPromos(data);
+    try {
+      const data = await loadPromos();
+      if (data) setPromos(data);
+    } catch {
+      // keep the current list
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  useEffect(() => { fetchPromos(); }, [fetchPromos]);
+  useEffect(() => {
+    let cancelled = false;
+    loadPromos()
+      .then((data) => {
+        if (!cancelled && data) setPromos(data);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   const updateStatus = async (id: string, status: string) => {
     const res = await fetch(`/api/promotions/${id}`, {
@@ -68,7 +91,7 @@ export default function AdminPromotionsPage() {
   };
 
   const deletePromo = async (id: string) => {
-    if (!confirm("حذف طلب الترويج هذا؟")) return;
+    if (!confirm(t("confirmDelete"))) return;
     const res = await fetch(`/api/promotions/${id}`, { method: "DELETE" });
     if (res.ok) fetchPromos();
   };
@@ -92,26 +115,8 @@ export default function AdminPromotionsPage() {
     EXPIRED: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
   };
 
-  const placementLabel: Record<string, string> = {
-    HOME_TOP: "الصفحة الرئيسية",
-    EXPLORE_TOP: "صفحة الاستكشاف",
-    BOTH: "الرئيسية + الاستكشاف",
-  };
-
-  const statusLabel: Record<string, string> = {
-    PENDING: "قيد المراجعة",
-    APPROVED: "موافق عليه",
-    REJECTED: "مرفوض",
-    EXPIRED: "منتهي",
-  };
-
-  const filterLabel: Record<string, string> = {
-    ALL: "الكل",
-    PENDING: "قيد المراجعة",
-    APPROVED: "موافق عليه",
-    REJECTED: "مرفوض",
-    EXPIRED: "منتهي",
-  };
+  const placementLabel = (p: string) => (t.has(`placements.${p}`) ? t(`placements.${p}`) : p);
+  const statusLabel = (s: string) => (t.has(`status.${s}`) ? t(`status.${s}`) : s);
 
   const pendingCount = promos.filter((p) => p.status === "PENDING").length;
 
@@ -128,15 +133,15 @@ export default function AdminPromotionsPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-[#eef0e8] flex items-center gap-3">
-            طلبات الترويج
+            {t("title")}
             {pendingCount > 0 && (
               <span className="bg-yellow-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                {pendingCount} معلق
+                {t("pendingCount", { count: pendingCount })}
               </span>
             )}
           </h1>
           <p className="text-sm text-[#eef0e899] mt-1">
-            مراجعة وإدارة طلبات ترويج المحامص
+            {t("subtitle")}
           </p>
         </div>
       </div>
@@ -153,7 +158,7 @@ export default function AdminPromotionsPage() {
                 : "bg-[#16261d] text-[#eef0e8aa] border border-[#eef0e80d] hover:bg-[#eef0e805]"
             }`}
           >
-            {s === "ALL" ? `الكل (${promos.length})` : `${filterLabel[s]} (${promos.filter((p) => p.status === s).length})`}
+            {t("filterCount", { label: statusLabel(s), count: s === "ALL" ? promos.length : promos.filter((p) => p.status === s).length })}
           </button>
         ))}
       </div>
@@ -161,8 +166,8 @@ export default function AdminPromotionsPage() {
       {filtered.length === 0 ? (
         <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-12 text-center">
           <span className="material-symbols-outlined text-5xl text-[#eef0e880] mb-3 block">campaign</span>
-          <p className="text-[#eef0e899] font-medium">لا توجد طلبات ترويج</p>
-          <p className="text-sm text-[#eef0e880] mt-1">يمكن للمحامص طلب الترويج من صفحة علامتهم التجارية</p>
+          <p className="text-[#eef0e899] font-medium">{t("empty")}</p>
+          <p className="text-sm text-[#eef0e880] mt-1">{t("emptyHint")}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -170,7 +175,8 @@ export default function AdminPromotionsPage() {
             <div key={p.id} className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] overflow-hidden">
               <div className="p-5">
                 <div className="flex items-start gap-4">
-                  {/* Brand Logo */}
+                  {/* Brand Logo (any URL the brand saved, so a plain img) */}
+                  {/* eslint-disable-next-line @next/next/no-img-element -- brand logo URL can be any host */}
                   <img
                     src={p.company.logo || "/brand/banners/avatar-placeholder.svg"}
                     alt={p.company.name}
@@ -181,26 +187,26 @@ export default function AdminPromotionsPage() {
                     <div className="flex items-center gap-3 mb-1">
                       <h3 className="font-bold text-[#eef0e8] text-lg">{p.company.name}</h3>
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${statusColor[p.status]}`}>
-                        {statusLabel[p.status] || p.status}
+                        {statusLabel(p.status)}
                       </span>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm text-[#eef0e899]">
                       <span className="flex items-center gap-1">
                         <span className="material-symbols-outlined text-base">location_on</span>
-                        {placementLabel[p.placement] || p.placement}
+                        {placementLabel(p.placement)}
                       </span>
                       <span className="flex items-center gap-1">
                         <span className="material-symbols-outlined text-base">person</span>
-                        {p.requester.name || "غير معروف"}
+                        {p.requester.name || ta("unknown")}
                       </span>
                       <span className="flex items-center gap-1">
                         <span className="material-symbols-outlined text-base">schedule</span>
-                        {new Date(p.createdAt).toLocaleDateString("ar-u-nu-latn")}
+                        {new Date(p.createdAt).toLocaleDateString(locale)}
                       </span>
                       {p.priority > 0 && (
                         <span className="flex items-center gap-1 text-green-600 dark:text-green-400">
                           <span className="material-symbols-outlined text-base">priority_high</span>
-                          الأولوية: {p.priority}
+                          {t("priority", { priority: p.priority })}
                         </span>
                       )}
                     </div>
@@ -210,7 +216,8 @@ export default function AdminPromotionsPage() {
                       </p>
                     )}
                     {p.imageUrl && (
-                      <img src={p.imageUrl} alt="بانر الترويج" className="mt-3 rounded-lg max-h-32 object-cover" />
+                      // eslint-disable-next-line @next/next/no-img-element -- banner URL submitted by the brand, host can be anything
+                      <img src={p.imageUrl} alt={t("bannerAlt")} className="mt-3 rounded-lg max-h-32 object-cover" />
                     )}
                   </div>
                 </div>
@@ -219,7 +226,7 @@ export default function AdminPromotionsPage() {
                 {editingId === p.id && (
                   <div className="mt-4 pt-4 border-t border-[#eef0e80d] grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">الأولوية (الأعلى = يظهر أولاً)</label>
+                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fPriority")}</label>
                       <input
                         type="number"
                         value={editForm.priority}
@@ -228,17 +235,17 @@ export default function AdminPromotionsPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">ملاحظات الإدارة</label>
+                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fNotes")}</label>
                       <input
                         type="text"
                         value={editForm.adminNotes}
                         onChange={(e) => setEditForm({ ...editForm, adminNotes: e.target.value })}
-                        placeholder="ملاحظات داخلية..."
+                        placeholder={t("fNotesPlaceholder")}
                         className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">تاريخ البدء</label>
+                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fStart")}</label>
                       <input
                         type="date"
                         value={editForm.startDate}
@@ -247,7 +254,7 @@ export default function AdminPromotionsPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">تاريخ الانتهاء</label>
+                      <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fEnd")}</label>
                       <input
                         type="date"
                         value={editForm.endDate}
@@ -260,13 +267,13 @@ export default function AdminPromotionsPage() {
                         onClick={() => saveEdit(p.id)}
                         className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
                       >
-                        حفظ التغييرات
+                        {t("save")}
                       </button>
                       <button
                         onClick={() => setEditingId(null)}
                         className="px-4 py-2 bg-[#eef0e808] text-[#eef0e8cc] rounded-lg text-sm font-medium"
                       >
-                        إلغاء
+                        {t("cancel")}
                       </button>
                     </div>
                   </div>
@@ -282,14 +289,14 @@ export default function AdminPromotionsPage() {
                       className="flex items-center gap-1.5 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
                     >
                       <span className="material-symbols-outlined text-base">check_circle</span>
-                      موافقة
+                      {t("approve")}
                     </button>
                     <button
                       onClick={() => updateStatus(p.id, "REJECTED")}
                       className="flex items-center gap-1.5 px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700"
                     >
                       <span className="material-symbols-outlined text-base">cancel</span>
-                      رفض
+                      {t("reject")}
                     </button>
                   </>
                 )}
@@ -299,7 +306,7 @@ export default function AdminPromotionsPage() {
                     className="flex items-center gap-1.5 px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-700"
                   >
                     <span className="material-symbols-outlined text-base">timer_off</span>
-                    إنهاء
+                    {t("end")}
                   </button>
                 )}
                 {p.status === "REJECTED" && (
@@ -308,7 +315,7 @@ export default function AdminPromotionsPage() {
                     className="flex items-center gap-1.5 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
                   >
                     <span className="material-symbols-outlined text-base">check_circle</span>
-                    موافقة
+                    {t("approve")}
                   </button>
                 )}
                 <button
@@ -316,14 +323,14 @@ export default function AdminPromotionsPage() {
                   className="flex items-center gap-1.5 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-lg text-sm font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50"
                 >
                   <span className="material-symbols-outlined text-base">tune</span>
-                  {editingId === p.id ? "إغلاق" : "إعدادات"}
+                  {editingId === p.id ? t("close") : t("settings")}
                 </button>
                 <button
                   onClick={() => deletePromo(p.id)}
-                  className="flex items-center gap-1.5 px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-sm font-medium ml-auto"
+                  className="flex items-center gap-1.5 px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-sm font-medium ms-auto"
                 >
                   <span className="material-symbols-outlined text-base">delete</span>
-                  حذف
+                  {t("delete")}
                 </button>
               </div>
             </div>

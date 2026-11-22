@@ -1,0 +1,23 @@
+{
+  "title": "Brands",
+  "empty": "No brands.",
+  "status": {
+    "ALL": "All",
+    "PENDING": "Pending",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected"
+  },
+  "types": {
+    "roaster": "Roaster",
+    "cafe": "Café",
+    "equipment": "Equipment",
+    "tea_brand": "Tea brand"
+  },
+  "colCompany": "Company",
+  "colType": "Type",
+  "colOwner": "Owner",
+  "colStatus": "Status",
+  "colActions": "Actions",
+  "approve": "Approve",
+  "reject": "Reject"
+}

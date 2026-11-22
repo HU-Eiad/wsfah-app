@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 
 interface Brand {
   id: string;
@@ -11,18 +12,17 @@ interface Brand {
 }
 
 const TABS = ["ALL", "PENDING", "APPROVED", "REJECTED"];
-const TAB_LABELS: Record<string, string> = {
-  ALL: "الكل",
-  PENDING: "قيد المراجعة",
-  APPROVED: "موافق عليها",
-  REJECTED: "مرفوضة",
-};
-
-const BRAND_TYPE_LABELS: Record<string, string> = { roaster: "محمصة", cafe: "مقهى", equipment: "معدات", tea_brand: "علامة شاي" };
 export default function AdminBrandsPage() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [activeTab, setActiveTab] = useState("ALL");
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("adminBrands");
+  const ta = useTranslations("admin");
+  const statusLabel = (s: string) => (t.has(`status.${s}`) ? t(`status.${s}`) : s);
+  const typeLabel = (type: string) => {
+    const key = `types.${(type || "").toLowerCase()}`;
+    return t.has(key) ? t(key) : type;
+  };
 
   const fetchBrands = useCallback(async () => {
     setLoading(true);
@@ -57,15 +57,9 @@ export default function AdminBrandsPage() {
     }
   }
 
-  const STATUS_LABELS: Record<string, string> = {
-    APPROVED: "موافق عليها",
-    REJECTED: "مرفوضة",
-    PENDING: "قيد المراجعة",
-  };
-
   return (
     <div>
-      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">العلامات التجارية</h2>
+      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">{t("title")}</h2>
 
       <div className="flex gap-2 mb-6">
         {TABS.map((tab) => (
@@ -78,32 +72,32 @@ export default function AdminBrandsPage() {
                 : "bg-[#eef0e808] text-[#eef0e8aa] hover:bg-gray-200 dark:hover:bg-gray-700"
             }`}
           >
-            {TAB_LABELS[tab] || tab}
+            {statusLabel(tab)}
           </button>
         ))}
       </div>
 
       {loading ? (
-        <p className="text-[#eef0e899]">جاري التحميل...</p>
+        <p className="text-[#eef0e899]">{ta("loading")}</p>
       ) : brands.length === 0 ? (
-        <p className="text-[#eef0e899]">لا توجد علامات تجارية.</p>
+        <p className="text-[#eef0e899]">{t("empty")}</p>
       ) : (
         <div className="overflow-x-auto bg-[#16261d] border border-[#eef0e80d] rounded-2xl">
           <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="border-b border-[#eef0e80d]">
-                <th className="text-start p-4 text-[#eef0e899] font-medium">الشركة</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">النوع</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">المالك</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">الحالة</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">إجراءات</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colCompany")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colType")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colOwner")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colStatus")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colActions")}</th>
               </tr>
             </thead>
             <tbody>
               {brands.map((brand) => (
                 <tr key={brand.id} className="border-b border-[#eef0e80d] last:border-0">
                   <td className="p-4 text-[#eef0e8] font-medium">{brand.name}</td>
-                  <td className="p-4 text-[#eef0e8aa]">{BRAND_TYPE_LABELS[(brand.type || "").toLowerCase()] ?? brand.type}</td>
+                  <td className="p-4 text-[#eef0e8aa]">{typeLabel(brand.type)}</td>
                   <td className="p-4 text-[#eef0e8aa]">
                     {brand.owner?.name || brand.owner?.email || "—"}
                   </td>
@@ -117,7 +111,7 @@ export default function AdminBrandsPage() {
                           : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
                       }`}
                     >
-                      {STATUS_LABELS[brand.status] || brand.status}
+                      {statusLabel(brand.status)}
                     </span>
                   </td>
                   <td className="p-4 flex gap-2">
@@ -126,7 +120,7 @@ export default function AdminBrandsPage() {
                         onClick={() => updateStatus(brand.id, "APPROVED")}
                         className="px-3 py-1 rounded bg-green-600 hover:bg-green-700 text-white text-xs font-medium"
                       >
-                        موافقة
+                        {t("approve")}
                       </button>
                     )}
                     {brand.status !== "REJECTED" && (
@@ -134,7 +128,7 @@ export default function AdminBrandsPage() {
                         onClick={() => updateStatus(brand.id, "REJECTED")}
                         className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-medium"
                       >
-                        رفض
+                        {t("reject")}
                       </button>
                     )}
                   </td>

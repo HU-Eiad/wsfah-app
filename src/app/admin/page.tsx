@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface Stats {
   totalUsers: number;
@@ -16,6 +18,9 @@ const STAT_COLORS = ["#8fbf9a", "#c98a3d", "#2D7D7D", "#8B5CF6"];
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("adminDashboard");
+  const ta = useTranslations("admin");
+  const locale = intlLocale(useLocale());
 
   useEffect(() => {
     fetch("/api/admin/stats")
@@ -30,29 +35,29 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-center h-64">
         <div className="animate-pulse flex flex-col items-center gap-3">
           <span className="material-symbols-outlined text-4xl animate-spin" style={{ color: "#8fbf9a" }}>coffee</span>
-          <p className="text-sm font-medium" style={{ color: "rgba(238, 240, 232, 0.6)" }}>جاري التحميل...</p>
+          <p className="text-sm font-medium" style={{ color: "rgba(238, 240, 232, 0.6)" }}>{ta("loading")}</p>
         </div>
       </div>
     );
   }
 
   if (!stats) {
-    return <p className="text-red-500">فشل تحميل الإحصائيات.</p>;
+    return <p className="text-red-500">{t("loadFailed")}</p>;
   }
 
   const cards = [
-    { label: "المستخدمون", value: stats.totalUsers },
-    { label: "الوصفات", value: stats.totalRecipes },
-    { label: "العلامات التجارية", value: stats.totalBrands },
-    { label: "النقاط الممنوحة", value: stats.totalPoints },
+    { label: t("users"), value: stats.totalUsers },
+    { label: t("recipes"), value: stats.totalRecipes },
+    { label: t("brands"), value: stats.totalBrands },
+    { label: t("points"), value: stats.totalPoints },
   ];
 
   return (
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h2 className="text-2xl" style={{ color: "#eef0e8" }}>لوحة التحكم</h2>
-        <p className="text-sm mt-1" style={{ color: "rgba(238, 240, 232, 0.5)" }}>نظرة عامة على تطبيق وصفة</p>
+        <h2 className="text-2xl" style={{ color: "#eef0e8" }}>{t("title")}</h2>
+        <p className="text-sm mt-1" style={{ color: "rgba(238, 240, 232, 0.5)" }}>{t("subtitle")}</p>
       </div>
 
       {/* Stats Grid */}
@@ -92,7 +97,7 @@ export default function AdminDashboard() {
       <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: "#16261d", border: "1px solid rgba(143, 191, 154, 0.06)" }}>
         <div className="px-5 py-4 flex items-center gap-2" style={{ borderBottom: "1px solid rgba(143, 191, 154, 0.06)" }}>
           <span className="material-symbols-outlined text-lg" style={{ color: "#8fbf9a" }}>person_add</span>
-          <h3 className="font-bold" style={{ color: "#eef0e8" }}>التسجيلات الأخيرة</h3>
+          <h3 className="font-bold" style={{ color: "#eef0e8" }}>{t("recentSignups")}</h3>
         </div>
         <div>
           {stats.recentUsers.map((user, i) => (
@@ -110,13 +115,13 @@ export default function AdminDashboard() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold truncate" style={{ color: "#eef0e8" }}>
-                    {user.name || "بدون اسم"}
+                    {user.name || ta("noName")}
                   </p>
                   <p className="text-[11px] truncate" style={{ color: "rgba(238, 240, 232, 0.5)" }}>{user.email || "—"}</p>
                 </div>
               </div>
               <p className="text-[11px] shrink-0" style={{ color: "rgba(238, 240, 232, 0.5)" }}>
-                {new Date(user.createdAt).toLocaleDateString("ar-SA-u-nu-latn")}
+                {new Date(user.createdAt).toLocaleDateString(locale)}
               </p>
             </div>
           ))}

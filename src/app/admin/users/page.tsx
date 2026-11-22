@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface User {
   id: string;
@@ -12,7 +14,6 @@ interface User {
 }
 
 const ROLES = ["USER", "CREATOR", "BRAND_ADMIN", "SUPERADMIN"];
-const ROLE_LABELS: Record<string, string> = { USER: "مستخدم", CREATOR: "منشئ", BRAND_ADMIN: "مدير علامة", SUPERADMIN: "مدير عام" };
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -20,6 +21,10 @@ export default function AdminUsersPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("adminUsers");
+  const ta = useTranslations("admin");
+  const locale = intlLocale(useLocale());
+  const roleLabel = (r: string) => (ta.has(`roles.${r}`) ? ta(`roles.${r}`) : r);
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -55,12 +60,12 @@ export default function AdminUsersPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">المستخدمون</h2>
+      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">{t("title")}</h2>
 
       <div className="mb-4">
         <input
           type="text"
-          placeholder="البحث عن مستخدمين..."
+          placeholder={t("searchPlaceholder")}
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           className="w-full px-4 py-2.5 rounded-2xl border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] focus:ring-2 focus:ring-[#8fbf9a] focus:border-transparent outline-none text-sm"
@@ -68,7 +73,7 @@ export default function AdminUsersPage() {
       </div>
 
       {loading ? (
-        <p className="text-[#eef0e899]">جاري التحميل...</p>
+        <p className="text-[#eef0e899]">{ta("loading")}</p>
       ) : (
         <>
           {/* Mobile: Card layout */}
@@ -77,7 +82,7 @@ export default function AdminUsersPage() {
               <div key={user.id} className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-[#eef0e8]">{user.name || "بدون اسم"}</p>
+                    <p className="font-bold text-[#eef0e8]">{user.name || ta("noName")}</p>
                     <p className="text-xs text-[#eef0e899] mt-0.5">{user.email || "—"}</p>
                   </div>
                   <button
@@ -88,7 +93,7 @@ export default function AdminUsersPage() {
                         : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                     }`}
                   >
-                    {user.status === "ACTIVE" ? "نشط" : "معلّق"}
+                    {user.status === "ACTIVE" ? ta("status.ACTIVE") : ta("status.SUSPENDED")}
                   </button>
                 </div>
                 <div className="flex items-center justify-between gap-2">
@@ -98,11 +103,11 @@ export default function AdminUsersPage() {
                     className="flex-1 px-3 py-1.5 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-xs"
                   >
                     {ROLES.map((r) => (
-                      <option key={r} value={r}>{ROLE_LABELS[r] || r}</option>
+                      <option key={r} value={r}>{roleLabel(r)}</option>
                     ))}
                   </select>
                   <span className="text-[11px] text-[#eef0e899] shrink-0">
-                    {new Date(user.createdAt).toLocaleDateString("ar-SA-u-nu-latn")}
+                    {new Date(user.createdAt).toLocaleDateString(locale)}
                   </span>
                 </div>
               </div>
@@ -114,17 +119,17 @@ export default function AdminUsersPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#eef0e80d]">
-                  <th className="text-start p-4 text-[#eef0e899] font-medium">الاسم</th>
-                  <th className="text-start p-4 text-[#eef0e899] font-medium">البريد الإلكتروني</th>
-                  <th className="text-start p-4 text-[#eef0e899] font-medium">الدور</th>
-                  <th className="text-start p-4 text-[#eef0e899] font-medium">الحالة</th>
-                  <th className="text-start p-4 text-[#eef0e899] font-medium">تاريخ الانضمام</th>
+                  <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colName")}</th>
+                  <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colEmail")}</th>
+                  <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colRole")}</th>
+                  <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colStatus")}</th>
+                  <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colJoined")}</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
                   <tr key={user.id} className="border-b border-[#eef0e80d] last:border-0">
-                    <td className="p-4 text-[#eef0e8] font-medium">{user.name || "بدون اسم"}</td>
+                    <td className="p-4 text-[#eef0e8] font-medium">{user.name || ta("noName")}</td>
                     <td className="p-4 text-[#eef0e8aa]">{user.email || "—"}</td>
                     <td className="p-4">
                       <select
@@ -132,7 +137,7 @@ export default function AdminUsersPage() {
                         onChange={(e) => updateUser(user.id, { role: e.target.value })}
                         className="px-2 py-1 rounded border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-xs"
                       >
-                        {ROLES.map((r) => (<option key={r} value={r}>{ROLE_LABELS[r] || r}</option>))}
+                        {ROLES.map((r) => (<option key={r} value={r}>{roleLabel(r)}</option>))}
                       </select>
                     </td>
                     <td className="p-4">
@@ -144,11 +149,11 @@ export default function AdminUsersPage() {
                             : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                         }`}
                       >
-                        {user.status === "ACTIVE" ? "نشط" : "معلّق"}
+                        {user.status === "ACTIVE" ? ta("status.ACTIVE") : ta("status.SUSPENDED")}
                       </button>
                     </td>
                     <td className="p-4 text-[#eef0e899] text-xs">
-                      {new Date(user.createdAt).toLocaleDateString("ar-SA-u-nu-latn")}
+                      {new Date(user.createdAt).toLocaleDateString(locale)}
                     </td>
                   </tr>
                 ))}
@@ -159,16 +164,16 @@ export default function AdminUsersPage() {
           {/* Pagination */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
             <p className="text-sm text-[#eef0e899]">
-              صفحة {page} من {totalPages || 1} ({total} مستخدم)
+              {t("pageInfo", { page, pages: totalPages || 1, total })}
             </p>
             <div className="flex gap-2">
               <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}
                 className="px-4 py-2 rounded-lg border border-[#eef0e81a] text-sm disabled:opacity-50 text-[#eef0e8cc]">
-                السابق
+                {ta("prev")}
               </button>
               <button disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}
                 className="px-4 py-2 rounded-lg border border-[#eef0e81a] text-sm disabled:opacity-50 text-[#eef0e8cc]">
-                التالي
+                {ta("next")}
               </button>
             </div>
           </div>

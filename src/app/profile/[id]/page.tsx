@@ -1,3 +1,5 @@
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import BottomNav from "@/components/BottomNav";
 import MaterialIcon from "@/components/MaterialIcon";
 import FollowButton from "@/components/FollowButton";
@@ -42,7 +44,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     return (
       <div className="bg-background-light min-h-screen flex items-center justify-center">
         <div className="text-center px-6">
-          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
           <p className="text-sm text-espresso/70 mb-4">{t("notFound")}</p>
           <Link href="/" className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">{t("home")}</Link>
         </div>
@@ -84,9 +86,12 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       <main className="flex-1 pb-28">
         {/* Profile Header */}
         <div className="flex px-6 pt-8 pb-6 flex-col items-center text-center gap-4">
-          <img
+          <SafeImage
             src={user.image || "/brand/banners/avatar-placeholder.svg"}
             alt=""
+            width={96}
+            height={96}
+            sizes="96px"
             className="size-24 rounded-full object-cover ring-4 ring-surface bg-oat-milk"
           />
           <div className="space-y-2">
@@ -187,8 +192,10 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               {user.recipes.map((r) => (
                 <Link href={`/recipe/${r.id}`} key={r.id} className="flex flex-col gap-3">
                   <div className="aspect-[3/4] rounded-[20px] bg-pine overflow-hidden relative">
-                    <img
-                      className="absolute inset-0 w-full h-full object-cover"
+                    <SafeImage
+                      fill
+                      sizes="(min-width: 768px) 33vw, 50vw"
+                      className="object-cover"
                       src={r.imageUrl || "/brand/banners/recipe-placeholder.svg"}
                       alt=""
                     />

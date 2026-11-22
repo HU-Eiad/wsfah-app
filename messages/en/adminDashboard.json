@@ -1,0 +1,10 @@
+{
+  "title": "Dashboard",
+  "subtitle": "An overview of the WSFA app",
+  "loadFailed": "Couldn't load the stats.",
+  "users": "Users",
+  "recipes": "Recipes",
+  "brands": "Brands",
+  "points": "Points awarded",
+  "recentSignups": "Recent sign-ups"
+}

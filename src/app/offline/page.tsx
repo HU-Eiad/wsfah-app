@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 export default async function OfflinePage() {
@@ -15,7 +16,7 @@ export default async function OfflinePage() {
           </span>
           <span className="font-display text-2xl font-semibold">{t("appName")}</span>
         </div>
-        <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+        <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
         <h1 className="text-2xl mb-3">{t("title")}</h1>
         <p className="text-sm text-espresso/60 leading-relaxed">
           {t("body")}

@@ -5,7 +5,6 @@ import { getUserTier, hasFeature } from "@/lib/features";
 import {
   conversationsCollection,
   ensureIndexes,
-  ObjectId,
 } from "@/lib/mongodb";
 
 // GET /api/chat/conversations — list user's conversations

@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
+import Image from "next/image";
+import SafeImage from "./SafeImage";
 
 type RecipeCard = {
   id: string;
@@ -45,7 +47,7 @@ function RecipeGrid({ items, emptyText, emptyAction }: {
   if (items.length === 0) {
     return (
       <div className="col-span-2 flex flex-col items-center py-10 text-center">
-        <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+        <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
         <p className="text-sm text-espresso/70 mb-4" dir="auto">{emptyText}</p>
         {emptyAction && (
           <Link href={emptyAction.href} className="bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors" dir="auto">
@@ -61,8 +63,10 @@ function RecipeGrid({ items, emptyText, emptyAction }: {
       {items.map((r) => (
         <Link href={`/recipe/${r.slug}`} key={r.id} className="flex flex-col gap-2">
           <div className="relative aspect-[3/4] rounded-[20px] overflow-hidden bg-pine">
-            <img
-              className="absolute inset-0 w-full h-full object-cover"
+            <SafeImage
+              fill
+              sizes="(max-width: 768px) 50vw, 360px"
+              className="object-cover"
               src={r.imageUrl || PLACEHOLDER_IMG}
               alt=""
             />

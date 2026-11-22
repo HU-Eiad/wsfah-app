@@ -1,7 +1,7 @@
+import { getAuthSession } from "@/lib/auth-mobile";
 import { NextResponse } from "next/server";
 import { z } from "zod/v4";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { parseBody } from "@/lib/validation";
 
 const pushUnsubscribeSchema = z.object({
@@ -9,7 +9,7 @@ const pushUnsubscribeSchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

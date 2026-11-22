@@ -1,12 +1,13 @@
+import { getAuthSession } from "@/lib/auth-mobile";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const brandId = searchParams.get("brandId") || "";
 
   const products = await prisma.product.findMany({
+    take: 200, // bounded: this list grows with usage
     where: brandId ? { brandId } : {},
     include: {
       brand: { select: { id: true, name: true, logo: true } },
@@ -18,7 +19,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

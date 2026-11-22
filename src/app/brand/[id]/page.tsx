@@ -1,3 +1,4 @@
+import SafeImage from "@/components/SafeImage";
 import BottomNav from "@/components/BottomNav";
 import BrandTabs from "@/components/BrandTabs";
 import BrandIcon from "@/components/BrandIcon";
@@ -89,9 +90,12 @@ export default async function BrandProfilePage({ params }: { params: Promise<{ i
         <div className="p-4">
           <div className="bg-forest text-paper rounded-[20px] p-5 flex items-center gap-4">
             <div className="size-20 shrink-0 rounded-full overflow-hidden ring-4 ring-paper/15 bg-pine">
-              <img
+              <SafeImage
                 src={company.logo || "/brand/banners/avatar-placeholder.svg"}
                 alt=""
+                width={80}
+                height={80}
+                sizes="80px"
                 className="w-full h-full object-cover"
               />
             </div>

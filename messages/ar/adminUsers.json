@@ -1,0 +1,10 @@
+{
+  "title": "المستخدمون",
+  "searchPlaceholder": "البحث عن مستخدمين...",
+  "colName": "الاسم",
+  "colEmail": "البريد الإلكتروني",
+  "colRole": "الدور",
+  "colStatus": "الحالة",
+  "colJoined": "تاريخ الانضمام",
+  "pageInfo": "صفحة {page} من {pages} ({total} مستخدم)"
+}

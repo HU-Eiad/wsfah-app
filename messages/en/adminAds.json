@@ -1,0 +1,44 @@
+{
+  "title": "Ads management",
+  "subtitle": "Configure Google AdSense placements in the app",
+  "saved": "Saved!",
+  "save": "Save changes",
+  "publisherId": "Publisher ID (NEXT_PUBLIC_ADSENSE_ID)",
+  "publisherIdHint": "Set it in .env.local as NEXT_PUBLIC_ADSENSE_ID",
+  "estRevenue": "Estimated revenue",
+  "estRevenueHint": "Connect AdSense to see data",
+  "impressions": "Impressions",
+  "impressionsHint": "Total ad impressions today",
+  "activePlacements": "Active placements",
+  "activePlacementsHint": "Enabled ad placements",
+  "rulesTitle": "Ad visibility rules",
+  "rules": {
+    "free": "<b>Free users:</b> see all enabled ads",
+    "basic": "<b>Basic plan subscribers:</b> no ads (ad-free experience)",
+    "premium": "<b>Premium plan subscribers:</b> no ads (ad-free experience)"
+  },
+  "placementsTitle": "Ad placements",
+  "placements": {
+    "homeMid": "Home - after categories",
+    "feed0": "Feed - between activities",
+    "exploreTop": "Explore - top banner",
+    "recipeMid": "Recipe - between sections",
+    "recipeBottom": "Recipe - above comments"
+  },
+  "pages": {
+    "home": "Home",
+    "feed": "Feed",
+    "explore": "Explore",
+    "recipe": "Recipe details"
+  },
+  "slot": "Slot: {slot}",
+  "format": "Format: {format}",
+  "guideTitle": "Setup guide",
+  "guide": {
+    "step1": "Create a Google AdSense account at <b>adsense.google.com</b>",
+    "step2": "Get your publisher ID (it starts with <code>ca-pub-</code>)",
+    "step3": "Add <code>NEXT_PUBLIC_ADSENSE_ID=ca-pub-XXXX</code> to <b>.env.local</b>",
+    "step4": "Create ad units in AdSense and replace the slot IDs above",
+    "step5": "Deploy the app and wait for AdSense approval (usually 1-2 weeks)"
+  }
+}

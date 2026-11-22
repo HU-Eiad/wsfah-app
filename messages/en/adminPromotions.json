@@ -1,0 +1,36 @@
+{
+  "title": "Promotion requests",
+  "pendingCount": "{count} pending",
+  "subtitle": "Review and manage roaster promotion requests",
+  "filterCount": "{label} ({count})",
+  "empty": "No promotion requests",
+  "emptyHint": "Roasters can request a promotion from their brand page",
+  "priority": "Priority: {priority}",
+  "bannerAlt": "Promotion banner",
+  "fPriority": "Priority (higher shows first)",
+  "fNotes": "Admin notes",
+  "fNotesPlaceholder": "Internal notes...",
+  "fStart": "Start date",
+  "fEnd": "End date",
+  "save": "Save changes",
+  "cancel": "Cancel",
+  "approve": "Approve",
+  "reject": "Reject",
+  "end": "End",
+  "close": "Close",
+  "settings": "Settings",
+  "delete": "Delete",
+  "confirmDelete": "Delete this promotion request?",
+  "status": {
+    "ALL": "All",
+    "PENDING": "Pending",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "EXPIRED": "Expired"
+  },
+  "placements": {
+    "HOME_TOP": "Home page",
+    "EXPLORE_TOP": "Explore page",
+    "BOTH": "Home + Explore"
+  }
+}

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -7,7 +8,7 @@ export async function GET(req: Request) {
   const type = url.searchParams.get("type") || "";
   const limit = Math.min(parseInt(url.searchParams.get("limit") || "50"), 100);
 
-  const where: any = { status: "APPROVED" };
+  const where: Prisma.CompanyWhereInput = { status: "APPROVED" };
 
   if (search) {
     where.OR = [

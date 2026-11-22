@@ -28,6 +28,7 @@ export async function GET(req: Request) {
           rating: true, category: true, likes: true, createdAt: true,
         },
         orderBy: { createdAt: "desc" },
+        take: 100,
       },
       badges: { include: { badge: true } },
       challenges: { include: { challenge: true } },
@@ -38,6 +39,7 @@ export async function GET(req: Request) {
           },
         },
         orderBy: { createdAt: "desc" },
+        take: 100,
       },
     },
   });
@@ -52,7 +54,7 @@ export async function GET(req: Request) {
   // Resolve effective tier (Pro if part of active roaster)
   const effectiveTier = await getUserTier(userId);
 
-  return NextResponse.json({ ...safeUser, effectiveTier });
+  return NextResponse.json({ ...safeUser, effectiveTier, hasPassword: !!user.password });
 }
 
 export async function PATCH(req: Request) {
@@ -137,4 +139,98 @@ export async function PATCH(req: Request) {
     ? await signMobileToken({ id: updated.id, role: updated.role, tokenVersion })
     : undefined;
   return NextResponse.json({ ...result, ...(token ? { token } : {}) });
+}
+
+/**
+ * DELETE /api/users/me — delete the signed-in account.
+ * Body: { password?: string } (required when the account has a password).
+ *
+ * The User row is anonymised rather than removed, so public content other people
+ * interacted with (recipes, posts, comments, ratings) stays and shows a deleted user.
+ * Personal and private data is deleted. Sign-in methods are removed and all mobile
+ * tokens are revoked, so the account can't be used again.
+ */
+export async function DELETE(req: Request) {
+  const userId = await getUserId(req);
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await req.json().catch(() => ({}));
+  const password = typeof body?.password === "string" ? body.password : "";
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { password: true },
+  });
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+  if (user.password && !(password && (await compare(password, user.password)))) {
+    return NextResponse.json({ error: "Password is incorrect", code: "WRONG_PASSWORD" }, { status: 400 });
+  }
+
+  const ownsBrand = await prisma.company.count({ where: { ownerId: userId } });
+  if (ownsBrand > 0) {
+    return NextResponse.json(
+      { error: "Transfer or delete your brand before deleting your account", code: "OWNS_BRAND" },
+      { status: 409 }
+    );
+  }
+
+  await prisma.$transaction(async (tx) => {
+    // Keep other users' follower/following counters right.
+    const following = await tx.follow.findMany({ where: { followerId: userId }, select: { followingId: true } });
+    const followers = await tx.follow.findMany({ where: { followingId: userId }, select: { followerId: true } });
+    if (following.length) {
+      await tx.user.updateMany({
+        where: { id: { in: following.map((f) => f.followingId) }, followers: { gt: 0 } },
+        data: { followers: { decrement: 1 } },
+      });
+    }
+    if (followers.length) {
+      await tx.user.updateMany({
+        where: { id: { in: followers.map((f) => f.followerId) }, following: { gt: 0 } },
+        data: { following: { decrement: 1 } },
+      });
+    }
+    await tx.follow.deleteMany({ where: { OR: [{ followerId: userId }, { followingId: userId }] } });
+
+    // Personal / private data.
+    await tx.account.deleteMany({ where: { userId } });
+    await tx.session.deleteMany({ where: { userId } });
+    await tx.mobilePushToken.deleteMany({ where: { userId } });
+    await tx.pushSubscription.deleteMany({ where: { userId } });
+    await tx.notification.deleteMany({ where: { userId } });
+    await tx.brewLog.deleteMany({ where: { userId } });
+    await tx.equipment.deleteMany({ where: { userId } });
+    await tx.recipeSave.deleteMany({ where: { userId } });
+    await tx.recipeLike.deleteMany({ where: { userId } });
+    await tx.galleryPostLike.deleteMany({ where: { userId } });
+    await tx.collection.deleteMany({ where: { userId } });
+    await tx.activityEvent.deleteMany({ where: { userId } });
+    await tx.companyMember.deleteMany({ where: { userId } });
+    await tx.groupMember.deleteMany({ where: { userId } });
+    await tx.eventRsvp.deleteMany({ where: { userId } });
+
+    // Anonymise the account itself.
+    await tx.user.update({
+      where: { id: userId },
+      data: {
+        name: "مستخدم محذوف",
+        email: null,
+        phone: null,
+        emailVerified: null,
+        password: null,
+        image: null,
+        bio: null,
+        status: "DELETED",
+        subscriptionTier: "free",
+        tokenVersion: { increment: 1 },
+      },
+    });
+  });
+
+  logAudit(userId, AUDIT.PROFILE_UPDATE, "user", userId, { action: "account_deleted" });
+  return NextResponse.json({ deleted: true });
 }

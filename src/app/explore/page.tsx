@@ -1,3 +1,5 @@
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import AdSlot from "@/components/AdSlot";
 import BottomNav from "@/components/BottomNav";
 import PromotedBrands from "@/components/PromotedBrands";
@@ -60,7 +62,7 @@ export default async function ExplorePage() {
 
         {posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm font-semibold text-espresso/70">{t("emptyTitle")}</p>
             <p className="text-xs text-espresso/60 mt-1">{t("emptyBody")}</p>
           </div>
@@ -81,15 +83,18 @@ export default async function ExplorePage() {
                     className="w-full object-cover"
                   />
                 ) : post.imageUrl ? (
-                  <img src={post.imageUrl} alt={post.caption || t("postAlt")} className="w-full object-cover" />
+                  <SafeImage src={post.imageUrl} alt={post.caption || t("postAlt")} width={0} height={0} sizes="(min-width: 672px) 336px, 50vw" className="w-full h-auto object-cover" />
                 ) : null}
                 <div className="p-3">
                   {/* Roaster Info - Prominent */}
                   {post.company && (
                     <div className="flex items-center gap-2 mb-2">
-                      <img
+                      <SafeImage
                         src={post.company.logo || "/brand/banners/avatar-placeholder.svg"}
                         alt=""
+                        width={28}
+                        height={28}
+                        sizes="28px"
                         className="size-7 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
                       />
                       <div className="flex-1 min-w-0">
@@ -100,9 +105,12 @@ export default async function ExplorePage() {
                   )}
                   {!post.company && (
                     <div className="flex items-center gap-2 mb-2">
-                      <img
+                      <SafeImage
                         src={post.author.image || "/brand/banners/avatar-placeholder.svg"}
                         alt=""
+                        width={28}
+                        height={28}
+                        sizes="28px"
                         className="size-7 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
                       />
                       <p dir="auto" className="text-xs font-bold truncate">{post.author.name}</p>

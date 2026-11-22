@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
+import SafeImage from "./SafeImage";
 
 interface Recipe {
   id: string;
@@ -44,10 +45,12 @@ export default function RecommendedRecipes() {
             className="shrink-0 w-44 flex flex-col gap-3"
           >
             <div className="relative aspect-[3/4] rounded-[20px] overflow-hidden bg-pine">
-              <img
+              <SafeImage
                 src={recipe.imageUrl || "/brand/banners/recipe-placeholder.svg"}
                 alt=""
-                className="absolute inset-0 w-full h-full object-cover"
+                fill
+                sizes="176px"
+                className="object-cover"
               />
               <span className="absolute top-3 start-3 text-[11px] font-bold px-2 py-1 rounded-md bg-surface/90 text-espresso" dir="auto">
                 {recipe.category}

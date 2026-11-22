@@ -34,5 +34,10 @@
   "ingredients": "Ingredients",
   "itemCount": "{count, plural, one {# item} other {# items}}",
   "steps": "Steps",
-  "brewLogged": "Brew logged! Check your brew journal."
+  "brewLogged": "Brew logged! Check your brew journal.",
+  "proBadge": "Pro",
+  "lockedTitle": "This is a Pro recipe",
+  "lockedBody": "The ingredients, steps and brew parameters are for Pro members. Upgrade to unlock this recipe and every other Pro recipe.",
+  "lockedUpgrade": "See plans",
+  "lockedSignIn": "Already Pro? Sign in"
 }

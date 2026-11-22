@@ -1,5 +1,7 @@
 "use client";
 
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { use } from "react";
 import Link from "next/link";
@@ -114,7 +116,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
     return (
       <div className="bg-background-light min-h-screen flex items-center justify-center">
         <div className="text-center px-6">
-          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
           <p className="text-sm text-espresso/70 mb-4">{t("notFound")}</p>
           <Link href="/collections" className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">{t("backToCollections")}</Link>
         </div>
@@ -238,7 +240,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
           {/* Recipes Grid */}
           {collection.recipes.length === 0 ? (
             <div className="text-center py-12 px-6">
-              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
               <p className="text-sm text-espresso/70 leading-relaxed">
                 {t("empty")}
               </p>
@@ -252,10 +254,12 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
                   className="flex flex-col gap-3"
                 >
                   <div className="relative aspect-[4/3] rounded-[20px] overflow-hidden bg-pine">
-                    <img
+                    <SafeImage
                       src={recipe.imageUrl || "/brand/banners/recipe-placeholder.svg"}
                       alt=""
-                      className="absolute inset-0 w-full h-full object-cover"
+                      fill
+                      sizes="(min-width: 768px) 33vw, 50vw"
+                      className="object-cover"
                     />
                   </div>
                   <div>

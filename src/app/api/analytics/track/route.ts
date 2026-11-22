@@ -1,7 +1,7 @@
+import { getAuthSession } from "@/lib/auth-mobile";
 import { NextResponse } from "next/server";
 import { z } from "zod/v4";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { parseBody } from "@/lib/validation";
 
 const trackSchema = z.object({
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   }
 
   // Get userId if authenticated (anonymous tracking is OK)
-  const session = await auth();
+  const session = await getAuthSession();
   const userId = session?.user?.id ?? null;
 
   await prisma.brandView.create({

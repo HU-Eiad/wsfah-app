@@ -1,3 +1,4 @@
+import SafeImage from "@/components/SafeImage";
 import BottomNav from "@/components/BottomNav";
 import MaterialIcon from "@/components/MaterialIcon";
 import AdSlot from "@/components/AdSlot";
@@ -71,7 +72,7 @@ export default async function HomePage() {
               aria-label={t("profile")}
               className="size-12 rounded-full ring-2 ring-primary/40 ring-offset-2 ring-offset-background-light block overflow-hidden"
             >
-              <img alt="" className="w-full h-full object-cover" src={userImage} />
+              <SafeImage alt="" width={48} height={48} sizes="48px" className="w-full h-full object-cover" src={userImage} />
             </Link>
             <h1 className="text-2xl leading-tight">
               {greeting}
@@ -104,9 +105,12 @@ export default async function HomePage() {
             </div>
             <Link href={`/recipe/${featuredRecipe.slug}`} className="block">
               <article className="relative overflow-hidden rounded-[20px] bg-pine text-paper aspect-[4/5] flex flex-col justify-end">
-                <img
+                <SafeImage
                   alt=""
-                  className="absolute inset-0 w-full h-full object-cover"
+                  fill
+                  priority
+                  sizes="(min-width: 672px) 640px, 100vw"
+                  className="object-cover"
                   src={featuredRecipe.imageUrl || recipePlaceholder}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-pine via-pine/75 to-pine/10"></div>
@@ -170,7 +174,7 @@ export default async function HomePage() {
                 <Link href={`/brand/${r.id}`} key={r.id} className="flex flex-col items-center gap-2 shrink-0 w-[76px] group">
                   <div className="size-16 rounded-full ring-1 ring-espresso/10 group-hover:ring-2 group-hover:ring-primary overflow-hidden bg-oat-milk transition-shadow">
                     {r.logo ? (
-                      <img src={r.logo} alt="" className="w-full h-full object-cover" />
+                      <SafeImage src={r.logo} alt="" width={64} height={64} sizes="64px" className="w-full h-full object-cover" />
                     ) : (
                       <span className="w-full h-full flex items-center justify-center font-display text-2xl text-forest dark:text-primary">
                         {r.name.charAt(0)}
@@ -196,9 +200,11 @@ export default async function HomePage() {
             {trendingRecipes.map((item) => (
               <Link href={`/recipe/${item.slug}`} key={item.id} className="flex flex-col gap-3">
                 <div className="relative aspect-[3/4] rounded-[20px] overflow-hidden bg-pine">
-                  <img
+                  <SafeImage
                     alt=""
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill
+                    sizes="(min-width: 768px) 33vw, 50vw"
+                    className="object-cover"
                     src={item.imageUrl || recipePlaceholder}
                   />
                   <span

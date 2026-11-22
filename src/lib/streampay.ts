@@ -6,7 +6,18 @@ function getApiKey() {
   return key;
 }
 
-async function streamFetch<T = any>(
+/** Generic StreamPay object; specific shapes below for the fields we rely on. */
+export type StreamPayRecord = { id: string; [key: string]: unknown };
+
+export interface StreamPayPaymentLink extends StreamPayRecord {
+  url?: string;
+  status?: string;
+  amount?: string | number;
+  amount_collected?: string;
+  custom_metadata?: Record<string, string>;
+}
+
+async function streamFetch<T = StreamPayRecord>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
@@ -84,14 +95,14 @@ export async function createPaymentLink(params: {
       throw new Error("product_id is required — check STREAM_PRODUCT_* env vars");
     }
   }
-  return streamFetch("/api/v2/payment_links", {
+  return streamFetch<StreamPayPaymentLink>("/api/v2/payment_links", {
     method: "POST",
     body: JSON.stringify(params),
   });
 }
 
 export async function getPaymentLink(id: string) {
-  return streamFetch(`/api/v2/payment_links/${id}`);
+  return streamFetch<StreamPayPaymentLink>(`/api/v2/payment_links/${id}`);
 }
 
 export async function listPaymentLinks() {

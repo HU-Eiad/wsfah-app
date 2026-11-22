@@ -1,5 +1,6 @@
 "use client";
 
+import SafeImage from "@/components/SafeImage";
 import { useState, useEffect, useRef } from "react";
 import { use } from "react";
 import { useRouter } from "next/navigation";
@@ -89,6 +90,12 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
           return;
         }
         const data = await res.json();
+        if (data.locked === true) {
+          // Content withheld by the Pro paywall: never build a form that would
+          // save empty ingredients/steps over the real ones.
+          setError(t("errors.loadFailed"));
+          return;
+        }
         setRecipeName(data.title || "");
         setCategory(data.category || "");
         setDifficulty(data.difficulty || "Beginner");
@@ -289,7 +296,7 @@ export default function EditRecipePage({ params }: { params: Promise<{ id: strin
             <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent" />
           ) : imageUrl ? (
             <>
-              <img src={imageUrl} alt={t("imageAlt")} className="absolute inset-0 w-full h-full object-cover" />
+              <SafeImage src={imageUrl} alt={t("imageAlt")} fill sizes="(min-width: 672px) 672px, 100vw" className="object-cover" />
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
                 <div className="bg-surface/90 rounded-full p-3">
                   <MaterialIcon icon="edit" className="text-xl text-espresso" />

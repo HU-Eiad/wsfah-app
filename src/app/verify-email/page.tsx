@@ -19,21 +19,21 @@ function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const t = useTranslations("verifyEmail");
   const token = searchParams.get("token");
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+  const [result, setResult] = useState<"success" | "error" | null>(null);
+  // No token in the link: nothing to verify.
+  const status: "loading" | "success" | "error" = !token ? "error" : result ?? "loading";
 
   useEffect(() => {
-    if (!token) {
-      setStatus("error");
-      return;
-    }
-
+    if (!token) return;
+    let cancelled = false;
     fetch("/api/auth/verify-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token }),
     })
-      .then((res) => setStatus(res.ok ? "success" : "error"))
-      .catch(() => setStatus("error"));
+      .then((res) => { if (!cancelled) setResult(res.ok ? "success" : "error"); })
+      .catch(() => { if (!cancelled) setResult("error"); });
+    return () => { cancelled = true; };
   }, [token]);
 
   return (

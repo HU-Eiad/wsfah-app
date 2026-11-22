@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import MaterialIcon from "./MaterialIcon";
 import BrandIcon from "./BrandIcon";
 import { UserPricingToggle, RoasterPricingToggle } from "./PricingToggle";
@@ -121,8 +122,8 @@ export default async function LandingPage() {
           </div>
 
           <div className="relative">
-            <div className="aspect-[6/5] md:aspect-[1/1.05] rounded-[28px] overflow-hidden bg-paper">
-              <img src="/brand/banners/landing-hero.svg" alt="" className="w-full h-full object-cover object-left" />
+            <div className="relative aspect-[6/5] md:aspect-[1/1.05] rounded-[28px] overflow-hidden bg-paper">
+              <Image src="/brand/banners/landing-hero.svg" alt="" fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-left" />
             </div>
             {/* Recipe slip: overlaps the image edge on phones, floats over its corner on desktop */}
             <div className="relative -mt-10 ms-auto me-4 md:absolute md:mt-0 md:me-0 md:-bottom-8 md:-start-10 w-60 bg-surface rounded-2xl shadow-[0_18px_40px_-18px_rgba(20,53,36,0.45)] border border-espresso/5 p-5">

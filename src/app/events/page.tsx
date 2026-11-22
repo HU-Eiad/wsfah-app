@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MaterialIcon from "@/components/MaterialIcon";
@@ -175,7 +176,7 @@ export default function EventsPage() {
           </div>
         ) : events.length === 0 ? (
           <div className="text-center py-12">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (

@@ -1,5 +1,7 @@
 "use client";
 
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -129,7 +131,7 @@ export default function GroupDetailPage() {
     return (
       <div className="min-h-screen bg-background-light text-espresso flex items-center justify-center p-6">
         <div className="text-center">
-          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
           <p className="text-sm text-espresso/70">{t("notFound")}</p>
           <Link href="/groups" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">
             {t("allGroups")}
@@ -211,7 +213,7 @@ export default function GroupDetailPage() {
         <div className="space-y-4">
           {posts.length === 0 ? (
             <div className="text-center py-8">
-              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
               <p className="text-sm text-espresso/70">
                 {t("postsEmpty")}
               </p>
@@ -224,9 +226,12 @@ export default function GroupDetailPage() {
               >
                 <div className="flex items-center gap-3 mb-3">
                   {post.author.image ? (
-                    <img
+                    <SafeImage
                       src={post.author.image}
                       alt=""
+                      width={40}
+                      height={40}
+                      sizes="40px"
                       className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
                     />
                   ) : (
@@ -247,10 +252,13 @@ export default function GroupDetailPage() {
                   {post.body}
                 </p>
                 {post.imageUrl && (
-                  <img
+                  <SafeImage
                     src={post.imageUrl}
                     alt=""
-                    className="mt-3 rounded-[20px] max-h-96 w-full object-cover"
+                    width={0}
+                    height={0}
+                    sizes="(min-width: 800px) 768px, 100vw"
+                    className="mt-3 rounded-[20px] max-h-96 w-full h-auto object-cover"
                   />
                 )}
               </article>

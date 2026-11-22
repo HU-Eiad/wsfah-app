@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth-mobile";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 // GET: Get current user's subscription status
 export async function GET() {
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }

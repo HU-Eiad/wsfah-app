@@ -1,6 +1,7 @@
 import { auth } from "./auth";
 import { verifyMobileToken } from "./jwt";
 import { prisma } from "./prisma";
+import { headers } from "next/headers";
 
 /**
  * Get authenticated user ID from either NextAuth session or mobile Bearer token.
@@ -19,7 +20,7 @@ export async function getAuthUser(req: Request): Promise<{ id: string; role: str
         where: { id: tokenData.id },
         select: { id: true, role: true, status: true, tokenVersion: true },
       });
-      if (!user || user.status === "SUSPENDED") return null;
+      if (!user || (user.status === "SUSPENDED" || user.status === "DELETED")) return null;
       if (user.tokenVersion !== tokenData.tokenVersion) return null;
       return { id: user.id, role: user.role };
     }
@@ -31,8 +32,23 @@ export async function getAuthUser(req: Request): Promise<{ id: string; role: str
       where: { id: session.user.id },
       select: { id: true, role: true, status: true },
     });
-    if (!user || user.status === "SUSPENDED") return null;
+    if (!user || (user.status === "SUSPENDED" || user.status === "DELETED")) return null;
     return { id: user.id, role: user.role || "USER" };
   }
   return null;
+}
+
+/**
+ * Drop-in replacement for `auth()` in API route handlers: same `{ user: { id, role } }`
+ * shape, but also accepts the mobile Bearer token (read from the incoming request
+ * headers) and applies the suspended/revoked checks of getAuthUser.
+ */
+export async function getAuthSession(): Promise<{ user: { id: string; role: string } } | null> {
+  const h = await headers();
+  const authorization = h.get("authorization");
+  const req = new Request("http://internal/", {
+    headers: authorization ? { authorization } : {},
+  });
+  const user = await getAuthUser(req);
+  return user ? { user } : null;
 }

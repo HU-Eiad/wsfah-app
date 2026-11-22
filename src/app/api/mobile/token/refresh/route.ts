@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     select: { id: true, role: true, status: true, tokenVersion: true },
   });
 
-  if (!user || user.status === "SUSPENDED" || user.tokenVersion !== tokenData.tokenVersion) {
+  if (!user || (user.status === "SUSPENDED" || user.status === "DELETED") || user.tokenVersion !== tokenData.tokenVersion) {
     return NextResponse.json({ error: "Account not found or suspended" }, { status: 403, headers: cors });
   }
 

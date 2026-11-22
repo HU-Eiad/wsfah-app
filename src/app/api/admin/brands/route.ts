@@ -13,6 +13,7 @@ export async function GET(req: Request) {
   const where = status ? { status } : undefined;
 
   const companies = await prisma.company.findMany({
+    take: 500, // bounded: this list grows with usage
     where,
     include: {
       owner: { select: { name: true, email: true } },

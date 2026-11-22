@@ -1,3 +1,4 @@
+import SafeImage from "@/components/SafeImage";
 import BottomNav from "@/components/BottomNav";
 import MaterialIcon from "@/components/MaterialIcon";
 import ProfileTabs from "@/components/ProfileTabs";
@@ -116,9 +117,12 @@ export default async function ProfilePage() {
       <main className="flex-1 pb-28">
         {/* Profile Header */}
         <div className="flex px-6 pt-8 pb-6 flex-col items-center text-center gap-4">
-          <img
+          <SafeImage
             src={user.image || "/brand/banners/avatar-placeholder.svg"}
             alt=""
+            width={96}
+            height={96}
+            sizes="96px"
             className="size-24 rounded-full object-cover ring-4 ring-surface bg-oat-milk"
           />
           <div className="space-y-2">

@@ -1,0 +1,19 @@
+{
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "users": "المستخدمون",
+    "brands": "العلامات التجارية",
+    "recipes": "الوصفات",
+    "moderation": "الإشراف",
+    "verification": "التوثيق",
+    "analytics": "التحليلات",
+    "subscriptions": "الاشتراكات",
+    "challenges": "التحديات",
+    "rewards": "المكافآت",
+    "promotions": "الترويج",
+    "ads": "الإعلانات"
+  },
+  "admin": "الإدارة",
+  "panel": "لوحة الإدارة",
+  "backToApp": "العودة للتطبيق"
+}

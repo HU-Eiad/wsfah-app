@@ -1,3 +1,5 @@
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import BottomNav from "@/components/BottomNav";
 import MaterialIcon from "@/components/MaterialIcon";
 import Link from "next/link";
@@ -30,7 +32,7 @@ export default async function GalleryPage() {
       <main className="flex-1 px-4 pb-28 pt-4">
         {posts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm font-semibold text-espresso/70">{t("emptyTitle")}</p>
             <p className="text-xs text-espresso/60 mt-1">{t("emptyBody")}</p>
           </div>
@@ -38,13 +40,16 @@ export default async function GalleryPage() {
           <div className="columns-2 gap-3 space-y-3">
             {posts.map((post) => (
               <div key={post.id} className="break-inside-avoid rounded-[20px] overflow-hidden bg-surface border border-espresso/10">
-                {post.imageUrl && <img src={post.imageUrl} alt={post.caption || t("postAlt")} className="w-full object-cover" />}
+                {post.imageUrl && <SafeImage src={post.imageUrl} alt={post.caption || t("postAlt")} width={0} height={0} sizes="(min-width: 672px) 336px, 50vw" className="w-full h-auto object-cover" />}
                 <div className="p-3">
                   {post.caption && <p className="text-sm leading-relaxed mb-2" dir="auto">{post.caption}</p>}
                   <div className="flex items-center gap-2">
-                    <img
+                    <SafeImage
                       src={post.author.image || "/brand/banners/avatar-placeholder.svg"}
                       alt=""
+                      width={24}
+                      height={24}
+                      sizes="24px"
                       className="size-6 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
                     />
                     <span dir="auto" className="text-xs text-espresso/60 font-medium truncate">{post.author.name}</span>

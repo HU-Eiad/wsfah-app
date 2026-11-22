@@ -8,6 +8,7 @@ export async function GET() {
   if (error) return error;
 
   const reports = await prisma.report.findMany({
+    take: 500, // bounded: this list grows with usage
     where: { status: "PENDING" },
     include: {
       reporter: { select: { name: true, email: true } },

@@ -22,7 +22,6 @@ export async function GET(req: Request) {
       .toArray();
 
     const result = mongoConvs.map((c) => {
-      const lastRead = c.lastReadAt?.[user.id] || new Date(0);
       const otherParticipant = c.participants.find((p) => p.userId !== user.id);
       const lastMessage = c.lastMessage || null;
       const myLastReadAt = c.lastReadAt?.[user.id] || null;

@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { intlLocale } from "@/i18n/format";
+import Image from "next/image";
+import SafeImage from "@/components/SafeImage";
 
 interface LeaderboardEntry {
   rank: number;
@@ -33,16 +35,22 @@ export default function LeaderboardPage() {
   const tc = useTranslations("common");
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState<SortTab>("points");
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Result tagged with the tab it was fetched for: loading until it matches.
+  const [data, setData] = useState<{ tab: SortTab; entries: LeaderboardEntry[] } | null>(null);
+  const loading = data?.tab !== activeTab;
+  const entries = data?.entries ?? [];
 
   useEffect(() => {
-    setLoading(true);
+    let cancelled = false;
     fetch(`/api/leaderboard?sort=${activeTab}`)
-      .then((res) => res.json())
-      .then(setEntries)
-      .catch(() => setEntries([]))
-      .finally(() => setLoading(false));
+      .then((res) => (res.ok ? res.json() : []))
+      .then((list: unknown) => {
+        if (!cancelled) setData({ tab: activeTab, entries: Array.isArray(list) ? (list as LeaderboardEntry[]) : [] });
+      })
+      .catch(() => {
+        if (!cancelled) setData({ tab: activeTab, entries: [] });
+      });
+    return () => { cancelled = true; };
   }, [activeTab]);
 
   return (
@@ -76,7 +84,7 @@ export default function LeaderboardPage() {
           </div>
         ) : entries.length === 0 ? (
           <div className="text-center py-12 px-6">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
@@ -98,9 +106,12 @@ export default function LeaderboardPage() {
                   </div>
 
                   {/* Avatar */}
-                  <img
+                  <SafeImage
                     src={entry.image || "/brand/banners/avatar-placeholder.svg"}
                     alt=""
+                    width={podium ? 48 : 40}
+                    height={podium ? 48 : 40}
+                    sizes={podium ? "48px" : "40px"}
                     className={`rounded-full object-cover shrink-0 bg-oat-milk ${podium ? "size-12" : "size-10"}`}
                   />
 

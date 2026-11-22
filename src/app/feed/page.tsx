@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import ActivityCard from "@/components/ActivityCard";
 import AdSlot from "@/components/AdSlot";
@@ -75,7 +76,7 @@ export default function FeedPage() {
       <div className="p-4">
         {activities.length === 0 ? (
           <div className="text-center py-16">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-espresso/70 font-semibold mb-1">{t("emptyTitle")}</p>
             <p className="text-sm text-espresso/60 leading-relaxed">
               {t("emptyBody")}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import MaterialIcon from "@/components/MaterialIcon";
 
@@ -27,36 +28,38 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
   const [newIsPublic, setNewIsPublic] = useState(false);
   const [updating, setUpdating] = useState<Set<string>>(new Set());
 
-  const fetchCollections = async () => {
-    try {
-      const res = await fetch("/api/collections");
-      if (!res.ok) throw new Error("Failed to fetch collections");
-      const data = await res.json();
-      setCollections(data);
-      // Find which collections already contain this recipe
-      const checks = data.map((col: Collection) =>
-        fetch(`/api/collections/${col.id}/recipes`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ recipeId }),
-        })
-          .then((r) => r.ok)
-          .catch(() => false)
-      );
-      const results = await Promise.all(checks);
-      const existingIds = data
-        .filter((_: Collection, i: number) => results[i])
-        .map((col: Collection) => col.id);
-      setSelectedIds(new Set(existingIds));
-    } catch (error) {
-      console.error("Error fetching collections:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchCollections();
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/collections");
+        if (!res.ok) throw new Error("Failed to fetch collections");
+        const data: Collection[] = await res.json();
+        if (cancelled) return;
+        setCollections(data);
+        // Find which collections already contain this recipe (read-only GET;
+        // the old POST "check" added the recipe to every collection).
+        const results = await Promise.all(
+          data.map((col) =>
+            fetch(`/api/collections/${col.id}`)
+              .then((r) => (r.ok ? r.json() : null))
+              .then((c: { recipes?: { recipeId: string }[] } | null) =>
+                !!c?.recipes?.some((cr) => cr.recipeId === recipeId)
+              )
+              .catch(() => false)
+          )
+        );
+        if (cancelled) return;
+        setSelectedIds(new Set(data.filter((_, i) => results[i]).map((col) => col.id)));
+      } catch (error) {
+        console.error("Error fetching collections:", error);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [recipeId]);
 
   const handleToggle = async (collectionId: string, isSelected: boolean) => {
@@ -147,7 +150,7 @@ export default function AddToCollectionModal({ recipeId, onClose }: AddToCollect
             </div>
           ) : collections.length === 0 ? (
             <div className="text-center py-6">
-              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
               <p className="text-sm text-espresso/70 mb-4">{t("empty")}</p>
               <button
                 onClick={() => setShowCreateForm(true)}

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
@@ -106,7 +107,7 @@ export default function JournalPage() {
         <h2 className="text-xl mb-4">{t("recent")}</h2>
         {logs.length === 0 ? (
           <div className="text-center py-10 px-6 bg-surface rounded-2xl border border-espresso/10">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70 leading-relaxed mb-5">
               {t("empty")}
             </p>

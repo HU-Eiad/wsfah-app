@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import MaterialIcon from "@/components/MaterialIcon";
+import SafeImage from "@/components/SafeImage";
 import { useTranslations, useLocale } from "next-intl";
 import { intlLocale } from "@/i18n/format";
 
@@ -56,9 +56,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               href={`/recipe/${activity.entityId}`}
               className="shrink-0"
             >
-              <img
+              <SafeImage
                 src={userAvatar}
                 alt={userName}
+                width={40}
+                height={40}
                 className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
               />
             </Link>
@@ -86,9 +88,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               href={`/recipe/${activity.entityId}`}
               className="shrink-0"
             >
-              <img
+              <SafeImage
                 src={userAvatar}
                 alt={userName}
+                width={40}
+                height={40}
                 className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
               />
             </Link>
@@ -115,9 +119,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               href={`/profile/${activity.userId}`}
               className="shrink-0"
             >
-              <img
+              <SafeImage
                 src={userAvatar}
                 alt={userName}
+                width={40}
+                height={40}
                 className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
               />
             </Link>
@@ -146,9 +152,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
               href={activity.entityType === "recipe" ? `/recipe/${activity.entityId}` : `/explore/${activity.entityId}`}
               className="shrink-0"
             >
-              <img
+              <SafeImage
                 src={userAvatar}
                 alt={userName}
+                width={40}
+                height={40}
                 className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
               />
             </Link>
@@ -171,9 +179,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       default:
         return (
           <div className="flex items-start gap-3">
-            <img
+            <SafeImage
               src={userAvatar}
               alt={userName}
+              width={40}
+              height={40}
               className="size-10 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
             />
             <div className="flex-1 min-w-0">

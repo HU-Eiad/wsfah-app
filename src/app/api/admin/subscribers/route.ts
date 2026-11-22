@@ -40,6 +40,7 @@ export async function GET(req: Request) {
   });
 
   const companies = await prisma.company.findMany({
+    take: 500, // bounded: this list grows with usage
     where: {
       subscriptionTier: { not: "basic" },
     },

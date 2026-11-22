@@ -91,7 +91,14 @@
     },
     "deletion": {
       "title": "Deleting your account",
-      "body": "You can ask us to delete your account at any time by contacting us at support@wsfa.app from the email or phone number linked to the account. We will delete your account and the personal data and content linked to it, except records we must keep by law (such as payment records). You can also delete individual recipes, posts and brew logs yourself in the app."
+      "body": "You can delete your account at any time in Settings → Delete account, on the website or in the app. You confirm with your password (accounts that only use Google sign-in just confirm). If you own a brand, transfer or delete it first. When you delete your account:",
+      "points": [
+        "Your private data is deleted: brew journal and brew logs, saved and liked recipes, follows, collections, notifications and device push tokens.",
+        "Your account is anonymised: your name is replaced with \"deleted user\", and your email address, phone number, photo, bio, password and sign-in methods (including Google) are removed, so nobody can sign in to it again.",
+        "Recipes, posts and comments you published stay visible to others but are shown as from a deleted user. You can delete individual recipes, posts and brew logs yourself before deleting your account.",
+        "Records we must keep by law, such as payment records, are retained for the required period.",
+        "If you can't access your account, email support@wsfa.app from the email or phone number linked to it and we will delete it for you."
+      ]
     },
     "rights": {
       "title": "Your choices",

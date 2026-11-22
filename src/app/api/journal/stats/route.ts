@@ -28,6 +28,7 @@ export async function GET(req: Request) {
       where: { userId, brewDate: { gte: monthStart } },
     }),
     prisma.brewLog.findMany({
+      take: 2000, // bounded: this list grows with usage
       where: { userId },
       select: { brewDate: true },
       orderBy: { brewDate: "desc" },

@@ -8,6 +8,7 @@ export async function GET(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const redemptions = await prisma.brandRewardRedemption.findMany({
+    take: 200, // bounded: this list grows with usage
     where: { userId: user.id },
     include: {
       brandReward: {

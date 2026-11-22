@@ -28,7 +28,7 @@ export async function GET(req: Request) {
     where: { id: tokenData.id },
     select: {
       id: true, name: true, email: true, image: true, role: true,
-      status: true, tokenVersion: true,
+      status: true, tokenVersion: true, password: true,
       points: true, subscriptionTier: true, bio: true, phone: true,
       followers: true, following: true,
       _count: {
@@ -44,7 +44,7 @@ export async function GET(req: Request) {
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404, headers: cors });
   }
-  if (user.status === "SUSPENDED" || user.tokenVersion !== tokenData.tokenVersion) {
+  if ((user.status === "SUSPENDED" || user.status === "DELETED") || user.tokenVersion !== tokenData.tokenVersion) {
     return NextResponse.json({ error: "Invalid token" }, { status: 401, headers: cors });
   }
 
@@ -61,5 +61,8 @@ export async function GET(req: Request) {
     _count: undefined,
     tokenVersion: undefined,
     status: undefined,
+    password: undefined,
+    // Lets the app ask for the password only when the account has one (e.g. on delete).
+    hasPassword: !!user.password,
   }, { headers: cors });
 }

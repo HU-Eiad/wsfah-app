@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -157,7 +158,7 @@ export default function CollectionsPage() {
         <div className="p-4">
           {collections.length === 0 ? (
             <div className="text-center py-12 px-6">
-              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
               <p className="text-sm text-espresso/70 leading-relaxed">
                 {t("empty")}
               </p>

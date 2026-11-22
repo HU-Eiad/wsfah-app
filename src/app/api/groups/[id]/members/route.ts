@@ -13,6 +13,7 @@ export async function GET(
   const { id } = await params;
 
   const members = await prisma.groupMember.findMany({
+    take: 500, // bounded: this list grows with usage
     where: { groupId: id },
     include: {
       user: { select: { id: true, name: true, image: true } },

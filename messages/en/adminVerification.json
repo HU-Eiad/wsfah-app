@@ -1,0 +1,10 @@
+{
+  "title": "Brand verification",
+  "empty": "No pending verification requests.",
+  "applicant": "Applicant: {name}",
+  "documents": "Documents:",
+  "document": "Document {n}",
+  "submitted": "Submitted: {date}",
+  "approve": "Approve",
+  "reject": "Reject"
+}

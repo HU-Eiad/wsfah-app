@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
 import BrandIcon from "./BrandIcon";
+import Image from "next/image";
+import SafeImage from "./SafeImage";
 
 type Product = {
   id: string;
@@ -139,7 +141,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
         <div className="grid grid-cols-2 gap-x-4 gap-y-6 p-4">
           {localProducts.length === 0 ? (
             <div className="col-span-2 text-center py-10">
-              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
               <p className="text-sm text-espresso/70">{t("emptyProducts")}</p>
             </div>
           ) : (
@@ -183,8 +185,10 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                 ) : (
                   <>
                     <div className="aspect-[4/5] rounded-[20px] bg-oat-milk overflow-hidden relative">
-                      <img
-                        className="w-full h-full object-cover"
+                      <SafeImage
+                        fill
+                        sizes="(max-width: 768px) 50vw, 360px"
+                        className="object-cover"
                         src={p.imageUrl || "/brand/banners/recipe-placeholder.svg"}
                         alt={p.name}
                       />
@@ -230,15 +234,17 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
         <div className="grid grid-cols-2 gap-x-4 gap-y-6 p-4">
           {recipes.length === 0 ? (
             <div className="col-span-2 text-center py-10">
-              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
               <p className="text-sm text-espresso/70">{t("emptyRecipes")}</p>
             </div>
           ) : (
             recipes.map((r) => (
               <Link href={`/recipe/${r.slug}`} key={r.id} className="flex flex-col gap-3">
                 <div className="aspect-[3/4] rounded-[20px] bg-pine overflow-hidden relative">
-                  <img
-                    className="absolute inset-0 w-full h-full object-cover"
+                  <SafeImage
+                    fill
+                    sizes="(max-width: 768px) 50vw, 360px"
+                    className="object-cover"
                     src={r.imageUrl || "/brand/banners/recipe-placeholder.svg"}
                     alt=""
                   />
@@ -304,7 +310,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
 
           {localGallery.length === 0 ? (
             <div className="text-center py-10">
-              <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+              <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
               <p className="text-sm text-espresso/70">{t("emptyGallery")}</p>
             </div>
           ) : (
@@ -314,7 +320,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                   {post.imageUrl && (post.mediaType === "video" ? (
                     <video src={post.imageUrl} controls playsInline preload="metadata" className="w-full object-cover" />
                   ) : (
-                    <img src={post.imageUrl} alt={post.caption || ""} className="w-full object-cover" />
+                    <SafeImage src={post.imageUrl} alt={post.caption || ""} width={480} height={480} sizes="(max-width: 768px) 50vw, 360px" className="w-full h-auto object-cover" />
                   ))}
                   {post.caption && (
                     <p className="text-xs text-espresso/70 p-2.5 leading-relaxed" dir="auto">{post.caption}</p>

@@ -1,0 +1,19 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "brands": "Brands",
+    "recipes": "Recipes",
+    "moderation": "Moderation",
+    "verification": "Verification",
+    "analytics": "Analytics",
+    "subscriptions": "Subscriptions",
+    "challenges": "Challenges",
+    "rewards": "Rewards",
+    "promotions": "Promotions",
+    "ads": "Ads"
+  },
+  "admin": "Admin",
+  "panel": "Admin panel",
+  "backToApp": "Back to the app"
+}

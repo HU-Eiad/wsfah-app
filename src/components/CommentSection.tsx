@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useTranslations, useLocale } from "next-intl";
 import { intlLocale } from "@/i18n/format";
+import SafeImage from "@/components/SafeImage";
 
 interface Author {
   id: string;
@@ -177,9 +178,11 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
       >
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0">
-            <img
+            <SafeImage
               src={comment.author.image || "/brand/banners/avatar-placeholder.svg"}
               alt=""
+              width={40}
+              height={40}
               className="size-10 rounded-full object-cover bg-oat-milk"
             />
           </div>
@@ -283,9 +286,11 @@ export default function CommentSection({ recipeId, postId }: CommentSectionProps
         <form onSubmit={handleSubmit} className="mb-6">
           <div className="flex gap-3">
             <div className="flex-shrink-0">
-              <img
+              <SafeImage
                 src={session.user.image || "/brand/banners/avatar-placeholder.svg"}
                 alt=""
+                width={40}
+                height={40}
                 className="size-10 rounded-full object-cover bg-oat-milk"
               />
             </div>

@@ -1,9 +1,9 @@
+import { getAuthSession } from "@/lib/auth-mobile";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 
 async function requireSuperAdmin() {
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.id) return null;
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },

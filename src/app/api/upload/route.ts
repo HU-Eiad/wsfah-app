@@ -1,5 +1,5 @@
+import { getAuthUser } from "@/lib/auth-mobile";
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { randomUUID } from "crypto";
 import { logAudit, AUDIT } from "@/lib/audit";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
@@ -102,16 +102,8 @@ const MIME_TO_EXT: Record<string, string> = {
 };
 
 export async function POST(req: Request) {
-  // Support both NextAuth session and mobile JWT
-  const session = await auth();
-  let userId = session?.user?.id;
-
-  if (!userId) {
-    // Try mobile JWT
-    const { getAuthUser } = await import("@/lib/auth-mobile");
-    const mobileUser = await getAuthUser(req);
-    userId = mobileUser?.id;
-  }
+  // Mobile Bearer token or web session (suspended/revoked users rejected)
+  const userId = (await getAuthUser(req))?.id;
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

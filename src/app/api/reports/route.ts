@@ -1,10 +1,10 @@
-import { auth } from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 import { parseBody, reportSchema } from "@/lib/validation";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

@@ -16,6 +16,7 @@ export async function GET(
 
   if (type === "following") {
     const following = await prisma.follow.findMany({
+      take: 500, // bounded: this list grows with usage
       where: { followerId: id },
       include: {
         following: { select: { id: true, name: true, image: true } },
@@ -33,6 +34,7 @@ export async function GET(
 
   // Default: followers
   const followers = await prisma.follow.findMany({
+    take: 500, // bounded: this list grows with usage
     where: { followingId: id },
     include: {
       follower: { select: { id: true, name: true, image: true } },

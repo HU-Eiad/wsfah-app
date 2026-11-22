@@ -1,5 +1,7 @@
 "use client";
 
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
@@ -152,12 +154,15 @@ export default function RewardsPage() {
       {/* Profile banner: member info at the start, stamp-card art at the end */}
       <div className="p-4">
         <div className="relative overflow-hidden rounded-[20px] bg-forest text-paper min-h-40 flex items-center p-6">
-          <img src="/brand/banners/rewards-banner.svg" alt="" className="absolute inset-0 w-full h-full object-cover object-left ltr:-scale-x-100" />
+          <Image src="/brand/banners/rewards-banner.svg" alt="" fill sizes="100vw" className="object-cover object-left ltr:-scale-x-100" />
           <div className="absolute inset-0 bg-gradient-to-l ltr:bg-gradient-to-r from-forest via-forest/85 to-transparent sm:via-forest/40" aria-hidden />
           <div className="relative flex items-center gap-4">
-            <img
+            <SafeImage
               src={user.image || "/brand/banners/avatar-placeholder.svg"}
               alt=""
+              width={80}
+              height={80}
+              sizes="80px"
               className="size-20 rounded-full object-cover ring-4 ring-paper/20"
             />
             <div>
@@ -325,7 +330,7 @@ export default function RewardsPage() {
         </div>
         {activeChallenges.length === 0 ? (
           <div className="bg-surface rounded-2xl p-6 border border-espresso/10 text-center">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70 mb-4">{t("noChallenges")}</p>
             <Link href="/challenges" className="inline-block bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">
               {t("browseChallenges")}
@@ -364,7 +369,7 @@ export default function RewardsPage() {
         <h2 className="text-xl mb-4">{t("redeemable")}</h2>
         {rewards.length === 0 ? (
           <div className="bg-surface rounded-2xl p-6 border border-espresso/10 text-center">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70">{t("noRewards")}</p>
           </div>
         ) : (

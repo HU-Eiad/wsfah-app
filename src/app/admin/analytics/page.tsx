@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface WeekData {
   week: string;
@@ -18,6 +19,7 @@ interface Analytics {
 export default function AdminAnalyticsPage() {
   const [data, setData] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("adminAnalytics");
 
   useEffect(() => {
     fetch("/api/admin/analytics")
@@ -28,11 +30,11 @@ export default function AdminAnalyticsPage() {
   }, []);
 
   if (loading) {
-    return <p className="text-[#eef0e899]">جاري تحميل التحليلات...</p>;
+    return <p className="text-[#eef0e899]">{t("loading")}</p>;
   }
 
   if (!data) {
-    return <p className="text-red-500">فشل تحميل التحليلات.</p>;
+    return <p className="text-red-500">{t("loadFailed")}</p>;
   }
 
   const maxUsers = Math.max(...data.usersPerWeek.map((w) => w.count), 1);
@@ -40,23 +42,23 @@ export default function AdminAnalyticsPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">التحليلات</h2>
+      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">{t("title")}</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
-          <p className="text-sm text-[#eef0e899]">إجمالي الإعجابات</p>
+          <p className="text-sm text-[#eef0e899]">{t("totalLikes")}</p>
           <p className="text-3xl font-bold text-[#eef0e8] mt-1">
             {data.totalLikes.toLocaleString("en-US")}
           </p>
         </div>
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
-          <p className="text-sm text-[#eef0e899]">إجمالي التعليقات</p>
+          <p className="text-sm text-[#eef0e899]">{t("totalComments")}</p>
           <p className="text-3xl font-bold text-[#eef0e8] mt-1">
             {data.totalComments.toLocaleString("en-US")}
           </p>
         </div>
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
-          <p className="text-sm text-[#eef0e899]">إجمالي المتابعات</p>
+          <p className="text-sm text-[#eef0e899]">{t("totalFollows")}</p>
           <p className="text-3xl font-bold text-[#eef0e8] mt-1">
             {data.totalFollows.toLocaleString("en-US")}
           </p>
@@ -67,7 +69,7 @@ export default function AdminAnalyticsPage() {
         {/* Users per week chart */}
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
           <h3 className="text-lg font-semibold text-[#eef0e8] mb-4">
-            المستخدمون الجدد أسبوعياً
+            {t("usersPerWeek")}
           </h3>
           <div className="flex items-end gap-2 h-48">
             {data.usersPerWeek.map((week) => (
@@ -88,7 +90,7 @@ export default function AdminAnalyticsPage() {
         {/* Recipes per week chart */}
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
           <h3 className="text-lg font-semibold text-[#eef0e8] mb-4">
-            الوصفات الجديدة أسبوعياً
+            {t("recipesPerWeek")}
           </h3>
           <div className="flex items-end gap-2 h-48">
             {data.recipesPerWeek.map((week) => (
@@ -110,12 +112,12 @@ export default function AdminAnalyticsPage() {
       {/* Weekly tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
-          <h3 className="text-lg font-semibold text-[#eef0e8] mb-4">جدول المستخدمين</h3>
+          <h3 className="text-lg font-semibold text-[#eef0e8] mb-4">{t("usersTable")}</h3>
           <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="border-b border-[#eef0e80d]">
-                <th className="text-start py-2 text-[#eef0e899]">الأسبوع</th>
-                <th className="text-start py-2 text-[#eef0e899]">مستخدمون جدد</th>
+                <th className="text-start py-2 text-[#eef0e899]">{t("week")}</th>
+                <th className="text-start py-2 text-[#eef0e899]">{t("newUsers")}</th>
               </tr>
             </thead>
             <tbody>
@@ -130,12 +132,12 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 overflow-x-auto">
-          <h3 className="text-lg font-semibold text-[#eef0e8] mb-4">جدول الوصفات</h3>
+          <h3 className="text-lg font-semibold text-[#eef0e8] mb-4">{t("recipesTable")}</h3>
           <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="border-b border-[#eef0e80d]">
-                <th className="text-start py-2 text-[#eef0e899]">الأسبوع</th>
-                <th className="text-start py-2 text-[#eef0e899]">وصفات جديدة</th>
+                <th className="text-start py-2 text-[#eef0e899]">{t("week")}</th>
+                <th className="text-start py-2 text-[#eef0e899]">{t("newRecipes")}</th>
               </tr>
             </thead>
             <tbody>

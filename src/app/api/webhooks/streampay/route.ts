@@ -3,6 +3,17 @@ import { prisma } from "@/lib/prisma";
 import { timingSafeEqual } from "crypto";
 import { claimPayment, releasePayment, planExpiry } from "@/lib/payments";
 
+/** Payload fields we read from StreamPay webhook events. */
+interface WebhookData {
+  id?: string;
+  amount?: string | number;
+  currency?: string;
+  reason?: string;
+  current_period_end?: string;
+  custom_metadata?: Record<string, string>;
+  metadata?: Record<string, string>;
+}
+
 function secretMatches(given: string | null, expected: string) {
   if (!given) return false;
   const a = Buffer.from(given);
@@ -90,7 +101,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function handlePaymentSuccess(data: any) {
+async function handlePaymentSuccess(data: WebhookData) {
   const metadata = data.custom_metadata || data.metadata || {};
 
   // Handle promotion payments
@@ -165,7 +176,7 @@ async function handlePaymentSuccess(data: any) {
   });
 }
 
-async function handleSubscriptionCreated(data: any) {
+async function handleSubscriptionCreated(data: WebhookData) {
   const metadata = data.custom_metadata || data.metadata || {};
   const userId = metadata.user_id;
 
@@ -185,7 +196,7 @@ async function handleSubscriptionCreated(data: any) {
   }
 }
 
-async function handleSubscriptionEnded(data: any) {
+async function handleSubscriptionEnded(data: WebhookData) {
   const metadata = data.custom_metadata || data.metadata || {};
   const userId = metadata.user_id;
   const planSlug = metadata.plan_slug;
@@ -222,7 +233,7 @@ async function handleSubscriptionEnded(data: any) {
   });
 }
 
-async function handleRenewalSuccess(data: any) {
+async function handleRenewalSuccess(data: WebhookData) {
   const metadata = data.custom_metadata || data.metadata || {};
   const userId = metadata.user_id;
   const companyId = metadata.company_id;
@@ -256,7 +267,7 @@ async function handleRenewalSuccess(data: any) {
   });
 }
 
-async function handleRenewalFailed(data: any) {
+async function handleRenewalFailed(data: WebhookData) {
   const metadata = data.custom_metadata || data.metadata || {};
   const userId = metadata.user_id;
 
@@ -276,7 +287,7 @@ async function handleRenewalFailed(data: any) {
   }
 }
 
-async function handlePaymentFailed(data: any) {
+async function handlePaymentFailed(data: WebhookData) {
   const metadata = data.custom_metadata || data.metadata || {};
   const userId = metadata.user_id;
 
@@ -296,7 +307,7 @@ async function handlePaymentFailed(data: any) {
   }
 }
 
-async function handleRefund(data: any) {
+async function handleRefund(data: WebhookData) {
   const metadata = data.custom_metadata || data.metadata || {};
   const userId = metadata.user_id;
   const planSlug = metadata.plan_slug;

@@ -1,0 +1,7 @@
+{
+  "title": "Moderation",
+  "empty": "No pending reports.",
+  "reportedBy": "Reported by: {name}",
+  "dismiss": "Dismiss",
+  "takeAction": "Take action"
+}

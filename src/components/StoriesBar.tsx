@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import StoryViewer from "@/components/StoryViewer";
+import SafeImage from "@/components/SafeImage";
 
 interface Story {
   id: string;
@@ -45,9 +46,11 @@ export default function StoriesBar() {
             <div className="size-[60px] rounded-full ring-2 ring-primary ring-offset-2 ring-offset-background-light">
               <div className="w-full h-full rounded-full bg-oat-milk overflow-hidden">
                 {group.company.logo ? (
-                  <img
+                  <SafeImage
                     src={group.company.logo}
                     alt=""
+                    width={60}
+                    height={60}
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (

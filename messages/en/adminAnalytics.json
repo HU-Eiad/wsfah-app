@@ -1,0 +1,15 @@
+{
+  "title": "Analytics",
+  "loading": "Loading analytics...",
+  "loadFailed": "Couldn't load analytics.",
+  "totalLikes": "Total likes",
+  "totalComments": "Total comments",
+  "totalFollows": "Total follows",
+  "usersPerWeek": "New users per week",
+  "recipesPerWeek": "New recipes per week",
+  "usersTable": "Users table",
+  "recipesTable": "Recipes table",
+  "week": "Week",
+  "newUsers": "New users",
+  "newRecipes": "New recipes"
+}

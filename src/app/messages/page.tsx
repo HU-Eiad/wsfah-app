@@ -1,5 +1,7 @@
 "use client";
 
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
@@ -67,7 +69,7 @@ export default function MessagesPage() {
       <div className="max-w-2xl mx-auto px-4 py-4">
         {conversations.length === 0 ? (
           <div className="text-center py-12">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
@@ -81,9 +83,12 @@ export default function MessagesPage() {
                 {/* Avatar */}
                 <div className="relative shrink-0">
                   {c.otherUser?.image ? (
-                    <img
+                    <SafeImage
                       src={c.otherUser.image}
                       alt=""
+                      width={48}
+                      height={48}
+                      sizes="48px"
                       className="size-12 rounded-full object-cover bg-oat-milk ring-1 ring-espresso/10"
                     />
                   ) : (

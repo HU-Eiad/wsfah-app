@@ -1,0 +1,33 @@
+{
+  "title": "المكافآت",
+  "new": "مكافأة جديدة",
+  "edit": "تعديل المكافأة",
+  "close": "إغلاق",
+  "fTitle": "العنوان",
+  "fCategory": "الفئة",
+  "fPoints": "تكلفة النقاط",
+  "fImage": "رابط الصورة (اختياري)",
+  "update": "تحديث المكافأة",
+  "create": "إنشاء المكافأة",
+  "empty": "لا توجد مكافآت بعد.",
+  "colReward": "المكافأة",
+  "colCategory": "الفئة",
+  "colPoints": "تكلفة النقاط",
+  "colRedemptions": "مرات الاستبدال",
+  "colStatus": "الحالة",
+  "colActions": "إجراءات",
+  "points": "{count} نقطة",
+  "times": "{count} مرة",
+  "enabled": "مفعّلة",
+  "disabled": "معطّلة",
+  "editBtn": "تعديل",
+  "deleteBtn": "حذف",
+  "confirmDelete": "حذف هذه المكافأة؟",
+  "categories": {
+    "Discount": "خصم",
+    "Merchandise": "منتجات",
+    "Experience": "تجربة",
+    "Digital": "رقمي",
+    "Other": "أخرى"
+  }
+}

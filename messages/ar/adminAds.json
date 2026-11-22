@@ -1,0 +1,44 @@
+{
+  "title": "إدارة الإعلانات",
+  "subtitle": "إعداد مواضع Google AdSense في التطبيق",
+  "saved": "تم الحفظ!",
+  "save": "حفظ التغييرات",
+  "publisherId": "معرّف الناشر (NEXT_PUBLIC_ADSENSE_ID)",
+  "publisherIdHint": "قم بتعيينه في ملف .env.local باسم NEXT_PUBLIC_ADSENSE_ID",
+  "estRevenue": "الإيرادات المقدرة",
+  "estRevenueHint": "اربط AdSense لرؤية البيانات",
+  "impressions": "مرات الظهور",
+  "impressionsHint": "إجمالي مرات ظهور الإعلانات اليوم",
+  "activePlacements": "المواضع النشطة",
+  "activePlacementsHint": "مواضع الإعلانات المفعّلة",
+  "rulesTitle": "قواعد ظهور الإعلانات",
+  "rules": {
+    "free": "<b>المستخدمون المجانيون:</b> يرون جميع الإعلانات المفعّلة",
+    "basic": "<b>مشتركو الخطة الأساسية:</b> بدون إعلانات (تجربة خالية من الإعلانات)",
+    "premium": "<b>مشتركو الخطة المميزة:</b> بدون إعلانات (تجربة خالية من الإعلانات)"
+  },
+  "placementsTitle": "مواضع الإعلانات",
+  "placements": {
+    "homeMid": "الرئيسية - بعد الأقسام",
+    "feed0": "التغذية - بين الأنشطة",
+    "exploreTop": "الاستكشاف - بانر علوي",
+    "recipeMid": "الوصفة - بين الأقسام",
+    "recipeBottom": "الوصفة - فوق التعليقات"
+  },
+  "pages": {
+    "home": "الرئيسية",
+    "feed": "التغذية",
+    "explore": "الاستكشاف",
+    "recipe": "تفاصيل الوصفة"
+  },
+  "slot": "الموضع: {slot}",
+  "format": "الشكل: {format}",
+  "guideTitle": "دليل الإعداد",
+  "guide": {
+    "step1": "أنشئ حساب Google AdSense على <b>adsense.google.com</b>",
+    "step2": "احصل على معرّف الناشر (يبدأ بـ <code>ca-pub-</code>)",
+    "step3": "أضف <code>NEXT_PUBLIC_ADSENSE_ID=ca-pub-XXXX</code> إلى ملف <b>.env.local</b>",
+    "step4": "أنشئ وحدات إعلانية في AdSense واستبدل معرّفات المواضع أعلاه",
+    "step5": "انشر التطبيق وانتظر موافقة AdSense (عادة 1-2 أسبوع)"
+  }
+}

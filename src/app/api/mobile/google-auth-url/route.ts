@@ -14,9 +14,11 @@ export async function GET(req: NextRequest) {
 
   const redirectUri = `${process.env.AUTH_URL || process.env.NEXTAUTH_URL || "https://wsfa.app"}/api/mobile/google-callback`;
 
+  // PKCE challenge from the app: base64url(SHA-256(code_verifier)), always 43 chars.
   const codeChallenge = req.nextUrl.searchParams.get("code_challenge");
-  // Legacy app builds don't send a challenge; they get the old flow (no state) until updated.
-  const validChallenge = codeChallenge && /^[A-Za-z0-9_-]{43}$/.test(codeChallenge);
+  if (!codeChallenge || !/^[A-Za-z0-9_-]{43}$/.test(codeChallenge)) {
+    return NextResponse.json({ error: "code_challenge required" }, { status: 400 });
+  }
 
   const params = new URLSearchParams({
     client_id: clientId,
@@ -25,7 +27,7 @@ export async function GET(req: NextRequest) {
     scope: "openid email profile",
     prompt: "select_account",
   });
-  if (validChallenge) params.set("state", await signOAuthState(codeChallenge));
+  params.set("state", await signOAuthState(codeChallenge));
 
   return NextResponse.json({
     url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,

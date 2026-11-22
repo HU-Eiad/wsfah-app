@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useTranslations } from "next-intl";
 
 interface Recipe {
   id: string;
@@ -29,6 +30,8 @@ interface RecipeDetail {
   isFeatured: boolean;
   isVerified: boolean;
   accessTier: string;
+  /** true when the API withheld ingredients/steps/brewParams for this viewer */
+  locked?: boolean;
   ingredients: { name: string; baseAmount: number; unit: string }[];
   steps: { title: string; description: string }[];
   brewParams: { temperature: string; ratio: string; grindSize: string; brewTimeSec: number } | null;
@@ -36,13 +39,36 @@ interface RecipeDetail {
 
 const CATEGORIES = ["pour-over", "cold-brew", "espresso", "matcha", "tea", "rituals"];
 const DIFFICULTIES = ["Beginner", "Intermediate", "Advanced"];
-const CATEGORY_LABELS: Record<string, string> = { "pour-over": "التقطير", "cold-brew": "التخمير البارد", espresso: "إسبريسو", matcha: "ماتشا", tea: "الشاي", rituals: "طقوس القهوة" };
-const DIFFICULTY_LABELS: Record<string, string> = { Beginner: "مبتدئ", Intermediate: "متوسط", Advanced: "متقدم" };
+const TIERS = ["FREE", "BASIC", "PREMIUM", "PRO"];
+
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
+  return (
+    <label className="flex items-center gap-2 cursor-pointer">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+        className={`w-10 h-5 rounded-full relative transition-colors ${
+          checked ? "bg-[#8fbf9a]" : "bg-gray-300 dark:bg-gray-700"
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
+            checked ? "left-5" : "left-0.5"
+          }`}
+        />
+      </button>
+      <span className="text-sm text-[#eef0e8cc]">{label}</span>
+    </label>
+  );
+}
 
 function ImageUpload({ value, onChange }: { value: string; onChange: (url: string) => void }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [mode, setMode] = useState<"upload" | "url">(value && value.startsWith("http") ? "url" : "upload");
+  const t = useTranslations("adminRecipes");
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -57,7 +83,7 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
       onChange(data.url);
     } catch (err) {
       console.error(err);
-      alert("فشل الرفع");
+      alert(t("uploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -75,7 +101,7 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
               : "bg-[#eef0e808] text-[#eef0e899] border border-transparent"
           }`}
         >
-          رفع
+          {t("modeUpload")}
         </button>
         <button
           type="button"
@@ -86,7 +112,7 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
               : "bg-[#eef0e808] text-[#eef0e899] border border-transparent"
           }`}
         >
-          رابط
+          {t("modeUrl")}
         </button>
       </div>
 
@@ -105,7 +131,7 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
             disabled={uploading}
             className="w-full px-4 py-3 rounded-lg border-2 border-dashed border-[#eef0e81a] bg-[#ffffff05] text-[#eef0e899] text-sm hover:border-[#8fbf9a]/50 hover:bg-[#8fbf9a]/5 transition-colors disabled:opacity-50"
           >
-            {uploading ? "جاري الرفع..." : value ? "تغيير الصورة" : "اضغط لرفع صورة"}
+            {uploading ? t("uploading") : value ? t("changeImage") : t("clickToUpload")}
           </button>
         </div>
       ) : (
@@ -120,14 +146,16 @@ function ImageUpload({ value, onChange }: { value: string; onChange: (url: strin
 
       {value && (
         <div className="relative">
+          {/* eslint-disable-next-line @next/next/no-img-element -- preview of an uploaded file or any pasted URL */}
           <img
             src={value}
-            alt="معاينة"
+            alt={t("preview")}
             className="w-full max-w-[200px] h-auto rounded-lg border border-[#eef0e80d]"
           />
           <button
             type="button"
             onClick={() => onChange("")}
+            aria-label={t("removeImage")}
             className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-500 text-white text-xs flex items-center justify-center hover:bg-red-600"
           >
             ✕
@@ -145,6 +173,11 @@ export default function AdminRecipesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const t = useTranslations("adminRecipes");
+  const ta = useTranslations("admin");
+  const categoryLabel = (c: string) => (t.has(`categories.${c}`) ? t(`categories.${c}`) : c);
+  const difficultyLabel = (d: string) => (t.has(`difficulties.${d}`) ? t(`difficulties.${d}`) : d);
+  const tierLabel = (tier: string) => (t.has(`tiers.${tier}`) ? t(`tiers.${tier}`) : tier);
 
   // Form state
   const [form, setForm] = useState({
@@ -213,6 +246,12 @@ export default function AdminRecipesPage() {
       const res = await fetch(`/api/recipes/${recipeId}`);
       if (!res.ok) return;
       const data: RecipeDetail = await res.json();
+      // Never open a form built from a withheld (paywalled) payload: saving it
+      // would look like the recipe has no ingredients or steps.
+      if (data.locked) {
+        alert(t("lockedCantEdit"));
+        return;
+      }
       setForm({
         title: data.title,
         description: data.description || "",
@@ -286,7 +325,7 @@ export default function AdminRecipesPage() {
         fetchRecipes();
       } else {
         const err = await res.json();
-        alert(err.error || "فشل الحفظ");
+        alert(err.error || t("saveFailed"));
       }
     } catch (err) {
       console.error(err);
@@ -330,7 +369,7 @@ export default function AdminRecipesPage() {
   }
 
   async function deleteRecipe(recipeId: string) {
-    if (!confirm("هل أنت متأكد من حذف هذه الوصفة؟")) return;
+    if (!confirm(t("confirmDelete"))) return;
     try {
       const res = await fetch(`/api/recipes/${recipeId}`, { method: "DELETE" });
       if (res.ok) {
@@ -345,31 +384,10 @@ export default function AdminRecipesPage() {
     "w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm focus:ring-2 focus:ring-[#8fbf9a] focus:border-transparent outline-none";
   const labelClass = "block text-xs font-medium text-[#eef0e8aa] mb-1";
 
-  function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
-    return (
-      <label className="flex items-center gap-2 cursor-pointer">
-        <button
-          type="button"
-          onClick={() => onChange(!checked)}
-          className={`w-10 h-5 rounded-full relative transition-colors ${
-            checked ? "bg-[#8fbf9a]" : "bg-gray-300 dark:bg-gray-700"
-          }`}
-        >
-          <span
-            className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
-              checked ? "left-5" : "left-0.5"
-            }`}
-          />
-        </button>
-        <span className="text-sm text-[#eef0e8cc]">{label}</span>
-      </label>
-    );
-  }
-
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-[#eef0e8]">الوصفات</h2>
+        <h2 className="text-2xl font-bold text-[#eef0e8]">{t("title")}</h2>
         <button
           onClick={() => {
             resetForm();
@@ -377,7 +395,7 @@ export default function AdminRecipesPage() {
           }}
           className="px-4 py-2 rounded-lg bg-[#8fbf9a] text-[#0e1a13] font-medium text-sm hover:bg-[#8fbf9a]/80 transition-colors"
         >
-          {showForm ? "إلغاء" : "+ وصفة جديدة"}
+          {showForm ? t("cancel") : t("newBtn")}
         </button>
       </div>
 
@@ -385,13 +403,13 @@ export default function AdminRecipesPage() {
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-6 mb-6 space-y-6">
           <h3 className="text-lg font-semibold text-[#eef0e8]">
-            {editingId ? "تعديل الوصفة" : "إنشاء وصفة جديدة"}
+            {editingId ? t("editTitle") : t("createTitle")}
           </h3>
 
           {/* Basic Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>العنوان *</label>
+              <label className={labelClass}>{t("fTitle")}</label>
               <input
                 type="text"
                 value={form.title}
@@ -401,48 +419,48 @@ export default function AdminRecipesPage() {
               />
             </div>
             <div>
-              <label className={labelClass}>صورة الوصفة</label>
+              <label className={labelClass}>{t("fImage")}</label>
               <ImageUpload
                 value={form.imageUrl}
                 onChange={(url) => setForm({ ...form, imageUrl: url })}
               />
             </div>
             <div>
-              <label className={labelClass}>القسم</label>
+              <label className={labelClass}>{t("fCategory")}</label>
               <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
                 className={inputClass}
               >
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{CATEGORY_LABELS[c] ?? c}</option>
+                  <option key={c} value={c}>{categoryLabel(c)}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className={labelClass}>الصعوبة</label>
+              <label className={labelClass}>{t("fDifficulty")}</label>
               <select
                 value={form.difficulty}
                 onChange={(e) => setForm({ ...form, difficulty: e.target.value })}
                 className={inputClass}
               >
                 {DIFFICULTIES.map((d) => (
-                  <option key={d} value={d}>{DIFFICULTY_LABELS[d] ?? d}</option>
+                  <option key={d} value={d}>{difficultyLabel(d)}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className={labelClass}>وقت التحضير (عرض)</label>
+              <label className={labelClass}>{t("fBrewTime")}</label>
               <input
                 type="text"
                 value={form.brewTime}
                 onChange={(e) => setForm({ ...form, brewTime: e.target.value })}
                 className={inputClass}
-                placeholder="مثال: 4 دقائق"
+                placeholder={t("fBrewTimePlaceholder")}
               />
             </div>
             <div>
-              <label className={labelClass}>وقت التحضير (ثواني)</label>
+              <label className={labelClass}>{t("fBrewTimeSeconds")}</label>
               <input
                 type="number"
                 value={form.brewTimeSeconds}
@@ -453,7 +471,7 @@ export default function AdminRecipesPage() {
           </div>
 
           <div>
-            <label className={labelClass}>الوصف</label>
+            <label className={labelClass}>{t("fDescription")}</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -464,29 +482,28 @@ export default function AdminRecipesPage() {
 
           {/* Toggles */}
           <div className="flex flex-wrap gap-6">
-            <Toggle checked={form.isFeatured} onChange={(v) => setForm({ ...form, isFeatured: v })} label="مميزة" />
-            <Toggle checked={form.isVerified} onChange={(v) => setForm({ ...form, isVerified: v })} label="موثقة" />
+            <Toggle checked={form.isFeatured} onChange={(v) => setForm({ ...form, isFeatured: v })} label={t("featured")} />
+            <Toggle checked={form.isVerified} onChange={(v) => setForm({ ...form, isVerified: v })} label={t("verified")} />
             <div className="flex items-center gap-2">
-              <label className="text-sm text-[#eef0e8cc]">الوصول:</label>
+              <label className="text-sm text-[#eef0e8cc]">{t("fAccess")}</label>
               <select
                 value={form.accessTier}
                 onChange={(e) => setForm({ ...form, accessTier: e.target.value })}
                 className="px-3 py-1.5 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm"
               >
-                <option value="FREE">مجاني (جميع المستخدمين)</option>
-                <option value="BASIC">الخطة الأساسية</option>
-                <option value="PREMIUM">الخطة المميزة</option>
-                <option value="PRO">الخطة الاحترافية</option>
+                {TIERS.map((tier) => (
+                  <option key={tier} value={tier}>{t(`tiersLong.${tier}`)}</option>
+                ))}
               </select>
             </div>
           </div>
 
           {/* Brewing Parameters */}
           <div>
-            <h4 className="text-sm font-semibold text-[#eef0e8] mb-3">معايير التحضير</h4>
+            <h4 className="text-sm font-semibold text-[#eef0e8] mb-3">{t("brewParams")}</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div>
-                <label className={labelClass}>درجة الحرارة</label>
+                <label className={labelClass}>{t("fTemperature")}</label>
                 <input
                   type="text"
                   value={brewParams.temperature}
@@ -496,7 +513,7 @@ export default function AdminRecipesPage() {
                 />
               </div>
               <div>
-                <label className={labelClass}>النسبة</label>
+                <label className={labelClass}>{t("fRatio")}</label>
                 <input
                   type="text"
                   value={brewParams.ratio}
@@ -506,17 +523,17 @@ export default function AdminRecipesPage() {
                 />
               </div>
               <div>
-                <label className={labelClass}>حجم الطحن</label>
+                <label className={labelClass}>{t("fGrind")}</label>
                 <input
                   type="text"
                   value={brewParams.grindSize}
                   onChange={(e) => setBrewParams({ ...brewParams, grindSize: e.target.value })}
                   className={inputClass}
-                  placeholder="متوسط-ناعم"
+                  placeholder={t("fGrindPlaceholder")}
                 />
               </div>
               <div>
-                <label className={labelClass}>المؤقت (ثانية)</label>
+                <label className={labelClass}>{t("fTimer")}</label>
                 <input
                   type="number"
                   value={brewParams.brewTimeSec}
@@ -530,13 +547,13 @@ export default function AdminRecipesPage() {
           {/* Ingredients */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-[#eef0e8]">المكونات</h4>
+              <h4 className="text-sm font-semibold text-[#eef0e8]">{t("ingredients")}</h4>
               <button
                 type="button"
                 onClick={() => setIngredients([...ingredients, { name: "", baseAmount: 0, unit: "g" }])}
                 className="text-xs text-[#8fbf9a] font-medium hover:underline"
               >
-                + إضافة
+                {t("addIngredient")}
               </button>
             </div>
             <div className="space-y-3">
@@ -550,7 +567,7 @@ export default function AdminRecipesPage() {
                         onClick={() => setIngredients(ingredients.filter((_, j) => j !== i))}
                         className="text-red-500 text-xs hover:text-red-700 font-medium"
                       >
-                        إزالة
+                        {t("remove")}
                       </button>
                     )}
                   </div>
@@ -564,7 +581,7 @@ export default function AdminRecipesPage() {
                         setIngredients(copy);
                       }}
                       className={inputClass}
-                      placeholder="اسم المكون"
+                      placeholder={t("ingredientName")}
                     />
                     <input
                       type="number"
@@ -575,7 +592,7 @@ export default function AdminRecipesPage() {
                         setIngredients(copy);
                       }}
                       className={inputClass}
-                      placeholder="الكمية"
+                      placeholder={t("amount")}
                     />
                     <select
                       value={ing.unit}
@@ -599,13 +616,13 @@ export default function AdminRecipesPage() {
           {/* Steps */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-[#eef0e8]">الخطوات</h4>
+              <h4 className="text-sm font-semibold text-[#eef0e8]">{t("steps")}</h4>
               <button
                 type="button"
                 onClick={() => setSteps([...steps, { title: "", description: "" }])}
                 className="text-xs text-[#8fbf9a] font-medium hover:underline"
               >
-                + إضافة خطوة
+                {t("addStep")}
               </button>
             </div>
             <div className="space-y-3">
@@ -624,7 +641,7 @@ export default function AdminRecipesPage() {
                         setSteps(copy);
                       }}
                       className={inputClass}
-                      placeholder="عنوان الخطوة"
+                      placeholder={t("stepTitle")}
                     />
                     <textarea
                       value={step.description}
@@ -634,7 +651,7 @@ export default function AdminRecipesPage() {
                         setSteps(copy);
                       }}
                       className={inputClass + " min-h-[50px]"}
-                      placeholder="وصف الخطوة"
+                      placeholder={t("stepDescription")}
                       rows={2}
                     />
                   </div>
@@ -642,6 +659,7 @@ export default function AdminRecipesPage() {
                     <button
                       type="button"
                       onClick={() => setSteps(steps.filter((_, j) => j !== i))}
+                      aria-label={t("remove")}
                       className="text-red-500 text-sm hover:text-red-700 pt-2"
                     >
                       ✕
@@ -658,14 +676,14 @@ export default function AdminRecipesPage() {
               disabled={saving}
               className="px-6 py-2.5 rounded-lg bg-[#8fbf9a] text-[#0e1a13] font-medium text-sm disabled:opacity-50 hover:bg-[#8fbf9a]/80 transition-colors"
             >
-              {saving ? "جاري الحفظ..." : editingId ? "تحديث الوصفة" : "إنشاء الوصفة"}
+              {saving ? t("saving") : editingId ? t("update") : t("create")}
             </button>
             <button
               type="button"
               onClick={() => { setShowForm(false); resetForm(); }}
               className="px-6 py-2.5 rounded-lg bg-gray-200 dark:bg-gray-700 text-[#eef0e8cc] font-medium text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
             >
-              إلغاء
+              {t("cancel")}
             </button>
           </div>
         </form>
@@ -675,7 +693,7 @@ export default function AdminRecipesPage() {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="البحث عن وصفات..."
+          placeholder={t("searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full max-w-md px-4 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] focus:ring-2 focus:ring-[#8fbf9a] focus:border-transparent outline-none"
@@ -684,9 +702,9 @@ export default function AdminRecipesPage() {
 
       {/* Recipe Table */}
       {loading ? (
-        <p className="text-[#eef0e899]">جاري التحميل...</p>
+        <p className="text-[#eef0e899]">{ta("loading")}</p>
       ) : recipes.length === 0 ? (
-        <p className="text-[#eef0e899]">لا توجد وصفات.</p>
+        <p className="text-[#eef0e899]">{t("empty")}</p>
       ) : (
         <>
         {/* Mobile: Card layout */}
@@ -696,17 +714,14 @@ export default function AdminRecipesPage() {
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
                   <p className="font-bold text-sm text-[#eef0e8] truncate">{recipe.title}</p>
-                  <p className="text-xs text-[#eef0e899]">{recipe.author?.name || "—"} · {CATEGORY_LABELS[recipe.category] ?? recipe.category}</p>
+                  <p className="text-xs text-[#eef0e899]">{recipe.author?.name || "—"} · {categoryLabel(recipe.category)}</p>
                 </div>
                 <select
                   value={recipe.accessTier}
                   onChange={(e) => updateAccessTier(recipe.id, e.target.value)}
                   className="shrink-0 px-2 py-1 rounded text-[11px] font-bold border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8]"
                 >
-                  <option value="FREE">مجاني</option>
-                  <option value="BASIC">أساسي</option>
-                  <option value="PREMIUM">مميز</option>
-                  <option value="PRO">احترافي</option>
+                  {TIERS.map((tier) => <option key={tier} value={tier}>{tierLabel(tier)}</option>)}
                 </select>
               </div>
               <div className="flex flex-wrap items-center gap-3">
@@ -717,7 +732,7 @@ export default function AdminRecipesPage() {
                   >
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${recipe.isFeatured ? "left-[18px]" : "left-0.5"}`} />
                   </button>
-                  مميزة
+                  {t("featured")}
                 </label>
                 <label className="flex items-center gap-2 text-xs text-[#eef0e8aa]">
                   <button
@@ -726,11 +741,11 @@ export default function AdminRecipesPage() {
                   >
                     <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${recipe.isVerified ? "left-[18px]" : "left-0.5"}`} />
                   </button>
-                  موثقة
+                  {t("verified")}
                 </label>
-                <div className="flex gap-2 mr-auto">
-                  <button onClick={() => openEdit(recipe.id)} className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium">تعديل</button>
-                  <button onClick={() => deleteRecipe(recipe.id)} className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-medium">حذف</button>
+                <div className="flex gap-2 ms-auto">
+                  <button onClick={() => openEdit(recipe.id)} className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium">{t("edit")}</button>
+                  <button onClick={() => deleteRecipe(recipe.id)} className="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-medium">{t("delete")}</button>
                 </div>
               </div>
             </div>
@@ -742,13 +757,13 @@ export default function AdminRecipesPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#eef0e80d]">
-                <th className="text-start p-4 text-[#eef0e899] font-medium">العنوان</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">المؤلف</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">القسم</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">مميزة</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">موثقة</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">المستوى</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">إجراءات</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colTitle")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colAuthor")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colCategory")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("featured")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("verified")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colTier")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colActions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -756,7 +771,7 @@ export default function AdminRecipesPage() {
                 <tr key={recipe.id} className="border-b border-[#eef0e80d] last:border-0">
                   <td className="p-4 text-[#eef0e8] font-medium">{recipe.title}</td>
                   <td className="p-4 text-[#eef0e8aa]">{recipe.author?.name || "—"}</td>
-                  <td className="p-4 text-[#eef0e8aa]">{CATEGORY_LABELS[recipe.category] ?? recipe.category}</td>
+                  <td className="p-4 text-[#eef0e8aa]">{categoryLabel(recipe.category)}</td>
                   <td className="p-4">
                     <button onClick={() => toggleField(recipe.id, "isFeatured", !recipe.isFeatured)}
                       className={`w-10 h-5 rounded-full relative transition-colors ${recipe.isFeatured ? "bg-[#8fbf9a]" : "bg-gray-300 dark:bg-gray-700"}`}>
@@ -772,16 +787,13 @@ export default function AdminRecipesPage() {
                   <td className="p-4">
                     <select value={recipe.accessTier} onChange={(e) => updateAccessTier(recipe.id, e.target.value)}
                       className="px-2 py-1 rounded text-xs font-medium border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8]">
-                      <option value="FREE">مجاني</option>
-                      <option value="BASIC">أساسي</option>
-                      <option value="PREMIUM">مميز</option>
-                      <option value="PRO">احترافي</option>
+                      {TIERS.map((tier) => <option key={tier} value={tier}>{tierLabel(tier)}</option>)}
                     </select>
                   </td>
                   <td className="p-4">
                     <div className="flex gap-2">
-                      <button onClick={() => openEdit(recipe.id)} className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium">تعديل</button>
-                      <button onClick={() => deleteRecipe(recipe.id)} className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-medium">حذف</button>
+                      <button onClick={() => openEdit(recipe.id)} className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium">{t("edit")}</button>
+                      <button onClick={() => deleteRecipe(recipe.id)} className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-medium">{t("delete")}</button>
                     </div>
                   </td>
                 </tr>

@@ -12,6 +12,7 @@ export async function GET(req: Request) {
 
   try {
     const collections = await prisma.collection.findMany({
+      take: 200, // bounded: this list grows with usage
       where: { userId: user.id },
       include: {
         _count: {

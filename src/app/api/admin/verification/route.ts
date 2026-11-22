@@ -8,6 +8,7 @@ export async function GET() {
   if (error) return error;
 
   const applications = await prisma.brandApplication.findMany({
+    take: 500, // bounded: this list grows with usage
     where: { status: "PENDING" },
     include: {
       company: { select: { id: true, name: true } },

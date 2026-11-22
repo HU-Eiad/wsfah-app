@@ -1,0 +1,33 @@
+{
+  "title": "Rewards",
+  "new": "New reward",
+  "edit": "Edit reward",
+  "close": "Close",
+  "fTitle": "Title",
+  "fCategory": "Category",
+  "fPoints": "Points cost",
+  "fImage": "Image URL (optional)",
+  "update": "Update reward",
+  "create": "Create reward",
+  "empty": "No rewards yet.",
+  "colReward": "Reward",
+  "colCategory": "Category",
+  "colPoints": "Points cost",
+  "colRedemptions": "Redemptions",
+  "colStatus": "Status",
+  "colActions": "Actions",
+  "points": "{count, plural, one {# point} other {# points}}",
+  "times": "{count, plural, one {# time} other {# times}}",
+  "enabled": "Enabled",
+  "disabled": "Disabled",
+  "editBtn": "Edit",
+  "deleteBtn": "Delete",
+  "confirmDelete": "Delete this reward?",
+  "categories": {
+    "Discount": "Discount",
+    "Merchandise": "Merchandise",
+    "Experience": "Experience",
+    "Digital": "Digital",
+    "Other": "Other"
+  }
+}

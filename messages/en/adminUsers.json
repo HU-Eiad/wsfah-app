@@ -1,0 +1,10 @@
+{
+  "title": "Users",
+  "searchPlaceholder": "Search users...",
+  "colName": "Name",
+  "colEmail": "Email",
+  "colRole": "Role",
+  "colStatus": "Status",
+  "colJoined": "Joined",
+  "pageInfo": "Page {page} of {pages} ({total} users)"
+}

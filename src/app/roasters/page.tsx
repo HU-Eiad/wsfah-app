@@ -1,3 +1,5 @@
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import BottomNav from "@/components/BottomNav";
 import MaterialIcon from "@/components/MaterialIcon";
 import BrandIcon from "@/components/BrandIcon";
@@ -41,7 +43,7 @@ export default async function RoastersPage() {
       <main className="flex-1 px-4 pb-24 pt-4">
         {companies.length === 0 ? (
           <div className="py-16 text-center">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
@@ -55,9 +57,12 @@ export default async function RoastersPage() {
                 {/* Logo + verified */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="size-14 rounded-full ring-1 ring-espresso/10 overflow-hidden bg-oat-milk">
-                    <img
+                    <SafeImage
                       src={c.logo || "/brand/banners/avatar-placeholder.svg"}
                       alt=""
+                      width={56}
+                      height={56}
+                      sizes="56px"
                       className="w-full h-full object-cover"
                     />
                   </div>

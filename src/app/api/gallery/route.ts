@@ -23,9 +23,23 @@ export async function GET(req: Request) {
     ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
   });
 
+  // Which of these posts the viewer has liked (one query instead of one per post).
+  const viewer = await getAuthUser(req);
+  const likedIds = viewer && posts.length
+    ? new Set(
+        (
+          await prisma.galleryPostLike.findMany({
+            where: { userId: viewer.id, postId: { in: posts.map((p) => p.id) } },
+            select: { postId: true },
+          })
+        ).map((l) => l.postId)
+      )
+    : new Set<string>();
+
   return NextResponse.json({
     posts: posts.map((p) => ({
       ...p,
+      liked: likedIds.has(p.id),
       likesCount: p._count.galleryLikes,
       commentsCount: p._count.comments,
       _count: undefined,

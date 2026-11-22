@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import RiyalSign from "@/components/RiyalSign";
+import { intlLocale } from "@/i18n/format";
 
 interface Plan {
   id: string;
@@ -51,6 +53,27 @@ interface SubCompany {
 
 const emptyPlan = { name: "", slug: "", price: "", currency: "USD", interval: "monthly", description: "", features: "", sortOrder: 0 };
 const emptyPromo = { name: "", placement: "HOME_TOP", duration: "7", price: "", currency: "USD", discount: "0", sortOrder: 0 };
+const PLACEMENTS = ["HOME_TOP", "EXPLORE_TOP", "BOTH"];
+const USER_TIERS = ["free", "pro", "premium"];
+
+interface SubscriptionsData {
+  plans: Plan[] | null;
+  promos: PromoPricing[] | null;
+  subscribers: { users?: Subscriber[]; companies?: SubCompany[] } | null;
+}
+
+async function loadSubscriptionsData(search: string, tier: string): Promise<SubscriptionsData> {
+  const [plansRes, promosRes, subsRes] = await Promise.all([
+    fetch("/api/admin/subscriptions"),
+    fetch("/api/admin/promotion-pricing"),
+    fetch(`/api/admin/subscribers?search=${encodeURIComponent(search)}&tier=${encodeURIComponent(tier)}`),
+  ]);
+  return {
+    plans: plansRes.ok ? await plansRes.json() : null,
+    promos: promosRes.ok ? await promosRes.json() : null,
+    subscribers: subsRes.ok ? await subsRes.json() : null,
+  };
+}
 
 export default function AdminSubscriptionsPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -58,6 +81,10 @@ export default function AdminSubscriptionsPage() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [subCompanies, setSubCompanies] = useState<SubCompany[]>([]);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("adminSubscriptions");
+  const locale = intlLocale(useLocale());
+  const placementLabel = (p: string) => (t.has(`placements.${p}`) ? t(`placements.${p}`) : p);
+  const tierLabel = (tier: string) => (t.has(`tiers.${tier}`) ? t(`tiers.${tier}`) : tier);
   const [tab, setTab] = useState<"subscribers" | "plans" | "promos">("subscribers");
   const [subSearch, setSubSearch] = useState("");
   const [subFilter, setSubFilter] = useState("");
@@ -75,23 +102,33 @@ export default function AdminSubscriptionsPage() {
   const [editingPromoId, setEditingPromoId] = useState<string | null>(null);
   const [promoSaving, setPromoSaving] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    const [plansRes, promosRes, subsRes] = await Promise.all([
-      fetch("/api/admin/subscriptions"),
-      fetch("/api/admin/promotion-pricing"),
-      fetch(`/api/admin/subscribers?search=${encodeURIComponent(subSearch)}&tier=${subFilter}`),
-    ]);
-    if (plansRes.ok) setPlans(await plansRes.json());
-    if (promosRes.ok) setPromos(await promosRes.json());
-    if (subsRes.ok) {
-      const data = await subsRes.json();
-      setSubscribers(data.users || []);
-      setSubCompanies(data.companies || []);
+  const applyData = useCallback((data: SubscriptionsData) => {
+    if (data.plans) setPlans(data.plans);
+    if (data.promos) setPromos(data.promos);
+    if (data.subscribers) {
+      setSubscribers(data.subscribers.users || []);
+      setSubCompanies(data.subscribers.companies || []);
     }
-    setLoading(false);
-  }, [subSearch, subFilter]);
+  }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  const fetchData = useCallback(async () => {
+    try {
+      applyData(await loadSubscriptionsData(subSearch, subFilter));
+    } catch {
+      // keep what is on screen
+    } finally {
+      setLoading(false);
+    }
+  }, [subSearch, subFilter, applyData]);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadSubscriptionsData(subSearch, subFilter)
+      .then((data) => { if (!cancelled) applyData(data); })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [subSearch, subFilter, applyData]);
 
   const updateUserTier = async (userId: string, tier: string) => {
     setUpdatingUser(userId);
@@ -153,7 +190,7 @@ export default function AdminSubscriptionsPage() {
   };
 
   const deletePlan = async (id: string) => {
-    if (!confirm("حذف هذه الخطة؟")) return;
+    if (!confirm(t("confirmDeletePlan"))) return;
     await fetch(`/api/admin/subscriptions?id=${id}`, { method: "DELETE" });
     fetchData();
   };
@@ -199,7 +236,7 @@ export default function AdminSubscriptionsPage() {
   };
 
   const deletePromo = async (id: string) => {
-    if (!confirm("حذف هذا التسعير؟")) return;
+    if (!confirm(t("confirmDeletePricing"))) return;
     await fetch(`/api/admin/promotion-pricing?id=${id}`, { method: "DELETE" });
     fetchData();
   };
@@ -213,12 +250,6 @@ export default function AdminSubscriptionsPage() {
     fetchData();
   };
 
-  const placementLabels: Record<string, string> = {
-    HOME_TOP: "الصفحة الرئيسية",
-    EXPLORE_TOP: "صفحة الاستكشاف",
-    BOTH: "الرئيسية + الاستكشاف",
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -229,8 +260,8 @@ export default function AdminSubscriptionsPage() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#eef0e8] mb-2">الخطط والأسعار</h1>
-      <p className="text-sm text-[#eef0e899] mb-6">إدارة خطط الاشتراك وأسعار الترويج</p>
+      <h1 className="text-2xl font-bold text-[#eef0e8] mb-2">{t("title")}</h1>
+      <p className="text-sm text-[#eef0e899] mb-6">{t("subtitle")}</p>
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-1 bg-espresso/5 dark:bg-white/5 p-1 rounded-2xl mb-6">
@@ -240,7 +271,7 @@ export default function AdminSubscriptionsPage() {
             tab === "subscribers" ? "bg-[#16261d] text-[#eef0e8] shadow-sm" : "text-[#eef0e899]"
           }`}
         >
-          المشتركين ({subscribers.filter(u => u.subscriptionTier !== "free").length})
+          {t("tabSubscribers", { count: subscribers.filter((u) => u.subscriptionTier !== "free").length })}
         </button>
         <button
           onClick={() => setTab("plans")}
@@ -248,7 +279,7 @@ export default function AdminSubscriptionsPage() {
             tab === "plans" ? "bg-[#16261d] text-[#eef0e8] shadow-sm" : "text-[#eef0e899]"
           }`}
         >
-          خطط الاشتراك ({plans.length})
+          {t("tabPlans", { count: plans.length })}
         </button>
         <button
           onClick={() => setTab("promos")}
@@ -256,7 +287,7 @@ export default function AdminSubscriptionsPage() {
             tab === "promos" ? "bg-[#16261d] text-[#eef0e8] shadow-sm" : "text-[#eef0e899]"
           }`}
         >
-          أسعار الترويج ({promos.length})
+          {t("tabPromos", { count: promos.length })}
         </button>
       </div>
 
@@ -269,7 +300,7 @@ export default function AdminSubscriptionsPage() {
               type="text"
               value={subSearch}
               onChange={(e) => setSubSearch(e.target.value)}
-              placeholder="بحث بالاسم أو البريد..."
+              placeholder={t("searchPlaceholder")}
               className="flex-1 min-w-[200px] px-4 py-2.5 rounded-lg border border-espresso/10 dark:border-white/10 bg-[#16261d] text-[#eef0e8] text-sm"
             />
             <select
@@ -277,10 +308,8 @@ export default function AdminSubscriptionsPage() {
               onChange={(e) => setSubFilter(e.target.value)}
               className="px-4 py-2.5 rounded-lg border border-espresso/10 dark:border-white/10 bg-[#16261d] text-[#eef0e8] text-sm"
             >
-              <option value="">جميع المستويات</option>
-              <option value="free">مجاني</option>
-              <option value="pro">احترافي</option>
-              <option value="premium">مميز</option>
+              <option value="">{t("allTiers")}</option>
+              {USER_TIERS.map((tier) => <option key={tier} value={tier}>{tierLabel(tier)}</option>)}
             </select>
           </div>
 
@@ -303,22 +332,22 @@ export default function AdminSubscriptionsPage() {
                         : u.subscriptionTier === "premium" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300"
                         : "bg-[#eef0e810] text-[#eef0e880]"
                     }`}>
-                      {u.subscriptionTier === "pro" ? (isExpired ? "منتهي" : "احترافي") : u.subscriptionTier === "premium" ? "مميز" : "مجاني"}
-                      {isOnTrial && " (تجربة)"}
+                      {u.subscriptionTier === "pro" ? (isExpired ? t("expired") : tierLabel("pro")) : u.subscriptionTier === "premium" ? tierLabel("premium") : tierLabel("free")}
+                      {isOnTrial && ` ${t("trialSuffix")}`}
                     </span>
                   </div>
 
                   {/* Row 2: Dates */}
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#eef0e899]">
-                    <span>بداية: {u.subscriptionStartsAt ? new Date(u.subscriptionStartsAt).toLocaleDateString("ar-SA-u-nu-latn") : "—"}</span>
+                    <span>{t("starts", { date: u.subscriptionStartsAt ? new Date(u.subscriptionStartsAt).toLocaleDateString(locale) : "—" })}</span>
                     <span>
-                      نهاية: {u.subscriptionExpiresAt ? (
+                      {t("ends")} {u.subscriptionExpiresAt ? (
                         <span className={isExpired ? "text-red-500 font-medium" : ""}>
-                          {new Date(u.subscriptionExpiresAt).toLocaleDateString("ar-SA-u-nu-latn")}
-                          {isExpired && " (منتهي)"}
+                          {new Date(u.subscriptionExpiresAt).toLocaleDateString(locale)}
+                          {isExpired && ` (${t("expired")})`}
                         </span>
                       ) : u.subscriptionTier !== "free" ? (
-                        <span className="text-green-600 font-medium">غير محدد</span>
+                        <span className="text-green-600 font-medium">{t("unlimited")}</span>
                       ) : "—"}
                     </span>
                   </div>
@@ -331,9 +360,7 @@ export default function AdminSubscriptionsPage() {
                       disabled={updatingUser === u.id}
                       className="px-3 py-1.5 rounded-lg border border-espresso/10 dark:border-white/10 bg-[#16261d] text-[#eef0e8] text-sm disabled:opacity-50"
                     >
-                      <option value="free">مجاني</option>
-                      <option value="pro">احترافي</option>
-                      <option value="premium">مميز</option>
+                      {USER_TIERS.map((tier) => <option key={tier} value={tier}>{tierLabel(tier)}</option>)}
                     </select>
                     {extendingUser === u.id ? (
                       <div className="flex flex-wrap items-center gap-1">
@@ -345,15 +372,15 @@ export default function AdminSubscriptionsPage() {
                           placeholder="30"
                           min="1"
                         />
-                        <span className="text-xs text-[#eef0e880]">يوم</span>
+                        <span className="text-xs text-[#eef0e880]">{t("days")}</span>
                         <button
                           onClick={() => extendSubscription(u.id)}
                           disabled={updatingUser === u.id}
                           className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-bold hover:bg-green-700 disabled:opacity-50"
                         >
-                          تمديد
+                          {t("extend")}
                         </button>
-                        <button onClick={() => setExtendingUser(null)} className="px-2 py-1.5 bg-gray-200 dark:bg-[#ffffff15] rounded-lg text-xs">✕</button>
+                        <button onClick={() => setExtendingUser(null)} aria-label={t("cancel")} className="px-2 py-1.5 bg-gray-200 dark:bg-[#ffffff15] rounded-lg text-xs">✕</button>
                       </div>
                     ) : (
                       <button
@@ -361,7 +388,7 @@ export default function AdminSubscriptionsPage() {
                         className="px-3 py-1.5 rounded-lg border border-blue-200 dark:border-blue-800 text-blue-600 text-xs font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center gap-1"
                       >
                         <span className="material-symbols-outlined text-sm">event_repeat</span>
-                        تمديد
+                        {t("extend")}
                       </button>
                     )}
                   </div>
@@ -371,7 +398,7 @@ export default function AdminSubscriptionsPage() {
             {subscribers.length === 0 && (
               <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-12 text-center">
                 <span className="material-symbols-outlined text-5xl text-[#eef0e880] mb-3 block">group</span>
-                <p className="text-[#eef0e880] font-medium">لا يوجد مشتركين</p>
+                <p className="text-[#eef0e880] font-medium">{t("noSubscribers")}</p>
               </div>
             )}
           </div>
@@ -379,7 +406,7 @@ export default function AdminSubscriptionsPage() {
           {/* Companies with subscriptions */}
           {subCompanies.length > 0 && (
             <div>
-              <h3 className="font-bold text-sm text-[#eef0e8] mb-3">اشتراكات العلامات التجارية</h3>
+              <h3 className="font-bold text-sm text-[#eef0e8] mb-3">{t("brandSubscriptions")}</h3>
               <div className="space-y-3">
                 {subCompanies.map((c) => (
                   <div key={c.id} className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-4 flex flex-wrap items-center justify-between gap-3">
@@ -392,7 +419,7 @@ export default function AdminSubscriptionsPage() {
                         {c.subscriptionTier}
                       </span>
                       <span className="text-xs text-[#eef0e880]">
-                        {c.subscriptionExpiresAt ? new Date(c.subscriptionExpiresAt).toLocaleDateString("ar-SA-u-nu-latn") : "غير محدد"}
+                        {c.subscriptionExpiresAt ? new Date(c.subscriptionExpiresAt).toLocaleDateString(locale) : t("unlimited")}
                       </span>
                     </div>
                   </div>
@@ -410,21 +437,21 @@ export default function AdminSubscriptionsPage() {
           <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-6 mb-6">
             <h2 className="font-bold text-lg text-[#eef0e8] mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-green-500">{editingPlanId ? "edit" : "add_circle"}</span>
-              {editingPlanId ? "تعديل الخطة" : "إنشاء خطة"}
+              {editingPlanId ? t("editPlan") : t("createPlanTitle")}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">اسم الخطة</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fPlanName")}</label>
                 <input
                   type="text"
                   value={planForm.name}
                   onChange={(e) => setPlanForm({ ...planForm, name: e.target.value, slug: planForm.slug || e.target.value.toLowerCase().replace(/\s+/g, "-") })}
-                  placeholder="مثال: مميز"
+                  placeholder={t("fPlanNamePlaceholder")}
                   className="w-full px-3 py-2.5 rounded-lg border border-espresso/10 dark:border-white/10 bg-[#16261d] text-[#eef0e8] text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">المعرّف</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fSlug")}</label>
                 <input
                   type="text"
                   value={planForm.slug}
@@ -434,7 +461,7 @@ export default function AdminSubscriptionsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">السعر</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fPrice")}</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -458,32 +485,32 @@ export default function AdminSubscriptionsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">الفترة</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fInterval")}</label>
                 <select
                   value={planForm.interval}
                   onChange={(e) => setPlanForm({ ...planForm, interval: e.target.value })}
                   className="w-full px-3 py-2.5 rounded-lg border border-espresso/10 dark:border-white/10 bg-[#16261d] text-[#eef0e8] text-sm"
                 >
-                  <option value="monthly">شهري</option>
-                  <option value="yearly">سنوي</option>
+                  <option value="monthly">{t("monthly")}</option>
+                  <option value="yearly">{t("yearly")}</option>
                 </select>
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">الوصف</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fDescription")}</label>
                 <input
                   type="text"
                   value={planForm.description}
                   onChange={(e) => setPlanForm({ ...planForm, description: e.target.value })}
-                  placeholder="الأفضل لعشاق القهوة المتحمسين"
+                  placeholder={t("fDescriptionPlaceholder")}
                   className="w-full px-3 py-2.5 rounded-lg border border-espresso/10 dark:border-white/10 bg-[#16261d] text-[#eef0e8] text-sm"
                 />
               </div>
               <div className="sm:col-span-2 lg:col-span-3">
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">المميزات (واحدة في كل سطر)</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fFeatures")}</label>
                 <textarea
                   value={planForm.features}
                   onChange={(e) => setPlanForm({ ...planForm, features: e.target.value })}
-                  placeholder={"وصفات غير محدودة\nتجربة بدون إعلانات\nدعم أولوية"}
+                  placeholder={t("fFeaturesPlaceholder")}
                   rows={3}
                   className="w-full px-3 py-2.5 rounded-lg border border-espresso/10 dark:border-white/10 bg-[#16261d] text-[#eef0e8] text-sm resize-none"
                 />
@@ -496,14 +523,14 @@ export default function AdminSubscriptionsPage() {
                 className="px-5 py-2.5 bg-green-600 text-white rounded-lg font-semibold text-sm hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
               >
                 <span className="material-symbols-outlined text-lg">{editingPlanId ? "save" : "add"}</span>
-                {planSaving ? "جاري الحفظ..." : editingPlanId ? "تحديث الخطة" : "إنشاء الخطة"}
+                {planSaving ? t("saving") : editingPlanId ? t("updatePlan") : t("createPlan")}
               </button>
               {editingPlanId && (
                 <button
                   onClick={() => { setEditingPlanId(null); setPlanForm(emptyPlan); }}
                   className="px-5 py-2.5 bg-espresso/5 dark:bg-white/5 rounded-lg font-semibold text-sm"
                 >
-                  إلغاء
+                  {t("cancel")}
                 </button>
               )}
             </div>
@@ -513,8 +540,8 @@ export default function AdminSubscriptionsPage() {
           {plans.length === 0 ? (
             <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-12 text-center">
               <span className="material-symbols-outlined text-5xl text-[#eef0e880] mb-3 block">credit_card</span>
-              <p className="text-[#eef0e880] font-medium">لا توجد خطط اشتراك بعد</p>
-              <p className="text-sm text-[#eef0e880] mt-1">أنشئ أول خطة أعلاه</p>
+              <p className="text-[#eef0e880] font-medium">{t("noPlans")}</p>
+              <p className="text-sm text-[#eef0e880] mt-1">{t("noPlansHint")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -528,14 +555,14 @@ export default function AdminSubscriptionsPage() {
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                         p.isActive ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : "bg-[#eef0e810] text-[#eef0e880]"
                       }`}>
-                        {p.isActive ? "نشطة" : "غير نشطة"}
+                        {p.isActive ? t("active") : t("inactive")}
                       </span>
                     </div>
                     <div className="flex items-baseline gap-1 mb-3">
                       <span className="text-3xl font-display text-[#eef0e8]">
                         {p.currency === "USD" ? "$" : p.currency === "EUR" ? "€" : p.currency === "GBP" ? "£" : ""}{p.price}{p.currency === "SAR" && <RiyalSign className="ms-1" />}
                       </span>
-                      <span className="text-sm text-[#eef0e880]">/{p.interval === "yearly" ? "سنة" : "شهر"}</span>
+                      <span className="text-sm text-[#eef0e880]">/{p.interval === "yearly" ? t("perYear") : t("perMonth")}</span>
                     </div>
                     {p.description && (
                       <p className="text-sm text-[#eef0e899] mb-3">{p.description}</p>
@@ -550,18 +577,18 @@ export default function AdminSubscriptionsPage() {
                         ))}
                       </ul>
                     )}
-                    <p className="text-[11px] text-[#eef0e880]">المعرّف: {p.slug}</p>
+                    <p className="text-[11px] text-[#eef0e880]">{t("slugLabel", { slug: p.slug })}</p>
                   </div>
                   <div className="flex border-t border-[#eef0e80d]">
                     <button onClick={() => editPlan(p)} className="flex-1 py-3 text-sm font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 flex items-center justify-center gap-1">
-                      <span className="material-symbols-outlined text-base">edit</span>تعديل
+                      <span className="material-symbols-outlined text-base">edit</span>{t("edit")}
                     </button>
                     <button onClick={() => togglePlan(p)} className="flex-1 py-3 text-sm font-medium text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/20 flex items-center justify-center gap-1 border-x border-[#eef0e80d]">
                       <span className="material-symbols-outlined text-base">{p.isActive ? "visibility_off" : "visibility"}</span>
-                      {p.isActive ? "تعطيل" : "تفعيل"}
+                      {p.isActive ? t("disable") : t("enable")}
                     </button>
                     <button onClick={() => deletePlan(p.id)} className="flex-1 py-3 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center gap-1">
-                      <span className="material-symbols-outlined text-base">delete</span>حذف
+                      <span className="material-symbols-outlined text-base">delete</span>{t("delete")}
                     </button>
                   </div>
                 </div>
@@ -578,33 +605,31 @@ export default function AdminSubscriptionsPage() {
           <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-6 mb-6">
             <h2 className="font-bold text-lg text-[#eef0e8] mb-4 flex items-center gap-2">
               <span className="material-symbols-outlined text-amber-500">{editingPromoId ? "edit" : "add_circle"}</span>
-              {editingPromoId ? "تعديل التسعير" : "إنشاء تسعير ترويج"}
+              {editingPromoId ? t("editPricing") : t("createPricingTitle")}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">اسم الباقة</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fPackageName")}</label>
                 <input
                   type="text"
                   value={promoForm.name}
                   onChange={(e) => setPromoForm({ ...promoForm, name: e.target.value })}
-                  placeholder="مثال: الرئيسية - أسبوع واحد"
+                  placeholder={t("fPackageNamePlaceholder")}
                   className="w-full px-3 py-2.5 rounded-lg border border-espresso/10 dark:border-white/10 bg-[#16261d] text-[#eef0e8] text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">الموضع</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fPlacement")}</label>
                 <select
                   value={promoForm.placement}
                   onChange={(e) => setPromoForm({ ...promoForm, placement: e.target.value })}
                   className="w-full px-3 py-2.5 rounded-lg border border-espresso/10 dark:border-white/10 bg-[#16261d] text-[#eef0e8] text-sm"
                 >
-                  <option value="HOME_TOP">الصفحة الرئيسية</option>
-                  <option value="EXPLORE_TOP">صفحة الاستكشاف</option>
-                  <option value="BOTH">الرئيسية + الاستكشاف</option>
+                  {PLACEMENTS.map((p) => <option key={p} value={p}>{placementLabel(p)}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">المدة (أيام)</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fDuration")}</label>
                 <input
                   type="number"
                   value={promoForm.duration}
@@ -614,7 +639,7 @@ export default function AdminSubscriptionsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">السعر</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fPrice")}</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -638,7 +663,7 @@ export default function AdminSubscriptionsPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#eef0e899] mb-1">الخصم (%)</label>
+                <label className="block text-xs font-medium text-[#eef0e899] mb-1">{t("fDiscount")}</label>
                 <input
                   type="number"
                   min="0"
@@ -657,14 +682,14 @@ export default function AdminSubscriptionsPage() {
                 className="px-5 py-2.5 bg-amber-600 text-white rounded-lg font-semibold text-sm hover:bg-amber-700 disabled:opacity-50 flex items-center gap-2"
               >
                 <span className="material-symbols-outlined text-lg">{editingPromoId ? "save" : "add"}</span>
-                {promoSaving ? "جاري الحفظ..." : editingPromoId ? "تحديث التسعير" : "إنشاء التسعير"}
+                {promoSaving ? t("saving") : editingPromoId ? t("updatePricing") : t("createPricing")}
               </button>
               {editingPromoId && (
                 <button
                   onClick={() => { setEditingPromoId(null); setPromoForm(emptyPromo); }}
                   className="px-5 py-2.5 bg-espresso/5 dark:bg-white/5 rounded-lg font-semibold text-sm"
                 >
-                  إلغاء
+                  {t("cancel")}
                 </button>
               )}
             </div>
@@ -674,21 +699,21 @@ export default function AdminSubscriptionsPage() {
           {promos.length === 0 ? (
             <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] p-12 text-center">
               <span className="material-symbols-outlined text-5xl text-[#eef0e880] mb-3 block">sell</span>
-              <p className="text-[#eef0e880] font-medium">لا توجد أسعار ترويج بعد</p>
-              <p className="text-sm text-[#eef0e880] mt-1">أنشئ باقات تسعير للمحامص</p>
+              <p className="text-[#eef0e880] font-medium">{t("noPricing")}</p>
+              <p className="text-sm text-[#eef0e880] mt-1">{t("noPricingHint")}</p>
             </div>
           ) : (
             <div className="bg-[#16261d] rounded-2xl border border-[#eef0e80d] overflow-hidden overflow-x-auto">
               <table className="w-full min-w-[600px]">
                 <thead>
                   <tr className="border-b border-[#eef0e80d] text-start">
-                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">الباقة</th>
-                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">الموضع</th>
-                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">المدة</th>
-                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">السعر</th>
-                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">الخصم</th>
-                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">النهائي</th>
-                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">إجراءات</th>
+                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">{t("colPackage")}</th>
+                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">{t("colPlacement")}</th>
+                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">{t("colDuration")}</th>
+                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">{t("colPrice")}</th>
+                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">{t("colDiscount")}</th>
+                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">{t("colFinal")}</th>
+                    <th className="px-5 py-3 text-xs font-bold text-[#eef0e899]">{t("colActions")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -697,8 +722,8 @@ export default function AdminSubscriptionsPage() {
                     return (
                       <tr key={p.id} className={`hover:bg-espresso/[0.02] dark:hover:bg-white/[0.02] ${!p.isActive ? "opacity-50" : ""}`}>
                         <td className="px-5 py-4 text-sm font-semibold text-[#eef0e8]">{p.name}</td>
-                        <td className="px-5 py-4 text-sm text-[#eef0e8aa]">{placementLabels[p.placement]}</td>
-                        <td className="px-5 py-4 text-sm text-[#eef0e8aa]">{p.duration} يوم</td>
+                        <td className="px-5 py-4 text-sm text-[#eef0e8aa]">{placementLabel(p.placement)}</td>
+                        <td className="px-5 py-4 text-sm text-[#eef0e8aa]">{t("durationDays", { count: p.duration })}</td>
                         <td className="px-5 py-4 text-sm text-[#eef0e8aa]">${p.price.toFixed(2)}</td>
                         <td className="px-5 py-4">
                           {p.discount > 0 ? (
@@ -712,13 +737,13 @@ export default function AdminSubscriptionsPage() {
                         <td className="px-5 py-4 text-sm font-bold text-green-600 dark:text-green-400">${final.toFixed(2)}</td>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-1">
-                            <button onClick={() => editPromo(p)} className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600">
+                            <button onClick={() => editPromo(p)} aria-label={t("edit")} className="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600">
                               <span className="material-symbols-outlined text-lg">edit</span>
                             </button>
-                            <button onClick={() => togglePromo(p)} className="p-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 text-amber-600">
+                            <button onClick={() => togglePromo(p)} aria-label={p.isActive ? t("disable") : t("enable")} className="p-1.5 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 text-amber-600">
                               <span className="material-symbols-outlined text-lg">{p.isActive ? "visibility_off" : "visibility"}</span>
                             </button>
-                            <button onClick={() => deletePromo(p.id)} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600">
+                            <button onClick={() => deletePromo(p.id)} aria-label={t("delete")} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600">
                               <span className="material-symbols-outlined text-lg">delete</span>
                             </button>
                           </div>

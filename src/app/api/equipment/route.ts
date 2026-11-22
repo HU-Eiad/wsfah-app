@@ -10,6 +10,7 @@ export async function GET(req: Request) {
   }
 
   const equipment = await prisma.equipment.findMany({
+    take: 300, // bounded: this list grows with usage
     where: { userId: user.id },
     orderBy: { createdAt: "desc" },
   });

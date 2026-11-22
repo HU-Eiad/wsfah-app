@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { getAuthUser } from "@/lib/auth-mobile";
 import { parseBody, followSchema } from "@/lib/validation";
 import { logAudit, AUDIT } from "@/lib/audit";
-import { recordActivity } from "@/lib/activity";
 import { trackChallengeProgress } from "@/lib/challenges";
 import { sendPushNotification } from "@/lib/push";
 import { notify } from "@/lib/notify";

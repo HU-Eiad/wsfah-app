@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAuthUser } from "@/lib/auth-mobile";
+import { getUserTier } from "@/lib/features";
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -30,7 +31,25 @@ export async function GET(
     return NextResponse.json({ error: "Recipe not found" }, { status: 404 });
   }
 
-  return NextResponse.json(recipe);
+  // Pro-only recipes: the method (ingredients, steps, brew parameters) is only sent to
+  // Pro subscribers, the author and admins. Everyone else gets the preview + `locked`.
+  if ((recipe.accessTier || "FREE").toUpperCase() === "PRO") {
+    const viewer = await getAuthUser(req);
+    let allowed = false;
+    if (viewer) {
+      if (viewer.id === recipe.authorId || viewer.role === "SUPERADMIN") {
+        allowed = true;
+      } else {
+        const tier = (await getUserTier(viewer.id)).toUpperCase();
+        allowed = tier === "PRO" || tier === "PREMIUM";
+      }
+    }
+    if (!allowed) {
+      return NextResponse.json({ ...recipe, ingredients: [], steps: [], brewParams: null, locked: true });
+    }
+  }
+
+  return NextResponse.json({ ...recipe, locked: false });
 }
 
 export async function PATCH(

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import MaterialIcon from "@/components/MaterialIcon";
+import SafeImage from "@/components/SafeImage";
 
 interface Story {
   id: string;
@@ -115,9 +116,11 @@ export default function StoryViewer({ stories, onClose }: StoryViewerProps) {
       <div className="flex items-center justify-between px-4 py-2">
         <div className="flex items-center gap-2">
           {current.company.logo ? (
-            <img
+            <SafeImage
               src={current.company.logo}
               alt=""
+              width={36}
+              height={36}
               className="size-9 rounded-full object-cover ring-1 ring-paper/20"
             />
           ) : (
@@ -150,11 +153,13 @@ export default function StoryViewer({ stories, onClose }: StoryViewerProps) {
             playsInline
           />
         ) : (
-          <img
+          <SafeImage
             key={current.id}
             src={current.mediaUrl}
             alt={current.caption || t("storyAlt")}
-            className="absolute inset-0 w-full h-full object-contain"
+            fill
+            sizes="100vw"
+            className="object-contain"
           />
         )}
 

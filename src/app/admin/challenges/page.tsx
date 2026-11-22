@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 
 interface Challenge {
   id: string;
@@ -17,12 +18,14 @@ interface Challenge {
 
 const RANKS = ["Bronze", "Silver", "Gold"];
 const CATEGORIES = ["General", "Brewing", "Social", "Streak"];
-const RANK_LABELS: Record<string, string> = { Bronze: "برونزي", Silver: "فضي", Gold: "ذهبي" };
-const CATEGORY_LABELS: Record<string, string> = { General: "عام", Brewing: "التحضير", Social: "اجتماعي", Streak: "الاستمرارية" };
 
 export default function AdminChallengesPage() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("adminChallenges");
+  const ta = useTranslations("admin");
+  const rankLabel = (r: string) => (t.has(`ranks.${r}`) ? t(`ranks.${r}`) : r);
+  const categoryLabel = (c: string) => (t.has(`categories.${c}`) ? t(`categories.${c}`) : c);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [form, setForm] = useState({
@@ -96,7 +99,7 @@ export default function AdminChallengesPage() {
   }
 
   async function deleteChallenge(id: string) {
-    if (!confirm("حذف هذا التحدي؟")) return;
+    if (!confirm(t("confirmDelete"))) return;
     const res = await fetch(`/api/admin/challenges?id=${id}`, { method: "DELETE" });
     if (res.ok) setChallenges((prev) => prev.filter((c) => c.id !== id));
   }
@@ -110,13 +113,13 @@ export default function AdminChallengesPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-[#eef0e8]">التحديات</h2>
+        <h2 className="text-2xl font-bold text-[#eef0e8]">{t("title")}</h2>
         <button
           onClick={() => { resetForm(); setShowForm(true); }}
           className="px-4 py-2 bg-[#8fbf9a] text-[#0e1a13] rounded-lg text-sm font-bold hover:bg-[#7fa88a] transition-colors flex items-center gap-2"
         >
           <span className="material-symbols-outlined text-lg">add</span>
-          تحدي جديد
+          {t("new")}
         </button>
       </div>
 
@@ -126,54 +129,54 @@ export default function AdminChallengesPage() {
           <div className="bg-[#16261d] rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between p-5 border-b border-[#eef0e80d]">
               <h3 className="text-lg font-bold text-[#eef0e8]">
-                {editId ? "تعديل التحدي" : "تحدي جديد"}
+                {editId ? t("edit") : t("new")}
               </h3>
-              <button onClick={resetForm} className="size-10 rounded-full hover:bg-[#ffffff08] flex items-center justify-center">
+              <button onClick={resetForm} aria-label={t("close")} className="size-10 rounded-full hover:bg-[#ffffff08] flex items-center justify-center">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">العنوان</label>
+                <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">{t("fTitle")}</label>
                 <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm text-[#eef0e8]" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">الوصف</label>
+                <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">{t("fDescription")}</label>
                 <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm text-[#eef0e8] resize-none" />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">الأيقونة (Material)</label>
+                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">{t("fIcon")}</label>
                   <div className="flex items-center gap-2">
                     <span className="material-symbols-outlined text-2xl text-[#8fbf9a]">{form.icon}</span>
                     <input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} className="flex-1 px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm text-[#eef0e8]" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">نقاط المكافأة</label>
+                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">{t("fPoints")}</label>
                   <input type="number" value={form.rewardPoints} onChange={(e) => setForm({ ...form, rewardPoints: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm text-[#eef0e8]" />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">الحد الأقصى للتقدم</label>
+                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">{t("fMaxProgress")}</label>
                   <input type="number" value={form.maxProgress} onChange={(e) => setForm({ ...form, maxProgress: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm text-[#eef0e8]" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">الرتبة</label>
+                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">{t("fRank")}</label>
                   <select value={form.rank} onChange={(e) => setForm({ ...form, rank: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm text-[#eef0e8]">
-                    {RANKS.map((r) => <option key={r} value={r}>{RANK_LABELS[r] ?? r}</option>)}
+                    {RANKS.map((r) => <option key={r} value={r}>{rankLabel(r)}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">الفئة</label>
+                  <label className="block text-sm font-medium text-[#eef0e8cc] mb-1">{t("fCategory")}</label>
                   <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-[#eef0e81a] bg-[#16261d] text-[#eef0e8] text-sm text-[#eef0e8]">
-                    {CATEGORIES.map((c) => <option key={c} value={c}>{CATEGORY_LABELS[c] ?? c}</option>)}
+                    {CATEGORIES.map((c) => <option key={c} value={c}>{categoryLabel(c)}</option>)}
                   </select>
                 </div>
               </div>
               <button onClick={handleSubmit} className="w-full py-3 bg-[#8fbf9a] text-[#0e1a13] rounded-2xl font-bold text-sm hover:bg-[#7fa88a] transition-colors">
-                {editId ? "تحديث التحدي" : "إنشاء التحدي"}
+                {editId ? t("update") : t("create")}
               </button>
             </div>
           </div>
@@ -182,22 +185,22 @@ export default function AdminChallengesPage() {
 
       {/* Table */}
       {loading ? (
-        <p className="text-[#eef0e899]">جاري التحميل...</p>
+        <p className="text-[#eef0e899]">{ta("loading")}</p>
       ) : challenges.length === 0 ? (
-        <p className="text-[#eef0e899]">لا توجد تحديات بعد.</p>
+        <p className="text-[#eef0e899]">{t("empty")}</p>
       ) : (
         <div className="overflow-x-auto bg-[#16261d] border border-[#eef0e80d] rounded-2xl">
           <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="border-b border-[#eef0e80d]">
-                <th className="text-start p-4 text-[#eef0e899] font-medium">التحدي</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">الرتبة</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">الفئة</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">النقاط</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">التقدم</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">المشاركون</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">الحالة</th>
-                <th className="text-start p-4 text-[#eef0e899] font-medium">إجراءات</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colChallenge")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colRank")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colCategory")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colPoints")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colProgress")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colParticipants")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colStatus")}</th>
+                <th className="text-start p-4 text-[#eef0e899] font-medium">{t("colActions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -214,12 +217,12 @@ export default function AdminChallengesPage() {
                   </td>
                   <td className="p-4">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${rankColor[c.rank] || rankColor.Bronze}`}>
-                      {RANK_LABELS[c.rank] ?? c.rank}
+                      {rankLabel(c.rank)}
                     </span>
                   </td>
-                  <td className="p-4 text-[#eef0e8aa]">{CATEGORY_LABELS[c.category] ?? c.category}</td>
+                  <td className="p-4 text-[#eef0e8aa]">{categoryLabel(c.category)}</td>
                   <td className="p-4 text-[#eef0e8] font-medium">{c.rewardPoints}</td>
-                  <td className="p-4 text-[#eef0e8aa]">{c.maxProgress} خطوة</td>
+                  <td className="p-4 text-[#eef0e8aa]">{t("steps", { count: c.maxProgress })}</td>
                   <td className="p-4 text-[#eef0e8aa]">{c._count.users}</td>
                   <td className="p-4">
                     <button
@@ -230,16 +233,16 @@ export default function AdminChallengesPage() {
                           : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                       }`}
                     >
-                      {c.isActive ? "نشط" : "غير نشط"}
+                      {c.isActive ? t("active") : t("inactive")}
                     </button>
                   </td>
                   <td className="p-4">
                     <div className="flex gap-2">
                       <button onClick={() => startEdit(c)} className="px-3 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium">
-                        تعديل
+                        {t("editBtn")}
                       </button>
                       <button onClick={() => deleteChallenge(c.id)} className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-medium">
-                        حذف
+                        {t("deleteBtn")}
                       </button>
                     </div>
                   </td>

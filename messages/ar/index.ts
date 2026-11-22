@@ -3,6 +3,20 @@ import ns_activityCard from "./activityCard.json";
 import ns_adBanner from "./adBanner.json";
 import ns_adSlot from "./adSlot.json";
 import ns_addToCollectionModal from "./addToCollectionModal.json";
+import ns_admin from "./admin.json";
+import ns_adminAds from "./adminAds.json";
+import ns_adminAnalytics from "./adminAnalytics.json";
+import ns_adminBrands from "./adminBrands.json";
+import ns_adminChallenges from "./adminChallenges.json";
+import ns_adminDashboard from "./adminDashboard.json";
+import ns_adminModeration from "./adminModeration.json";
+import ns_adminPromotions from "./adminPromotions.json";
+import ns_adminRecipes from "./adminRecipes.json";
+import ns_adminRewards from "./adminRewards.json";
+import ns_adminSidebar from "./adminSidebar.json";
+import ns_adminSubscriptions from "./adminSubscriptions.json";
+import ns_adminUsers from "./adminUsers.json";
+import ns_adminVerification from "./adminVerification.json";
 import ns_brand from "./brand.json";
 import ns_brandAnalytics from "./brandAnalytics.json";
 import ns_brandTabs from "./brandTabs.json";
@@ -78,6 +92,20 @@ const messages = {
   "adBanner": ns_adBanner,
   "adSlot": ns_adSlot,
   "addToCollectionModal": ns_addToCollectionModal,
+  "admin": ns_admin,
+  "adminAds": ns_adminAds,
+  "adminAnalytics": ns_adminAnalytics,
+  "adminBrands": ns_adminBrands,
+  "adminChallenges": ns_adminChallenges,
+  "adminDashboard": ns_adminDashboard,
+  "adminModeration": ns_adminModeration,
+  "adminPromotions": ns_adminPromotions,
+  "adminRecipes": ns_adminRecipes,
+  "adminRewards": ns_adminRewards,
+  "adminSidebar": ns_adminSidebar,
+  "adminSubscriptions": ns_adminSubscriptions,
+  "adminUsers": ns_adminUsers,
+  "adminVerification": ns_adminVerification,
   "brand": ns_brand,
   "brandAnalytics": ns_brandAnalytics,
   "brandTabs": ns_brandTabs,

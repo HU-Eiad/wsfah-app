@@ -1,5 +1,7 @@
 "use client";
 
+import SafeImage from "@/components/SafeImage";
+import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -103,7 +105,7 @@ export default function EventDetailPage() {
     return (
       <div className="min-h-screen bg-background-light text-espresso flex items-center justify-center p-6">
         <div className="text-center">
-          <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+          <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
           <p className="text-sm text-espresso/70">{t("notFound")}</p>
           <Link href="/events" className="inline-block mt-4 bg-primary text-on-primary rounded-xl px-5 py-3 font-bold text-sm hover:bg-primary/90 transition-colors">
             {t("allEvents")}
@@ -126,9 +128,12 @@ export default function EventDetailPage() {
 
       <div className="max-w-3xl mx-auto px-4 py-5">
         {event.imageUrl && (
-          <img
+          <SafeImage
             src={event.imageUrl}
             alt={event.title}
+            width={768}
+            height={256}
+            sizes="(min-width: 800px) 768px, 100vw"
             className="w-full h-64 object-cover rounded-[20px] mb-6"
           />
         )}

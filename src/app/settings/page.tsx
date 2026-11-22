@@ -8,6 +8,8 @@ import BottomNav from "@/components/BottomNav";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import LanguageSwitch from "@/components/LanguageSwitch";
 import BrandIcon from "@/components/BrandIcon";
+import SafeImage from "@/components/SafeImage";
+import { signOut } from "next-auth/react";
 import { logout } from "@/app/actions";
 
 interface UserData {
@@ -18,6 +20,8 @@ interface UserData {
   bio: string | null;
   image: string | null;
   role: string;
+  /** false for Google-only accounts (no password to confirm with). */
+  hasPassword?: boolean;
 }
 
 interface PrivacyData {
@@ -53,6 +57,64 @@ export default function SettingsPage() {
 
   // Avatar upload
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  // Account deletion
+  const [showDelete, setShowDelete] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const closeDeleteDialog = () => {
+    if (deleting) return;
+    setShowDelete(false);
+    setDeletePassword("");
+    setDeleteConfirmText("");
+    setDeleteError(null);
+  };
+
+  const handleDeleteAccount = async () => {
+    const needsPassword = user?.hasPassword !== false;
+    if (deleteConfirmText.trim().toLowerCase() !== t("deleteAccount.confirmWord").toLowerCase()) return;
+    if (needsPassword && !deletePassword) {
+      setDeleteError(t("deleteAccount.errors.passwordRequired"));
+      return;
+    }
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch("/api/users/me", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(needsPassword ? { password: deletePassword } : {}),
+      });
+      if (res.ok) {
+        // The account is gone: clear the session cookie and leave.
+        try {
+          await signOut({ redirectTo: "/" });
+        } catch {
+          window.location.href = "/";
+        }
+        return;
+      }
+      const data: { code?: string } = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        window.location.href = "/login?callbackUrl=%2Fsettings";
+        return;
+      }
+      if (data.code === "WRONG_PASSWORD") {
+        setDeleteError(t("deleteAccount.errors.wrongPassword"));
+      } else if (data.code === "OWNS_BRAND") {
+        setDeleteError(t("deleteAccount.errors.ownsBrand"));
+      } else {
+        setDeleteError(t("deleteAccount.errors.generic"));
+      }
+      setDeleting(false);
+    } catch {
+      setDeleteError(t("deleteAccount.errors.generic"));
+      setDeleting(false);
+    }
+  };
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -207,9 +269,12 @@ export default function SettingsPage() {
         {/* Avatar + Role */}
         <div className="flex flex-col items-center pt-8 pb-6 gap-3">
           <div className="relative">
-            <img
+            <SafeImage
               src={avatarUrl}
               alt=""
+              width={96}
+              height={96}
+              sizes="96px"
               className="size-24 rounded-full object-cover ring-4 ring-surface bg-oat-milk"
             />
             <label
@@ -526,7 +591,130 @@ export default function SettingsPage() {
             </button>
           </div>
         </section>
+
+        {/* Danger zone: delete account */}
+        <section className="mb-8">
+          <h2 className="text-xl mb-4 text-red-600">{t("deleteAccount.title")}</h2>
+          <div className="bg-surface rounded-2xl border border-red-200 p-4 space-y-3">
+            <p className="text-sm text-espresso/80 leading-relaxed">{t("deleteAccount.intro")}</p>
+            <div>
+              <p className="text-xs font-bold text-espresso/80">{t("deleteAccount.deletedTitle")}</p>
+              <p className="text-xs text-espresso/60 leading-relaxed">{t("deleteAccount.deletedBody")}</p>
+            </div>
+            <div>
+              <p className="text-xs font-bold text-espresso/80">{t("deleteAccount.anonymisedTitle")}</p>
+              <p className="text-xs text-espresso/60 leading-relaxed">{t("deleteAccount.anonymisedBody")}</p>
+            </div>
+            <p className="text-xs text-espresso/60 leading-relaxed">{t("deleteAccount.brandNote")}</p>
+            <button
+              onClick={() => setShowDelete(true)}
+              className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl border border-red-300 text-red-600 font-bold text-sm hover:bg-red-50 transition-colors"
+            >
+              <MaterialIcon icon="delete_forever" className="text-lg" />
+              {t("deleteAccount.button")}
+            </button>
+          </div>
+        </section>
       </main>
+
+      {showDelete && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/50 flex items-center justify-center p-6"
+          onClick={closeDeleteDialog}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-title"
+            className="bg-surface rounded-2xl p-6 max-w-sm w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleDeleteAccount();
+              }}
+              className="flex flex-col gap-4"
+            >
+              <div className="flex flex-col items-center text-center gap-3">
+                <div className="size-14 rounded-full bg-red-100 flex items-center justify-center">
+                  <MaterialIcon icon="delete_forever" className="text-3xl text-red-500" />
+                </div>
+                <h3 id="delete-account-title" className="text-lg font-bold">{t("deleteAccount.dialogTitle")}</h3>
+                <p className="text-sm text-espresso/60">{t("deleteAccount.dialogBody")}</p>
+              </div>
+
+              {user.hasPassword !== false && (
+                <div>
+                  <label htmlFor="delete-password" className={labelClass}>
+                    {t("deleteAccount.passwordLabel")}
+                  </label>
+                  <input
+                    id="delete-password"
+                    dir="auto"
+                    type="password"
+                    autoComplete="current-password"
+                    value={deletePassword}
+                    onChange={(e) => setDeletePassword(e.target.value)}
+                    placeholder={t("deleteAccount.passwordPlaceholder")}
+                    className={inputClass}
+                  />
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="delete-confirm" className={labelClass}>
+                  {t("deleteAccount.confirmLabel", { word: t("deleteAccount.confirmWord") })}
+                </label>
+                <input
+                  id="delete-confirm"
+                  dir="auto"
+                  type="text"
+                  autoComplete="off"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+
+              {deleteError && (
+                <p role="alert" className="px-3 py-2 rounded-xl text-sm bg-red-50 text-red-600 border border-red-200">
+                  {deleteError}
+                </p>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={closeDeleteDialog}
+                  disabled={deleting}
+                  className="flex-1 py-3 rounded-xl border border-espresso/15 font-bold text-sm hover:bg-oat-milk transition-colors disabled:opacity-50"
+                >
+                  {t("deleteAccount.cancel")}
+                </button>
+                <button
+                  type="submit"
+                  disabled={
+                    deleting ||
+                    deleteConfirmText.trim().toLowerCase() !== t("deleteAccount.confirmWord").toLowerCase() ||
+                    (user.hasPassword !== false && !deletePassword)
+                  }
+                  className="flex-1 py-3 rounded-xl bg-red-600 text-white font-bold text-sm hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {deleting ? (
+                    <>
+                      <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      {t("deleteAccount.deleting")}
+                    </>
+                  ) : (
+                    t("deleteAccount.confirm")
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

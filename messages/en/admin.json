@@ -1,0 +1,17 @@
+{
+  "loading": "Loading...",
+  "noName": "No name",
+  "prev": "Previous",
+  "next": "Next",
+  "roles": {
+    "USER": "User",
+    "CREATOR": "Creator",
+    "BRAND_ADMIN": "Brand admin",
+    "SUPERADMIN": "Super admin"
+  },
+  "status": {
+    "ACTIVE": "Active",
+    "SUSPENDED": "Suspended"
+  },
+  "unknown": "Unknown"
+}

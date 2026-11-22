@@ -21,7 +21,7 @@ const SECTIONS = [
   { key: "sharing" },
   { key: "visibility" },
   { key: "retention" },
-  { key: "deletion" },
+  { key: "deletion", hasPoints: true },
   { key: "rights" },
   { key: "children" },
   { key: "changes" },

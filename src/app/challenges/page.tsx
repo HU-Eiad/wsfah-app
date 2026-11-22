@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
@@ -122,7 +123,7 @@ export default function ChallengesPage() {
 
         {/* User Rank Badge */}
         <div className="relative overflow-hidden flex items-center gap-3 mb-4 bg-pine text-paper rounded-[20px] p-5 min-h-28">
-          <img src="/brand/banners/challenges-banner.svg" alt="" className="absolute inset-0 w-full h-full object-cover object-left ltr:-scale-x-100" />
+          <Image src="/brand/banners/challenges-banner.svg" alt="" fill sizes="100vw" className="object-cover object-left ltr:-scale-x-100" />
           <div className="absolute inset-0 bg-gradient-to-l ltr:bg-gradient-to-r from-pine via-pine/85 to-transparent sm:via-pine/40" aria-hidden />
           <div className="relative flex-1">
             <p className="text-xs text-paper/70 font-medium">{t("yourRank")}</p>
@@ -173,7 +174,7 @@ export default function ChallengesPage() {
           </div>
         ) : challenges.length === 0 ? (
           <div className="py-16 text-center">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (

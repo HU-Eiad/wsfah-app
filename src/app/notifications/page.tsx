@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -167,7 +168,7 @@ export default function NotificationsPage() {
           </div>
         ) : notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70 leading-relaxed mb-5">
               {t("empty")}
             </p>

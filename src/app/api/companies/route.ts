@@ -1,11 +1,11 @@
+import { getAuthSession } from "@/lib/auth-mobile";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { parseBody, companyCreateSchema } from "@/lib/validation";
 import { logAudit, AUDIT } from "@/lib/audit";
 
 export async function GET(req: Request) {
-  const session = await auth();
+  const session = await getAuthSession();
   const { searchParams } = new URL(req.url);
   const status = (searchParams.get("status") || "").slice(0, 50);
   const search = (searchParams.get("search") || "").slice(0, 200);
@@ -14,6 +14,7 @@ export async function GET(req: Request) {
   const effectiveStatus = session?.user?.id ? status : "APPROVED";
 
   const companies = await prisma.company.findMany({
+    take: 200, // bounded: this list grows with usage
     where: {
       ...(effectiveStatus ? { status: effectiveStatus } : {}),
       ...(search ? { name: { contains: search } } : {}),
@@ -33,7 +34,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

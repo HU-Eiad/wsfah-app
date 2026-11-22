@@ -11,8 +11,8 @@ export async function POST() {
     try {
       await prisma.$executeRawUnsafe(sql);
       results.push(`✓ ${label}`);
-    } catch (e: any) {
-      results.push(`⊘ ${label}: ${e.message?.slice(0, 80)}`);
+    } catch (e) {
+      results.push(`⊘ ${label}: ${(e instanceof Error ? e.message : String(e)).slice(0, 80)}`);
     }
   };
 

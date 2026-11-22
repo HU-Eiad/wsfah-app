@@ -3,25 +3,28 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 const navItems = [
-  { label: "لوحة التحكم", href: "/admin", icon: "dashboard" },
-  { label: "المستخدمون", href: "/admin/users", icon: "group" },
-  { label: "العلامات التجارية", href: "/admin/brands", icon: "storefront" },
-  { label: "الوصفات", href: "/admin/recipes", icon: "restaurant_menu" },
-  { label: "الإشراف", href: "/admin/moderation", icon: "shield" },
-  { label: "التوثيق", href: "/admin/verification", icon: "verified" },
-  { label: "التحليلات", href: "/admin/analytics", icon: "analytics" },
-  { label: "الاشتراكات", href: "/admin/subscriptions", icon: "credit_card" },
-  { label: "التحديات", href: "/admin/challenges", icon: "emoji_events" },
-  { label: "المكافآت", href: "/admin/rewards", icon: "redeem" },
-  { label: "الترويج", href: "/admin/promotions", icon: "campaign" },
-  { label: "الإعلانات", href: "/admin/ads", icon: "ads_click" },
-];
+  { key: "dashboard", href: "/admin", icon: "dashboard" },
+  { key: "users", href: "/admin/users", icon: "group" },
+  { key: "brands", href: "/admin/brands", icon: "storefront" },
+  { key: "recipes", href: "/admin/recipes", icon: "restaurant_menu" },
+  { key: "moderation", href: "/admin/moderation", icon: "shield" },
+  { key: "verification", href: "/admin/verification", icon: "verified" },
+  { key: "analytics", href: "/admin/analytics", icon: "analytics" },
+  { key: "subscriptions", href: "/admin/subscriptions", icon: "credit_card" },
+  { key: "challenges", href: "/admin/challenges", icon: "emoji_events" },
+  { key: "rewards", href: "/admin/rewards", icon: "redeem" },
+  { key: "promotions", href: "/admin/promotions", icon: "campaign" },
+  { key: "ads", href: "/admin/ads", icon: "ads_click" },
+] as const;
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const t = useTranslations("adminSidebar");
+  const tc = useTranslations("common");
 
   return (
     <>
@@ -34,7 +37,7 @@ export default function AdminSidebar() {
           </span>
         </button>
         <h1 className="text-lg" style={{ color: "#eef0e8" }}>
-          وصفة <span style={{ color: "#8fbf9a" }}>الإدارة</span>
+          {tc("appName")} <span style={{ color: "#8fbf9a" }}>{t("admin")}</span>
         </h1>
         <Link href="/home" className="p-2 rounded-xl hover:bg-white/10 transition-colors">
           <span className="material-symbols-outlined" style={{ color: "#eef0e8" }}>home</span>
@@ -61,9 +64,9 @@ export default function AdminSidebar() {
             </div>
             <div>
               <h1 className="text-lg" style={{ color: "#eef0e8" }}>
-                وصفة <span style={{ color: "#8fbf9a" }}>الإدارة</span>
+                {tc("appName")} <span style={{ color: "#8fbf9a" }}>{t("admin")}</span>
               </h1>
-              <p className="text-[11px]" style={{ color: "rgba(238, 240, 232, 0.55)" }}>لوحة الإدارة</p>
+              <p className="text-[11px]" style={{ color: "rgba(238, 240, 232, 0.55)" }}>{t("panel")}</p>
             </div>
           </div>
         </div>
@@ -92,7 +95,7 @@ export default function AdminSidebar() {
                 <span className="material-symbols-outlined text-xl" style={isActive ? { color: "#8fbf9a" } : {}}>
                   {item.icon}
                 </span>
-                {item.label}
+                {t(`nav.${item.key}`)}
               </Link>
             );
           })}
@@ -106,7 +109,7 @@ export default function AdminSidebar() {
             style={{ color: "rgba(238, 240, 232, 0.5)" }}
           >
             <span className="material-symbols-outlined text-xl">arrow_back</span>
-            العودة للتطبيق
+            {t("backToApp")}
           </Link>
         </div>
       </aside>

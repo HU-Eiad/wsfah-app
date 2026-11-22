@@ -6,6 +6,8 @@ import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
 import BrandIcon from "@/components/BrandIcon";
 import BottomNav from "@/components/BottomNav";
+import Image from "next/image";
+import SafeImage from "@/components/SafeImage";
 import { useTranslations } from "next-intl";
 
 /** Internal "no filter" sentinel value (not shown directly; label comes from messages). */
@@ -47,9 +49,7 @@ function SearchContent() {
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [activeDifficulty, setActiveDifficulty] = useState(ALL);
   const [activeSource, setActiveSource] = useState(ALL);
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const difficultyOptions = [
     { label: t("all"), value: ALL },
@@ -64,11 +64,14 @@ function SearchContent() {
     { label: t("source.brand"), value: "BRAND" },
   ];
 
-  // Sync activeCategory when URL param changes
-  useEffect(() => {
-    const urlCategory = searchParams.get("category") || ALL;
+  // Sync activeCategory when the URL param changes (adjusting state during
+  // render instead of in an effect).
+  const urlCategory = searchParams.get("category") || ALL;
+  const [prevUrlCategory, setPrevUrlCategory] = useState(urlCategory);
+  if (urlCategory !== prevUrlCategory) {
+    setPrevUrlCategory(urlCategory);
     setActiveCategory(urlCategory);
-  }, [searchParams]);
+  }
 
   useEffect(() => {
     fetch("/api/categories")
@@ -77,22 +80,31 @@ function SearchContent() {
       .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    if (query) params.set("search", query);
-    if (activeCategory !== ALL) params.set("category", activeCategory);
-    if (activeDifficulty !== ALL) params.set("difficulty", activeDifficulty);
-    if (activeSource !== ALL) params.set("source", activeSource);
+  const params = new URLSearchParams();
+  if (query) params.set("search", query);
+  if (activeCategory !== ALL) params.set("category", activeCategory);
+  if (activeDifficulty !== ALL) params.set("difficulty", activeDifficulty);
+  if (activeSource !== ALL) params.set("source", activeSource);
+  const requestKey = params.toString();
 
-    fetch(`/api/recipes?${params}`)
-      .then((r) => r.json())
-      .then((data) => {
-        setRecipes(data);
-        setLoading(false);
+  // Results tagged with the query they belong to: loading until they match,
+  // and responses for an older query (fast typing) are ignored.
+  const [results, setResults] = useState<{ key: string; recipes: Recipe[] } | null>(null);
+  const loading = results?.key !== requestKey;
+  const recipes = results?.recipes ?? [];
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/recipes?${requestKey}`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: unknown) => {
+        if (!cancelled) setResults({ key: requestKey, recipes: Array.isArray(data) ? (data as Recipe[]) : [] });
       })
-      .catch(() => setLoading(false));
-  }, [query, activeCategory, activeDifficulty, activeSource]);
+      .catch(() => {
+        if (!cancelled) setResults({ key: requestKey, recipes: [] });
+      });
+    return () => { cancelled = true; };
+  }, [requestKey]);
 
   const allCategories = [ALL, ...categories.map((c) => c.name)];
 
@@ -186,7 +198,7 @@ function SearchContent() {
           </div>
         ) : recipes.length === 0 ? (
           <div className="py-16 text-center">
-            <img src="/brand/banners/empty-state.svg" alt="" className="w-40 mx-auto mb-4" />
+            <Image src="/brand/banners/empty-state.svg" alt="" width={160} height={120} className="w-40 h-auto mx-auto mb-4" />
             <p className="text-sm text-espresso/70">{t("empty")}</p>
           </div>
         ) : (
@@ -194,9 +206,11 @@ function SearchContent() {
             {recipes.map((item) => (
               <Link href={`/recipe/${item.slug}`} key={item.id} className="flex flex-col gap-3">
                 <div className="relative aspect-[3/4] rounded-[20px] overflow-hidden bg-pine">
-                  <img
+                  <SafeImage
                     alt=""
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill
+                    sizes="50vw"
+                    className="object-cover"
                     src={item.imageUrl || "/brand/banners/recipe-placeholder.svg"}
                   />
                   <span

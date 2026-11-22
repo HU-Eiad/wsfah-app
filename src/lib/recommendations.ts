@@ -3,9 +3,9 @@ import { prisma } from "@/lib/prisma";
 export async function getRecommendations(userId: string, limit = 10) {
   // 1. Get user's engaged recipe IDs (liked, saved, rated)
   const [likes, saves, ratings] = await Promise.all([
-    prisma.recipeLike.findMany({ where: { userId }, select: { recipeId: true } }),
-    prisma.recipeSave.findMany({ where: { userId }, select: { recipeId: true } }),
-    prisma.recipeRating.findMany({ where: { userId }, select: { recipeId: true, rating: true } }),
+    prisma.recipeLike.findMany({ take: 300, where: { userId }, select: { recipeId: true } }),
+    prisma.recipeSave.findMany({ take: 300, where: { userId }, select: { recipeId: true } }),
+    prisma.recipeRating.findMany({ take: 300, where: { userId }, select: { recipeId: true, rating: true } }),
   ]);
 
   const engagedIds = new Set([

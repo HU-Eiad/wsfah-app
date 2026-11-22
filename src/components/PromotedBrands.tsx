@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import SafeImage from "./SafeImage";
 
 interface Promotion {
   id: string;
@@ -54,9 +55,11 @@ export default function PromotedBrands({ placement }: PromotedBrandsProps) {
               <div className="h-28 bg-cover bg-center" style={{ backgroundImage: `url('${p.imageUrl}')` }} />
             ) : (
               <div className="h-28 bg-oat-milk flex items-center justify-center">
-                <img
+                <SafeImage
                   src={p.company.logo || "/brand/banners/avatar-placeholder.svg"}
                   alt={p.company.name}
+                  width={64}
+                  height={64}
                   className="size-16 rounded-full ring-1 ring-espresso/10 object-cover"
                 />
               </div>
@@ -64,7 +67,7 @@ export default function PromotedBrands({ placement }: PromotedBrandsProps) {
             <div className="p-4">
               <div className="flex items-center gap-2 mb-1">
                 {!p.imageUrl && p.company.logo && (
-                  <img src={p.company.logo} alt="" className="size-6 rounded-full object-cover" />
+                  <SafeImage src={p.company.logo} alt="" width={24} height={24} className="size-6 rounded-full object-cover" />
                 )}
                 <h4 className="font-bold text-sm group-hover:text-primary transition-colors truncate" dir="auto">
                   {p.company.name}

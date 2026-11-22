@@ -1,6 +1,6 @@
+import { getAuthSession } from "@/lib/auth-mobile";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 
 // GET active promotions (public) or all promotions (admin)
 export async function GET(req: Request) {
@@ -9,7 +9,7 @@ export async function GET(req: Request) {
 
   if (all) {
     // Admin: return all promotion requests
-    const session = await auth();
+    const session = await getAuthSession();
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -22,6 +22,7 @@ export async function GET(req: Request) {
     }
 
     const promotions = await prisma.promotionRequest.findMany({
+      take: 500, // bounded: this list grows with usage
       include: {
         company: { select: { id: true, name: true, logo: true, type: true } },
         requester: { select: { id: true, name: true, image: true } },
@@ -78,7 +79,7 @@ export async function GET(req: Request) {
 
 // POST: Brand admin submits a promotion request
 export async function POST(req: Request) {
-  const session = await auth();
+  const session = await getAuthSession();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

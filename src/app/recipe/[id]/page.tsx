@@ -35,6 +35,9 @@ interface Recipe {
   ingredients: { id: string; name: string; baseAmount: number; unit: string; imageUrl: string | null; sortOrder: number }[];
   steps: { id: string; stepNumber: number; title: string; description: string; imageUrl: string | null }[];
   brewParams: { temperature: string; ratio: string; grindSize: string; brewTimeSec: number } | null;
+  /** Pro recipe viewed without Pro: ingredients/steps are [] and brewParams is null. */
+  locked?: boolean;
+  accessTier?: "FREE" | "PRO";
 }
 
 export default function RecipeDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -57,7 +60,8 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
   const [saveBusy, setSaveBusy] = useState(false);
 
   // Current user state (for owner actions)
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  // undefined = still checking, null = signed out
+  const [currentUserId, setCurrentUserId] = useState<string | null | undefined>(undefined);
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
@@ -87,7 +91,13 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           setLoading(false);
           return;
         }
-        setRecipe(data);
+        setRecipe({
+          ...data,
+          ingredients: Array.isArray(data.ingredients) ? data.ingredients : [],
+          steps: Array.isArray(data.steps) ? data.steps : [],
+          brewParams: data.brewParams ?? null,
+          locked: data.locked === true,
+        });
         setLikeCount(data.likes ?? 0);
         setDisplayRating(data.rating ?? 0);
         if (data.brewParams?.brewTimeSec) {
@@ -106,9 +116,9 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
     fetch("/api/users/me")
       .then((r) => { if (r.ok) return r.json(); throw new Error(); })
       .then((data) => {
-        setCurrentUserId(data.id);
+        setCurrentUserId(typeof data?.id === "string" ? data.id : null);
       })
-      .catch(() => {});
+      .catch(() => setCurrentUserId(null));
   }, []);
 
   // Fetch initial like status
@@ -212,7 +222,8 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
     }
   }, [id, saved, saveBusy]);
 
-  const isOwner = currentUserId && recipe?.authorId === currentUserId;
+  const isOwner = !!currentUserId && recipe?.authorId === currentUserId;
+  const locked = recipe?.locked === true;
 
   const handleDelete = useCallback(async () => {
     if (!recipe) return;
@@ -342,6 +353,12 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               {recipe.isFeatured && (
                 <span className="bg-primary text-on-primary text-[11px] font-bold px-2 py-0.5 rounded-full">
                   {tc("badges.featured")}
+                </span>
+              )}
+              {recipe.accessTier === "PRO" && (
+                <span className="inline-flex items-center gap-1 bg-crema text-espresso text-[11px] font-bold px-2 py-0.5 rounded-full">
+                  <MaterialIcon icon={locked ? "lock" : "workspace_premium"} className="text-[13px]" filled />
+                  {t("proBadge")}
                 </span>
               )}
             </div>
@@ -560,6 +577,33 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
             </section>
           )}
 
+          {/* Pro paywall: the API withholds ingredients, steps and brew params */}
+          {locked && (
+            <section className="bg-surface rounded-[20px] p-6 border border-espresso/10 flex flex-col items-center text-center gap-3">
+              <div className="size-14 rounded-full bg-crema/20 flex items-center justify-center">
+                <MaterialIcon icon="lock" className="text-3xl text-primary" filled />
+              </div>
+              <h3 className="font-display text-xl">{t("lockedTitle")}</h3>
+              <p className="text-sm text-slate-600 leading-relaxed max-w-sm">{t("lockedBody")}</p>
+              <Link
+                href="/pricing"
+                className="mt-2 w-full max-w-xs flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-on-primary font-bold text-sm hover:opacity-90 transition-opacity active:scale-95"
+              >
+                <MaterialIcon icon="workspace_premium" className="text-xl" filled />
+                {t("lockedUpgrade")}
+              </Link>
+              {currentUserId === null && (
+                <Link
+                  href={`/login?callbackUrl=${encodeURIComponent(`/recipe/${id}`)}`}
+                  className="text-sm font-bold text-primary hover:underline"
+                >
+                  {t("lockedSignIn")}
+                </Link>
+              )}
+            </section>
+          )}
+
+          {!locked && (<>
           {/* Servings */}
           <div className="flex items-center justify-between bg-oat-milk p-4 rounded-xl">
             <div>
@@ -686,12 +730,13 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
               </div>
             </section>
           )}
+          </>)}
 
           {/* Ad between ingredients and steps */}
           <AdSlot slot="recipe-mid" format="horizontal" />
 
           {/* Steps */}
-          {recipe.steps.length > 0 && (
+          {!locked && recipe.steps.length > 0 && (
             <section>
               <h3 className="text-xl font-bold mb-4">{t("steps")}</h3>
               <div className="flex flex-col gap-8">
@@ -735,7 +780,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
       )}
 
       {/* Brew Mode */}
-      {showBrewMode && recipe.steps.length > 0 && (
+      {showBrewMode && !locked && recipe.steps.length > 0 && (
         <BrewMode
           steps={recipe.steps}
           brewTimeSec={totalTime}
@@ -749,7 +794,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
       )}
 
       {/* Brew Log Modal */}
-      {showBrewLog && (
+      {showBrewLog && !locked && (
         <BrewLogModal
           recipeId={recipe.id}
           recipeName={recipe.title}

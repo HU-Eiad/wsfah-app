@@ -1,0 +1,17 @@
+{
+  "loading": "جاري التحميل...",
+  "noName": "بدون اسم",
+  "prev": "السابق",
+  "next": "التالي",
+  "roles": {
+    "USER": "مستخدم",
+    "CREATOR": "منشئ",
+    "BRAND_ADMIN": "مدير علامة",
+    "SUPERADMIN": "مدير عام"
+  },
+  "status": {
+    "ACTIVE": "نشط",
+    "SUSPENDED": "معلّق"
+  },
+  "unknown": "غير معروف"
+}

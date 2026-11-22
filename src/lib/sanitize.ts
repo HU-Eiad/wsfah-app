@@ -1,5 +1,6 @@
 // Strips sensitive fields from user objects before sending to client
 export function sanitizeUser<T extends Record<string, unknown>>(user: T): Omit<T, "password"> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password: _, ...safe } = user;
   return safe as Omit<T, "password">;
 }

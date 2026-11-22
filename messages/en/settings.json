@@ -55,5 +55,30 @@
     "viewProfile": "View profile",
     "manageSubscription": "Manage subscription",
     "signOut": "Sign out"
+  },
+  "deleteAccount": {
+    "title": "Delete account",
+    "intro": "Permanently delete your WSFA account. This can't be undone.",
+    "deletedTitle": "Deleted",
+    "deletedBody": "Your brew journal and brew logs, saved and liked recipes, follows, collections, notifications and push notification tokens.",
+    "anonymisedTitle": "Anonymised",
+    "anonymisedBody": "Your name becomes \"deleted user\" and your email, phone, photo, bio, password and sign-in methods (including Google) are removed. Recipes, posts and comments you published stay visible, shown as from a deleted user.",
+    "brandNote": "If you own a brand, transfer or delete it first.",
+    "button": "Delete my account",
+    "dialogTitle": "Delete your account?",
+    "dialogBody": "You will be signed out and won't be able to sign in to this account again.",
+    "passwordLabel": "Your password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmLabel": "Type {word} to confirm",
+    "confirmWord": "DELETE",
+    "cancel": "Cancel",
+    "confirm": "Delete permanently",
+    "deleting": "Deleting…",
+    "errors": {
+      "passwordRequired": "Enter your password to continue.",
+      "wrongPassword": "The password is incorrect.",
+      "ownsBrand": "You own a brand. Transfer it to another member or delete it before deleting your account.",
+      "generic": "Couldn't delete your account. Please try again."
+    }
   }
 }

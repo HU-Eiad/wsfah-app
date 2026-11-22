@@ -1,0 +1,41 @@
+{
+  "title": "Challenges",
+  "new": "New challenge",
+  "edit": "Edit challenge",
+  "fTitle": "Title",
+  "fDescription": "Description",
+  "fIcon": "Icon (Material)",
+  "fPoints": "Reward points",
+  "fMaxProgress": "Max progress",
+  "fRank": "Rank",
+  "fCategory": "Category",
+  "update": "Update challenge",
+  "create": "Create challenge",
+  "empty": "No challenges yet.",
+  "colChallenge": "Challenge",
+  "colRank": "Rank",
+  "colCategory": "Category",
+  "colPoints": "Points",
+  "colProgress": "Progress",
+  "colParticipants": "Participants",
+  "colStatus": "Status",
+  "colActions": "Actions",
+  "steps": "{count, plural, one {# step} other {# steps}}",
+  "active": "Active",
+  "inactive": "Inactive",
+  "editBtn": "Edit",
+  "deleteBtn": "Delete",
+  "confirmDelete": "Delete this challenge?",
+  "close": "Close",
+  "ranks": {
+    "Bronze": "Bronze",
+    "Silver": "Silver",
+    "Gold": "Gold"
+  },
+  "categories": {
+    "General": "General",
+    "Brewing": "Brewing",
+    "Social": "Social",
+    "Streak": "Streak"
+  }
+}

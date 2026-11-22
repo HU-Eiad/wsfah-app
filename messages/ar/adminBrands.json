@@ -1,0 +1,23 @@
+{
+  "title": "العلامات التجارية",
+  "empty": "لا توجد علامات تجارية.",
+  "status": {
+    "ALL": "الكل",
+    "PENDING": "قيد المراجعة",
+    "APPROVED": "موافق عليها",
+    "REJECTED": "مرفوضة"
+  },
+  "types": {
+    "roaster": "محمصة",
+    "cafe": "مقهى",
+    "equipment": "معدات",
+    "tea_brand": "علامة شاي"
+  },
+  "colCompany": "الشركة",
+  "colType": "النوع",
+  "colOwner": "المالك",
+  "colStatus": "الحالة",
+  "colActions": "إجراءات",
+  "approve": "موافقة",
+  "reject": "رفض"
+}

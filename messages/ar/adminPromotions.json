@@ -1,0 +1,36 @@
+{
+  "title": "طلبات الترويج",
+  "pendingCount": "{count} معلق",
+  "subtitle": "مراجعة وإدارة طلبات ترويج المحامص",
+  "filterCount": "{label} ({count})",
+  "empty": "لا توجد طلبات ترويج",
+  "emptyHint": "يمكن للمحامص طلب الترويج من صفحة علامتهم التجارية",
+  "priority": "الأولوية: {priority}",
+  "bannerAlt": "بانر الترويج",
+  "fPriority": "الأولوية (الأعلى = يظهر أولاً)",
+  "fNotes": "ملاحظات الإدارة",
+  "fNotesPlaceholder": "ملاحظات داخلية...",
+  "fStart": "تاريخ البدء",
+  "fEnd": "تاريخ الانتهاء",
+  "save": "حفظ التغييرات",
+  "cancel": "إلغاء",
+  "approve": "موافقة",
+  "reject": "رفض",
+  "end": "إنهاء",
+  "close": "إغلاق",
+  "settings": "إعدادات",
+  "delete": "حذف",
+  "confirmDelete": "حذف طلب الترويج هذا؟",
+  "status": {
+    "ALL": "الكل",
+    "PENDING": "قيد المراجعة",
+    "APPROVED": "موافق عليه",
+    "REJECTED": "مرفوض",
+    "EXPIRED": "منتهي"
+  },
+  "placements": {
+    "HOME_TOP": "الصفحة الرئيسية",
+    "EXPLORE_TOP": "صفحة الاستكشاف",
+    "BOTH": "الرئيسية + الاستكشاف"
+  }
+}

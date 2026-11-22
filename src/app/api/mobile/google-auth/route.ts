@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "الحساب غير موجود" }, { status: 404 });
     }
-    if (user.status === "SUSPENDED") {
+    if (user.status === "SUSPENDED" || user.status === "DELETED") {
       return NextResponse.json({ error: "الحساب موقوف" }, { status: 403 });
     }
 

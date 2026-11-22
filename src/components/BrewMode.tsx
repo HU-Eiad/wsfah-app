@@ -30,7 +30,6 @@ export default function BrewMode({ steps, brewTimeSec, recipeName, onClose, onCo
 
   const totalSteps = steps.length;
   const step = steps[currentStep];
-  const progress = totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 0;
   const timerProgress = brewTimeSec > 0 ? ((brewTimeSec - timer) / brewTimeSec) * 100 : 0;
 
   useEffect(() => {

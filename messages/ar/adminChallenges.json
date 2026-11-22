@@ -1,0 +1,41 @@
+{
+  "title": "التحديات",
+  "new": "تحدي جديد",
+  "edit": "تعديل التحدي",
+  "fTitle": "العنوان",
+  "fDescription": "الوصف",
+  "fIcon": "الأيقونة (Material)",
+  "fPoints": "نقاط المكافأة",
+  "fMaxProgress": "الحد الأقصى للتقدم",
+  "fRank": "الرتبة",
+  "fCategory": "الفئة",
+  "update": "تحديث التحدي",
+  "create": "إنشاء التحدي",
+  "empty": "لا توجد تحديات بعد.",
+  "colChallenge": "التحدي",
+  "colRank": "الرتبة",
+  "colCategory": "الفئة",
+  "colPoints": "النقاط",
+  "colProgress": "التقدم",
+  "colParticipants": "المشاركون",
+  "colStatus": "الحالة",
+  "colActions": "إجراءات",
+  "steps": "{count} خطوة",
+  "active": "نشط",
+  "inactive": "غير نشط",
+  "editBtn": "تعديل",
+  "deleteBtn": "حذف",
+  "confirmDelete": "حذف هذا التحدي؟",
+  "close": "إغلاق",
+  "ranks": {
+    "Bronze": "برونزي",
+    "Silver": "فضي",
+    "Gold": "ذهبي"
+  },
+  "categories": {
+    "General": "عام",
+    "Brewing": "التحضير",
+    "Social": "اجتماعي",
+    "Streak": "الاستمرارية"
+  }
+}

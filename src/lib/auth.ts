@@ -36,7 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!user || !user.password) return null;
 
         // Block suspended users
-        if (user.status === "SUSPENDED") return null;
+        if (user.status === "SUSPENDED" || user.status === "DELETED") return null;
 
         const isValid = await compare(password, user.password);
         if (!isValid) return null;
@@ -113,7 +113,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         // Block suspended users
-        if (user.status === "SUSPENDED") return null;
+        if (user.status === "SUSPENDED" || user.status === "DELETED") return null;
 
         return {
           id: user.id,
@@ -143,7 +143,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               data: {
                 email: profile.email,
                 name: profile.name || null,
-                image: (profile as any).picture as string || null,
+                image: typeof profile.picture === "string" ? profile.picture : null,
               },
             });
           }

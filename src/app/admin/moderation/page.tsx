@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { intlLocale } from "@/i18n/format";
 
 interface Report {
   id: string;
@@ -16,6 +18,9 @@ interface Report {
 export default function AdminModerationPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("adminModeration");
+  const ta = useTranslations("admin");
+  const locale = intlLocale(useLocale());
 
   useEffect(() => {
     fetch("/api/admin/reports")
@@ -42,13 +47,13 @@ export default function AdminModerationPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">الإشراف</h2>
+      <h2 className="text-2xl font-bold text-[#eef0e8] mb-6">{t("title")}</h2>
 
       {loading ? (
-        <p className="text-[#eef0e899]">جاري التحميل...</p>
+        <p className="text-[#eef0e899]">{ta("loading")}</p>
       ) : reports.length === 0 ? (
         <div className="bg-[#16261d] border border-[#eef0e80d] rounded-2xl p-8 text-center">
-          <p className="text-[#eef0e899]">لا توجد بلاغات معلقة.</p>
+          <p className="text-[#eef0e899]">{t("empty")}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -68,13 +73,13 @@ export default function AdminModerationPage() {
                     </span>
                   </div>
                   <p className="text-sm text-[#eef0e8aa] mb-1">
-                    أبلغ بواسطة: {report.reporter?.name || report.reporter?.email || "غير معروف"}
+                    {t("reportedBy", { name: report.reporter?.name || report.reporter?.email || ta("unknown") })}
                   </p>
                   {report.details && (
                     <p className="text-sm text-[#eef0e8cc] mt-2">{report.details}</p>
                   )}
                   <p className="text-xs text-[#eef0e880] mt-2">
-                    {new Date(report.createdAt).toLocaleString("en-US")}
+                    {new Date(report.createdAt).toLocaleString(locale)}
                   </p>
                 </div>
                 <div className="flex gap-2 ms-4">
@@ -82,13 +87,13 @@ export default function AdminModerationPage() {
                     onClick={() => handleAction(report.id, "DISMISSED")}
                     className="px-3 py-1.5 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-[#eef0e8cc] text-xs font-medium"
                   >
-                    رفض
+                    {t("dismiss")}
                   </button>
                   <button
                     onClick={() => handleAction(report.id, "ACTION_TAKEN")}
                     className="px-3 py-1.5 rounded bg-red-600 hover:bg-red-700 text-white text-xs font-medium"
                   >
-                    اتخاذ إجراء
+                    {t("takeAction")}
                   </button>
                 </div>
               </div>
