@@ -3,12 +3,18 @@
 // HTML pages (which can contain signed-in user data) are never stored, so nothing
 // can leak between users sharing a device. Navigations are network-first with the
 // pre-cached /offline page as the fallback.
-const CACHE_NAME = "wsfa-v3";
+const CACHE_NAME = "wsfa-v4";
 const OFFLINE_URL = "/offline";
 const PRECACHE = [OFFLINE_URL, "/brand/wsfa-mark.svg", "/brand/banners/empty-state.svg"];
 
-// Same-origin paths that are safe to serve cache-first (public, versioned or static).
-const STATIC_PREFIXES = ["/_next/static/", "/brand/", "/icons/"];
+// Same-origin requests that are safe to serve cache-first: hashed Next.js build files,
+// and image files from public/. Note /brand/<id> is also a PAGE route (its RSC data is
+// fetched without mode "navigate"), so /brand/ only counts for actual image files.
+function isStaticAsset(url) {
+  if (url.search) return false; // e.g. ?_rsc= page data
+  if (url.pathname.startsWith("/_next/static/")) return true;
+  return /^\/(brand|icons)\/.+\.(svg|png|jpe?g|webp|ico)$/i.test(url.pathname);
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -59,7 +65,7 @@ self.addEventListener("fetch", (event) => {
   }
 
   // Static assets: cache-first.
-  if (STATIC_PREFIXES.some((p) => url.pathname.startsWith(p))) {
+  if (isStaticAsset(url)) {
     event.respondWith(
       caches.match(request).then(
         (cached) =>
