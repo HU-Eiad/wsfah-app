@@ -37,7 +37,7 @@ interface RecipeDetail {
   brewParams: { temperature: string; ratio: string; grindSize: string; brewTimeSec: number } | null;
 }
 
-const CATEGORIES = ["pour-over", "cold-brew", "espresso", "matcha", "tea", "rituals"];
+const CATEGORIES = ["pour-over", "cold-brew", "espresso", "matcha", "tea"];
 const DIFFICULTIES = ["Beginner", "Intermediate", "Advanced"];
 const TIERS = ["FREE", "BASIC", "PREMIUM", "PRO"];
 

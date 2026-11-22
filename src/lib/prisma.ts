@@ -19,6 +19,8 @@ const cols = [
     `ALTER TABLE "PromotionRequest" ADD COLUMN IF NOT EXISTS "duration" INTEGER`,
     `ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "tokenVersion" INTEGER NOT NULL DEFAULT 0`,
     `CREATE TABLE IF NOT EXISTS "ProcessedPayment" ("id" TEXT NOT NULL PRIMARY KEY, "kind" TEXT NOT NULL, "userId" TEXT, "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP)`,
+    // "Rituals" category retired (2026-11-23); kept only while a recipe still uses it.
+    `DELETE FROM "Category" WHERE "slug" = 'rituals' AND NOT EXISTS (SELECT 1 FROM "Recipe" WHERE "category" IN ('rituals', 'طقوس'))`,
   ];
 
 async function syncSchema(base: PrismaClient) {

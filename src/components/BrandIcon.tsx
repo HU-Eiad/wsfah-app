@@ -29,5 +29,4 @@ export const CATEGORY_ICONS: Record<string, string> = {
   espresso: "cat-espresso",
   matcha: "cat-matcha",
   tea: "cat-tea",
-  rituals: "cat-rituals",
 };

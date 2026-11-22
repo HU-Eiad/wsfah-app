@@ -58,8 +58,7 @@
     "cold-brew": "Cold brew",
     "espresso": "Espresso",
     "matcha": "Matcha",
-    "tea": "Tea",
-    "rituals": "Coffee rituals"
+    "tea": "Tea"
   },
   "difficulties": {
     "Beginner": "Beginner",

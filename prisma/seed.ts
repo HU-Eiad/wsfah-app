@@ -29,7 +29,6 @@ async function main() {
     { name: "إسبريسو", slug: "espresso", icon: "bolt" },
     { name: "ماتشا", slug: "matcha", icon: "spa" },
     { name: "شاي", slug: "tea", icon: "emoji_food_beverage" },
-    { name: "طقوس", slug: "rituals", icon: "self_improvement" },
   ];
   for (const cat of categoryData) {
     await prisma.category.upsert({
