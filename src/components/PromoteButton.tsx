@@ -3,6 +3,11 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
+import RiyalSign from "./RiyalSign";
+import { useApiErrorMessage } from "./useApiErrorMessage";
+
+/** sessionStorage key holding the promotion awaiting payment confirmation. */
+export const PENDING_PROMOTION_KEY = "wsfa-pending-promotion";
 
 interface PromoteButtonProps {
   companyId: string;
@@ -22,11 +27,12 @@ interface PricingOption {
 export default function PromoteButton({ companyId, companyName }: PromoteButtonProps) {
   const t = useTranslations("promoteButton");
   const tc = useTranslations("common");
+  const apiError = useApiErrorMessage();
   const [open, setOpen] = useState(false);
   const [placement, setPlacement] = useState("HOME_TOP");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<"success" | "error" | "conflict" | null>(null);
+  const [result, setResult] = useState<"error" | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [pricing, setPricing] = useState<PricingOption[]>([]);
   const [selectedPricing, setSelectedPricing] = useState<string | null>(null);
@@ -34,8 +40,8 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
   useEffect(() => {
     if (!open) return;
     fetch("/api/admin/promotion-pricing")
-      .then((r) => r.json())
-      .then((data) => setPricing(data))
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => setPricing(Array.isArray(data) ? data : []))
       .catch(() => {});
   }, [open]);
 
@@ -48,30 +54,34 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
     ? selectedPlan.price * (1 - selectedPlan.discount / 100)
     : null;
 
+  // Paid flow: checkout creates the promotion request (awaiting payment) and
+  // returns a StreamPay link. After payment the user lands on /pricing, which
+  // calls /api/promotions/verify with the stored promotion id.
   const handleSubmit = async () => {
+    if (!selectedPricing || submitting) return;
     setSubmitting(true);
     setResult(null);
     try {
-      const res = await fetch("/api/promotions", {
+      const res = await fetch("/api/promotions/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ companyId, placement, message }),
+        body: JSON.stringify({ companyId, pricingId: selectedPricing, placement, message }),
       });
-      if (res.ok) {
-        setResult("success");
-        setMessage("");
-        setTimeout(() => { setOpen(false); setResult(null); }, 2000);
-      } else if (res.status === 409) {
-        setResult("conflict");
-      } else {
-        const data = await res.json();
-        setErrorMsg(data.error || t("errors.submitFailed"));
-        setResult("error");
+      const data = res.ok ? await res.json().catch(() => ({})) : {};
+      if (res.ok && typeof data.url === "string") {
+        try {
+          if (data.promotionId) sessionStorage.setItem(PENDING_PROMOTION_KEY, String(data.promotionId));
+        } catch {}
+        // Stay in the submitting state while the browser leaves for the payment page.
+        window.location.assign(data.url);
+        return;
       }
+      setErrorMsg(res.ok ? t("errors.submitFailed") : apiError(res.status));
+      setResult("error");
+      setSubmitting(false);
     } catch {
       setErrorMsg(t("errors.network"));
       setResult("error");
-    } finally {
       setSubmitting(false);
     }
   };
@@ -97,6 +107,7 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
               </div>
               <button
                 onClick={() => { setOpen(false); setResult(null); }}
+                disabled={submitting}
                 aria-label={tc("close")}
                 className="size-10 rounded-full hover:bg-oat-milk flex items-center justify-center"
               >
@@ -119,6 +130,7 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
                     <button
                       key={opt.value}
                       onClick={() => { setPlacement(opt.value); setSelectedPricing(null); }}
+                      disabled={submitting}
                       className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-colors text-start ${
                         placement === opt.value
                           ? "border-primary bg-primary/10"
@@ -143,6 +155,9 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
               </div>
 
               {/* Pricing Plans */}
+              {filteredPricing.length === 0 && (
+                <p className="text-sm text-espresso/60">{t("noPlans")}</p>
+              )}
               {filteredPricing.length > 0 && (
                 <div>
                   <label className="block text-sm font-semibold mb-3">
@@ -155,6 +170,7 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
                         <button
                           key={p.id}
                           onClick={() => setSelectedPricing(p.id)}
+                          disabled={submitting}
                           className={`w-full flex items-center justify-between p-4 rounded-xl border transition-colors text-start ${
                             selectedPricing === p.id
                               ? "border-primary bg-primary/10"
@@ -168,14 +184,14 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
                           <div className="text-end">
                             {p.discount > 0 ? (
                               <>
-                                <p className="text-xs text-espresso/50 line-through tabular-nums">${p.price.toFixed(2)}</p>
-                                <p className="font-bold text-primary tabular-nums">${final.toFixed(2)}</p>
+                                <p className="text-xs text-espresso/50 line-through tabular-nums"><RiyalSign /> {p.price.toFixed(2)}</p>
+                                <p className="font-bold text-primary tabular-nums"><RiyalSign /> {final.toFixed(2)}</p>
                                 <span className="text-[11px] bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 px-1.5 py-0.5 rounded-full font-bold">
                                   {t("discount", { percent: p.discount })}
                                 </span>
                               </>
                             ) : (
-                              <p className="font-bold tabular-nums">${p.price.toFixed(2)}</p>
+                              <p className="font-bold tabular-nums"><RiyalSign /> {p.price.toFixed(2)}</p>
                             )}
                           </div>
                         </button>
@@ -211,9 +227,18 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
                       <p className="text-xs text-espresso/60">{t("promotionDays", { count: selectedPlan.duration })}</p>
                     </div>
                     <div className="text-end">
-                      <p className="font-display text-2xl text-primary tabular-nums">${finalPrice.toFixed(2)}</p>
+                      <p className="font-display text-2xl text-primary tabular-nums"><RiyalSign /> {finalPrice.toFixed(2)}</p>
                       {selectedPlan.discount > 0 && (
-                        <p className="text-xs text-green-700 dark:text-green-400">{t("youSave", { amount: `$${(selectedPlan.price - finalPrice).toFixed(2)}` })}</p>
+                        <p className="text-xs text-green-700 dark:text-green-400">
+                          {t.rich("youSave", {
+                            value: (selectedPlan.price - finalPrice).toFixed(2),
+                            amount: (chunks) => (
+                              <span className="tabular-nums" dir="ltr">
+                                <RiyalSign /> {chunks}
+                              </span>
+                            ),
+                          })}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -236,18 +261,6 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
               </div>
 
               {/* Result Messages */}
-              {result === "success" && (
-                <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 dark:border-green-800 rounded-xl text-green-700 dark:text-green-300 text-sm font-medium">
-                  <MaterialIcon icon="check_circle" filled className="text-green-600" />
-                  {t("success")}
-                </div>
-              )}
-              {result === "conflict" && (
-                <div className="flex items-center gap-2 p-4 bg-amber-50 border border-amber-200 dark:border-amber-800 rounded-xl text-amber-700 dark:text-amber-300 text-sm font-medium">
-                  <MaterialIcon icon="warning" className="text-amber-600" />
-                  {t("conflict")}
-                </div>
-              )}
               {result === "error" && (
                 <div className="flex items-center gap-2 p-4 bg-red-50 border border-red-200 dark:border-red-800 rounded-xl text-red-700 dark:text-red-300 text-sm font-medium">
                   <MaterialIcon icon="error" className="text-red-600" />
@@ -258,14 +271,14 @@ export default function PromoteButton({ companyId, companyName }: PromoteButtonP
               {/* Submit */}
               <button
                 onClick={handleSubmit}
-                disabled={submitting || result === "success"}
+                disabled={submitting || !selectedPricing}
                 className="w-full py-3.5 bg-primary text-on-primary rounded-xl font-bold text-sm hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <div className="size-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <>
-                    <MaterialIcon icon="send" className="text-lg" />
+                    <MaterialIcon icon="payments" className="text-lg" />
                     {t("submit")}
                   </>
                 )}

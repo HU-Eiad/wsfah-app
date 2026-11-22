@@ -74,8 +74,15 @@ export async function DELETE(
     where: { ownerId: member.userId },
   });
   if (otherMemberships === 0 && ownedCompanies === 0) {
-    await prisma.user.update({
-      where: { id: member.userId },
+    // Only undo the legacy team auto-upgrade (Pro with no payment behind it).
+    // A plan the member pays for always has an expiry date and is left alone.
+    await prisma.user.updateMany({
+      where: {
+        id: member.userId,
+        subscriptionTier: { in: ["pro", "PRO"] },
+        subscriptionExpiresAt: null,
+        trialPlanSlug: null,
+      },
       data: { subscriptionTier: "free" },
     });
   }

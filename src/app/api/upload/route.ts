@@ -117,7 +117,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const formData = await req.formData();
+  // Reject oversized bodies before buffering them (largest allowed file is a 50MB video).
+  const declared = Number(req.headers.get("content-length") || 0);
+  if (declared > 51 * 1024 * 1024) {
+    return NextResponse.json({ error: "File too large (max 50MB)" }, { status: 413 });
+  }
+
+  const formData = await req.formData().catch(() => null);
+  if (!formData) {
+    return NextResponse.json({ error: "Invalid upload" }, { status: 400 });
+  }
   const file = formData.get("file") as File | null;
 
   if (!file) {

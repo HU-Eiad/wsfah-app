@@ -22,48 +22,63 @@ export default function GroupsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ name: "", description: "", isPublic: true });
   const [creating, setCreating] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
-  async function fetchGroups(query = "") {
-    setLoading(true);
-    const params = query ? `?search=${encodeURIComponent(query)}` : "";
-    const res = await fetch(`/api/groups${params}`);
-    if (res.ok) {
-      const data = await res.json();
-      setGroups(data);
-    }
-    setLoading(false);
-  }
-
+  // One effect for the initial load, debounced search and reloads. Stale
+  // requests are aborted so an older response can never overwrite a newer one.
   useEffect(() => {
-    fetchGroups();
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => fetchGroups(search), 300);
-    return () => clearTimeout(timer);
-  }, [search]);
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const params = search ? `?search=${encodeURIComponent(search)}` : "";
+        const res = await fetch(`/api/groups${params}`, { signal: controller.signal });
+        if (res.ok) {
+          const data = await res.json();
+          if (!controller.signal.aborted && Array.isArray(data)) setGroups(data);
+        }
+      } catch {
+        // aborted or network error: keep the current list
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }, search ? 300 : 0);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [search, reloadKey]);
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name.trim()) return;
     setCreating(true);
-    const res = await fetch("/api/groups", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    if (res.ok) {
-      setShowCreate(false);
-      setForm({ name: "", description: "", isPublic: true });
-      fetchGroups(search);
+    try {
+      const res = await fetch("/api/groups", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setShowCreate(false);
+        setForm({ name: "", description: "", isPublic: true });
+        setReloadKey((k) => k + 1);
+      }
+    } catch {
+      // network error: keep the form open so the user can retry
+    } finally {
+      setCreating(false);
     }
-    setCreating(false);
   }
 
   async function handleJoin(groupId: string) {
-    const res = await fetch(`/api/groups/${groupId}/members`, { method: "POST" });
-    if (res.ok || res.status === 409) {
-      window.location.href = `/groups/${groupId}`;
+    try {
+      const res = await fetch(`/api/groups/${groupId}/members`, { method: "POST" });
+      if (res.ok || res.status === 409) {
+        window.location.href = `/groups/${groupId}`;
+      }
+    } catch {
+      // network error: stay on the list
     }
   }
 

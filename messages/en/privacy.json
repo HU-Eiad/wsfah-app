@@ -1,0 +1,109 @@
+{
+  "title": "Privacy policy",
+  "lead": "What information WSFA collects when you use the website and app, why we use it, and the choices you have.",
+  "updatedOn": "22 November 2026",
+  "sections": {
+    "account": {
+      "title": "Your account",
+      "body": "When you create an account or sign in we collect:",
+      "points": [
+        "Your name, and your email address and/or mobile phone number.",
+        "Your password, stored only in hashed form (never in plain text). Phone sign-in uses one-time codes sent by SMS.",
+        "If you sign in with Google: your name, email address and profile photo as provided by Google.",
+        "Optional profile details such as your photo and bio, and your privacy settings."
+      ]
+    },
+    "content": {
+      "title": "What you create and share",
+      "body": "We store the content you add so the service can show it to you and, where intended, to others:",
+      "points": [
+        "Recipes, photos, gallery posts, stories, comments, ratings, collections and group posts.",
+        "Direct messages, which are visible to the participants of the conversation.",
+        "Your brew journal (brew logs, grind, water, timings and tasting notes) and your equipment list.",
+        "Event RSVPs, reports you submit, and brand or promotion requests if you manage a brand."
+      ]
+    },
+    "usage": {
+      "title": "Activity and usage",
+      "body": "To run features like the feed, recommendations, rewards and brand statistics we record:",
+      "points": [
+        "Likes, saves, follows, and points, badges, challenges and rewards you earn or redeem.",
+        "Usage events about which features and pages are used, and visits to brand pages (shown to brands as aggregate statistics).",
+        "Security records for sensitive actions, which can include an IP address."
+      ]
+    },
+    "device": {
+      "title": "Notifications and devices",
+      "body": "If you allow notifications we store a push token for your device or browser so we can send them:",
+      "points": [
+        "On the mobile app, a device push token delivered through Firebase Cloud Messaging.",
+        "In the browser, a Web Push subscription.",
+        "You can turn notifications off at any time in the app settings or your device settings."
+      ]
+    },
+    "location": {
+      "title": "Location",
+      "body": "WSFA only uses your location when you ask for it, for example to find coffee places near you, and only after you grant the permission on your device. We do not track your location in the background and do not save it to your profile."
+    },
+    "scale": {
+      "title": "Bluetooth scales",
+      "body": "If you connect a Bluetooth coffee scale in the mobile app, weight and timer readings are processed on your device to guide your brew. They are not sent to our servers unless you choose to save a brew log."
+    },
+    "payments": {
+      "title": "Payments",
+      "body": "Subscriptions and brand promotions are paid through StreamPay. Your card details are entered on StreamPay's payment page and are never sent to or stored by WSFA. We keep a record of the plan, amount, status and payment reference of each purchase."
+    },
+    "providers": {
+      "title": "Service providers",
+      "body": "We use trusted providers to operate WSFA. They process data only to provide their service to us:",
+      "points": [
+        "Hosting and database providers that run the website, app backend and data storage.",
+        "S3-compatible file storage for uploaded photos and images.",
+        "Google, for Google sign-in, and Firebase Cloud Messaging for app notifications.",
+        "StreamPay, for payments.",
+        "SMS and email providers, for verification codes and account emails.",
+        "Where ads are shown, Google AdSense, which may use cookies under Google's own policies."
+      ]
+    },
+    "use": {
+      "title": "How we use information",
+      "body": "We use the information above to:",
+      "points": [
+        "Create and secure your account and keep you signed in.",
+        "Show your content, profile and activity in the service according to your settings.",
+        "Send notifications and account emails you asked for or that are needed for your account.",
+        "Process subscriptions, promotions and rewards.",
+        "Moderate content, handle reports and prevent abuse.",
+        "Understand how features are used so we can improve them."
+      ]
+    },
+    "sharing": {
+      "title": "Sharing",
+      "body": "We do not sell your personal information. We share it only with the service providers listed above, when you choose to make content public, or when we are required to by law."
+    },
+    "visibility": {
+      "title": "What others can see",
+      "body": "Your name, photo, bio, public recipes, posts and ratings can be seen by other users and, for recipes and public profiles, by anyone with the link. Your email address and phone number are not shown on your public profile. Privacy settings let you control who sees your followers, likes and saved recipes."
+    },
+    "retention": {
+      "title": "How long we keep data",
+      "body": "We keep your information for as long as your account is active. One-time codes and verification tokens expire automatically. Some records, such as payment and security records, may be kept longer where needed to meet legal obligations or resolve disputes."
+    },
+    "deletion": {
+      "title": "Deleting your account",
+      "body": "You can ask us to delete your account at any time by contacting us at support@wsfa.app from the email or phone number linked to the account. We will delete your account and the personal data and content linked to it, except records we must keep by law (such as payment records). You can also delete individual recipes, posts and brew logs yourself in the app."
+    },
+    "rights": {
+      "title": "Your choices",
+      "body": "You can view and update your profile details in settings, change your privacy settings, turn notifications on or off, and ask us for a copy of your data or for corrections by contacting us."
+    },
+    "children": {
+      "title": "Children",
+      "body": "WSFA is not directed to children. If you believe a child has given us personal information, contact us and we will remove it."
+    },
+    "changes": {
+      "title": "Changes to this policy",
+      "body": "We may update this policy when the service changes. We will update the date at the top of this page and, for significant changes, let you know in the app."
+    }
+  }
+}

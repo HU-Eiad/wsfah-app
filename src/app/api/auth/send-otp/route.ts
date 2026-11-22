@@ -1,13 +1,14 @@
+import { randomInt } from "crypto";
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { parseBody, sendOtpSchema } from "@/lib/validation";
-import { rateLimitAuth } from "@/lib/rate-limit";
+import { rateLimitAuth, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   try {
     // Rate limit by IP
-    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const ip = getClientIp(req);
     const rl = rateLimitAuth(ip);
     if (!rl.success) {
       return NextResponse.json(
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
     }
 
     // Generate a random 6-digit code
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = randomInt(100000, 1000000).toString();
     const hashedOtp = await hash(otp, 10);
 
     // Store hashed OTP with 5-minute expiry

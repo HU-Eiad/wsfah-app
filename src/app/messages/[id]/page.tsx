@@ -33,9 +33,14 @@ export default function ConversationPage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const fetchMessages = useCallback(async () => {
-    const res = await fetch(`/api/messages/conversations/${id}`);
-    if (!res.ok) return;
-    const data: ConversationInfo = await res.json();
+    let data: ConversationInfo;
+    try {
+      const res = await fetch(`/api/messages/conversations/${id}`);
+      if (!res.ok) return;
+      data = await res.json();
+    } catch {
+      return; // network blip: the next poll retries
+    }
     setMessages(data.messages.slice().reverse());
 
     // Determine other user from messages
@@ -61,9 +66,41 @@ export default function ConversationPage() {
     return () => clearInterval(interval);
   }, [currentUserId, fetchMessages]);
 
+  // Track whether the reader is near the bottom (the list or the page may scroll).
+  const nearBottomRef = useRef(true);
+  const prevCountRef = useRef(0);
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    const el = containerRef.current;
+    const update = () => {
+      const threshold = 120;
+      if (el && el.scrollHeight > el.clientHeight + 1) {
+        nearBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+      } else {
+        const doc = document.documentElement;
+        nearBottomRef.current = doc.scrollHeight - window.scrollY - window.innerHeight < threshold;
+      }
+    };
+    el?.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("scroll", update, { passive: true });
+    return () => {
+      el?.removeEventListener("scroll", update);
+      window.removeEventListener("scroll", update);
+    };
+  }, []);
+
+  // Auto-scroll only when new messages arrive and the reader is already near the
+  // bottom, or the newest message is their own. Polling with no new messages
+  // never moves the view.
+  useEffect(() => {
+    const prev = prevCountRef.current;
+    prevCountRef.current = messages.length;
+    if (messages.length <= prev) return;
+    const newest = messages[messages.length - 1];
+    const isOwn = !!currentUserId && newest?.sender.id === currentUserId;
+    if (prev === 0 || nearBottomRef.current || isOwn) {
+      bottomRef.current?.scrollIntoView({ behavior: prev === 0 ? "auto" : "smooth" });
+    }
+  }, [messages, currentUserId]);
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();

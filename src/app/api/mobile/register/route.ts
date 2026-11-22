@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { rateLimitAuth } from "@/lib/rate-limit";
+import { rateLimitAuth, getClientIp } from "@/lib/rate-limit";
 import { signMobileToken } from "@/lib/jwt";
 import { logAudit, AUDIT } from "@/lib/audit";
 
 export async function POST(req: Request) {
   try {
-    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const ip = getClientIp(req);
     const rl = rateLimitAuth(ip);
     if (!rl.success) {
       return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
     logAudit(user.id, AUDIT.REGISTER, "user", user.id, { email, method: "mobile" }, ip);
 
-    const token = await signMobileToken({ id: user.id, role: user.role });
+    const token = await signMobileToken({ id: user.id, role: user.role, tokenVersion: user.tokenVersion });
 
     return NextResponse.json({ token, userId: user.id }, { status: 201 });
   } catch (error) {

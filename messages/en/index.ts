@@ -20,6 +20,7 @@ import ns_create from "./create.json";
 import ns_darkModeToggle from "./darkModeToggle.json";
 import ns_desktopOnly from "./desktopOnly.json";
 import ns_equipment from "./equipment.json";
+import ns_errors from "./errors.json";
 import ns_events from "./events.json";
 import ns_eventsDetail from "./eventsDetail.json";
 import ns_explore from "./explore.json";
@@ -36,6 +37,7 @@ import ns_journal from "./journal.json";
 import ns_journalNew from "./journalNew.json";
 import ns_landingPage from "./landingPage.json";
 import ns_leaderboard from "./leaderboard.json";
+import ns_legal from "./legal.json";
 import ns_login from "./login.json";
 import ns_loginActions from "./loginActions.json";
 import ns_messages from "./messages.json";
@@ -45,6 +47,7 @@ import ns_notifications from "./notifications.json";
 import ns_offline from "./offline.json";
 import ns_pricing from "./pricing.json";
 import ns_pricingToggle from "./pricingToggle.json";
+import ns_privacy from "./privacy.json";
 import ns_profile from "./profile.json";
 import ns_profileDetail from "./profileDetail.json";
 import ns_profileTabs from "./profileTabs.json";
@@ -66,6 +69,7 @@ import ns_signup from "./signup.json";
 import ns_signupActions from "./signupActions.json";
 import ns_storiesBar from "./storiesBar.json";
 import ns_storyViewer from "./storyViewer.json";
+import ns_terms from "./terms.json";
 import ns_upgradeModal from "./upgradeModal.json";
 import ns_verifyEmail from "./verifyEmail.json";
 
@@ -91,6 +95,7 @@ const messages = {
   "darkModeToggle": ns_darkModeToggle,
   "desktopOnly": ns_desktopOnly,
   "equipment": ns_equipment,
+  "errors": ns_errors,
   "events": ns_events,
   "eventsDetail": ns_eventsDetail,
   "explore": ns_explore,
@@ -107,6 +112,7 @@ const messages = {
   "journalNew": ns_journalNew,
   "landingPage": ns_landingPage,
   "leaderboard": ns_leaderboard,
+  "legal": ns_legal,
   "login": ns_login,
   "loginActions": ns_loginActions,
   "messages": ns_messages,
@@ -116,6 +122,7 @@ const messages = {
   "offline": ns_offline,
   "pricing": ns_pricing,
   "pricingToggle": ns_pricingToggle,
+  "privacy": ns_privacy,
   "profile": ns_profile,
   "profileDetail": ns_profileDetail,
   "profileTabs": ns_profileTabs,
@@ -137,6 +144,7 @@ const messages = {
   "signupActions": ns_signupActions,
   "storiesBar": ns_storiesBar,
   "storyViewer": ns_storyViewer,
+  "terms": ns_terms,
   "upgradeModal": ns_upgradeModal,
   "verifyEmail": ns_verifyEmail,
 };

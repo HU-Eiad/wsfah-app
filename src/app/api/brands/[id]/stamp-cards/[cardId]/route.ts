@@ -50,10 +50,14 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     return NextResponse.json({ error: "Not authorized" }, { status: 403 });
   }
 
-  await prisma.stampCard.update({
-    where: { id: cardId },
+  // Scope to this brand: a manager of brand A must not deactivate brand B's cards.
+  const res = await prisma.stampCard.updateMany({
+    where: { id: cardId, companyId: id },
     data: { isActive: false },
   });
+  if (res.count === 0) {
+    return NextResponse.json({ error: "Stamp card not found" }, { status: 404 });
+  }
 
   return NextResponse.json({ success: true });
 }

@@ -76,9 +76,17 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
 
   // Fetch recipe data
   useEffect(() => {
+    let cancelled = false;
     fetch(`/api/recipes/${id}`)
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
+        if (cancelled) return;
+        // Non-ok (404/500): keep recipe null so the not-found state shows.
+        if (!data || typeof data !== "object" || !data.id) {
+          setRecipe(null);
+          setLoading(false);
+          return;
+        }
         setRecipe(data);
         setLikeCount(data.likes ?? 0);
         setDisplayRating(data.rating ?? 0);
@@ -89,7 +97,8 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
   }, [id]);
 
   // Fetch current user
@@ -136,6 +145,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
   const submitRating = useCallback(async (value: number) => {
     if (ratingBusy) return;
     setRatingBusy(true);
+    const previousRating = userRating;
     setUserRating(value);
     try {
       const res = await fetch(`/api/recipes/${id}/rate`, {
@@ -143,17 +153,17 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rating: value }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        setDisplayRating(data.rating);
-        setUserRating(data.userRating);
-      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setDisplayRating(data.rating);
+      setUserRating(data.userRating);
     } catch {
-      // revert
+      // Roll back the optimistic rating
+      setUserRating(previousRating);
     } finally {
       setRatingBusy(false);
     }
-  }, [id, ratingBusy]);
+  }, [id, ratingBusy, userRating]);
 
   // Toggle like
   const toggleLike = useCallback(async () => {
@@ -282,7 +292,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
         <div className="text-center">
           <MaterialIcon icon="error_outline" className="text-4xl text-red-400" />
           <p className="text-sm text-slate-500 mt-2">{t("notFound")}</p>
-          <Link href="/" className="text-primary text-sm font-bold mt-3 block">{tc("nav.home")}</Link>
+          <Link href="/home" className="text-primary text-sm font-bold mt-3 block">{tc("nav.home")}</Link>
         </div>
       </div>
     );
@@ -293,7 +303,8 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
       {/* Nav */}
       <nav className="sticky top-0 z-50 flex items-center bg-background-light/80 backdrop-blur-md p-4 justify-between border-b border-primary/10">
         <Link
-          href="/"
+          href="/home"
+          aria-label={tc("back")}
           className="text-slate-900 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 cursor-pointer"
         >
           <MaterialIcon icon="arrow_forward" />
@@ -670,9 +681,6 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
                         <span dir="auto" className="text-[11px] text-slate-500">{ing.name}</span>
                       </div>
                     </div>
-                    <button className="text-primary hover:bg-primary/10 p-2 rounded-full transition-colors">
-                      <MaterialIcon icon="shopping_cart" />
-                    </button>
                   </div>
                 ))}
               </div>

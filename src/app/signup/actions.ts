@@ -7,7 +7,7 @@ import { getTranslations } from "next-intl/server";
 function isRedirect(error: unknown): boolean {
   if (error instanceof Error) {
     const msg = error.message || "";
-    const digest = (error as any).digest;
+    const digest = (error as { digest?: unknown }).digest;
     if (msg.includes("NEXT_REDIRECT") || msg.includes("redirect")) return true;
     if (typeof digest === "string" && digest.includes("NEXT_REDIRECT")) return true;
   }

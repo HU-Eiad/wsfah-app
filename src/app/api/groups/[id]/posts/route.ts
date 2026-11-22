@@ -12,6 +12,24 @@ export async function GET(
   const cursor = searchParams.get("cursor");
   const limit = 20;
 
+  // Posts of private groups are visible to members only.
+  const group = await prisma.group.findUnique({ where: { id }, select: { isPublic: true } });
+  if (!group) {
+    return NextResponse.json({ error: "Group not found" }, { status: 404 });
+  }
+  if (!group.isPublic) {
+    const viewer = await getAuthUser(request);
+    const member = viewer
+      ? await prisma.groupMember.findUnique({
+          where: { groupId_userId: { groupId: id, userId: viewer.id } },
+          select: { id: true },
+        })
+      : null;
+    if (!member) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+  }
+
   const posts = await prisma.groupPost.findMany({
     where: { groupId: id },
     orderBy: { createdAt: "desc" },

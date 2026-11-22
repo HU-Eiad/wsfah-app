@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { randomUUID } from "crypto";
 import { sendPasswordResetEmail } from "@/lib/email";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for") || "unknown";
+  const ip = getClientIp(req);
   const rl = rateLimit(`forgot:${ip}`, 3, 600_000); // 3 per 10 min
   if (!rl.success) {
     return NextResponse.json({ error: "طلبات كثيرة. حاول لاحقاً." }, { status: 429 });

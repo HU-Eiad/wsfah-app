@@ -60,50 +60,41 @@ export function hasFeature(tier: string, feature: "collections" | "messages" | "
   return !!limits[feature];
 }
 
+/** A brand subscription only counts once it has been paid for or trialled, which
+ *  always sets an expiry date. New brands start with tier "basic" and no expiry. */
+function activeCompanySubscription(now: Date) {
+  return { subscriptionExpiresAt: { gte: now } };
+}
+
 /** Get user's effective tier from database.
- *  If the user is an owner or active member of any roaster with a valid subscription,
- *  they automatically get Pro access — even if their personal tier is Free. */
+ *  Personal plans expire at subscriptionExpiresAt; legacy trials (no expiry recorded)
+ *  expire at trialEndsAt. Admin-granted plans without any dates do not expire.
+ *  Owners and active members of a brand with a live subscription get Pro. */
 export async function getUserTier(userId: string): Promise<string> {
+  const now = new Date();
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { subscriptionTier: true, trialEndsAt: true },
+    select: { subscriptionTier: true, subscriptionExpiresAt: true, trialEndsAt: true, trialPlanSlug: true },
   });
-  const personalTier = user?.subscriptionTier || "FREE";
+  let personalTier = user?.subscriptionTier || "FREE";
 
-  // Trust the database value — no auto-downgrade.
-  // Trial expiry and subscription management are handled by
-  // webhooks, /api/checkout/verify, and admin actions.
+  if (user && personalTier.toUpperCase() !== "FREE") {
+    const expired = user.subscriptionExpiresAt
+      ? user.subscriptionExpiresAt < now
+      : !!(user.trialPlanSlug && user.trialEndsAt && user.trialEndsAt < now);
+    if (expired) personalTier = "FREE";
+  }
 
-  // If already Pro or higher, no need to check roaster membership
   if (personalTier.toUpperCase() !== "FREE") return personalTier;
 
-  // Check if user owns any brand with a valid subscription
   const ownedBrand = await prisma.company.findFirst({
-    where: {
-      ownerId: userId,
-      subscriptionTier: { not: "" },
-      OR: [
-        { subscriptionExpiresAt: null }, // no expiry set (lifetime / not yet enforced)
-        { subscriptionExpiresAt: { gte: new Date() } },
-      ],
-    },
+    where: { ownerId: userId, ...activeCompanySubscription(now) },
     select: { id: true },
   });
   if (ownedBrand) return "PRO";
 
-  // Check if user is an active member of any brand with a valid subscription
   const membership = await prisma.companyMember.findFirst({
-    where: {
-      userId,
-      status: "active",
-      company: {
-        subscriptionTier: { not: "" },
-        OR: [
-          { subscriptionExpiresAt: null },
-          { subscriptionExpiresAt: { gte: new Date() } },
-        ],
-      },
-    },
+    where: { userId, status: "active", company: activeCompanySubscription(now) },
     select: { id: true },
   });
   if (membership) return "PRO";

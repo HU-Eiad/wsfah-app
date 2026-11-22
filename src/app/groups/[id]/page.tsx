@@ -39,54 +39,57 @@ export default function GroupDetailPage() {
   const [posting, setPosting] = useState(false);
 
   const fetchGroup = useCallback(async () => {
-    const res = await fetch(`/api/groups/${id}`);
-    if (res.ok) {
-      const data: GroupDetail = await res.json();
-      setGroup(data);
-      setPosts(data.posts);
+    try {
+      const res = await fetch(`/api/groups/${id}`);
+      if (res.ok) {
+        const data: GroupDetail = await res.json();
+        setGroup(data);
+        setPosts(Array.isArray(data.posts) ? data.posts : []);
+      }
+    } catch {
+      // network error: leave the current state (not-found if never loaded)
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [id]);
 
   const fetchPosts = useCallback(async () => {
-    const res = await fetch(`/api/groups/${id}/posts`);
-    if (res.ok) {
-      const data = await res.json();
-      setPosts(data.posts);
+    try {
+      const res = await fetch(`/api/groups/${id}/posts`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.posts)) setPosts(data.posts);
+      }
+    } catch {
+      // keep current posts
     }
   }, [id]);
-
-  const checkMembership = useCallback(async () => {
-    // Try to post an empty check - we'll determine membership from the group API
-    // For now, we optimistically check via a member join attempt
-    // A cleaner approach: just try joining and handle 409
-    const res = await fetch(`/api/groups/${id}/members`, { method: "POST" });
-    if (res.status === 409) {
-      setIsMember(true);
-    } else if (res.ok) {
-      // Just joined
-      setIsMember(true);
-      fetchGroup();
-    }
-  }, [id, fetchGroup]);
 
   useEffect(() => {
     fetchGroup();
   }, [fetchGroup]);
 
   async function handleJoin() {
-    const res = await fetch(`/api/groups/${id}/members`, { method: "POST" });
-    if (res.ok || res.status === 409) {
-      setIsMember(true);
-      fetchGroup();
+    try {
+      const res = await fetch(`/api/groups/${id}/members`, { method: "POST" });
+      if (res.ok || res.status === 409) {
+        setIsMember(true);
+        fetchGroup();
+      }
+    } catch {
+      // network error: membership unchanged
     }
   }
 
   async function handleLeave() {
-    const res = await fetch(`/api/groups/${id}/members`, { method: "DELETE" });
-    if (res.ok) {
-      setIsMember(false);
-      fetchGroup();
+    try {
+      const res = await fetch(`/api/groups/${id}/members`, { method: "DELETE" });
+      if (res.ok) {
+        setIsMember(false);
+        fetchGroup();
+      }
+    } catch {
+      // network error: membership unchanged
     }
   }
 
@@ -94,19 +97,24 @@ export default function GroupDetailPage() {
     e.preventDefault();
     if (!postBody.trim() || posting) return;
     setPosting(true);
-    const res = await fetch(`/api/groups/${id}/posts`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ body: postBody.trim() }),
-    });
-    if (res.ok) {
-      setPostBody("");
-      fetchPosts();
-    } else if (res.status === 403) {
-      // Not a member - attempt join
-      await handleJoin();
+    try {
+      const res = await fetch(`/api/groups/${id}/posts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body: postBody.trim() }),
+      });
+      if (res.ok) {
+        setPostBody("");
+        await fetchPosts();
+      } else if (res.status === 403) {
+        // Not a member - attempt join
+        await handleJoin();
+      }
+    } catch {
+      // network error: keep the draft so the user can retry
+    } finally {
+      setPosting(false);
     }
-    setPosting(false);
   }
 
   if (loading) {

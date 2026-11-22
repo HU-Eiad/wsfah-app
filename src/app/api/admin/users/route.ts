@@ -49,7 +49,11 @@ export async function PATCH(req: Request) {
 
   const data: Record<string, unknown> = {};
   if (role) data.role = role;
-  if (status) data.status = status;
+  if (status) {
+    data.status = status;
+    // Suspending (or any status/role change) revokes existing mobile tokens.
+    data.tokenVersion = { increment: 1 };
+  }
   if (subscriptionTier) data.subscriptionTier = subscriptionTier;
 
   const updated = await prisma.user.update({

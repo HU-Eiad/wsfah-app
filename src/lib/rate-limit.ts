@@ -90,3 +90,19 @@ export async function rateLimitAuthAsync(ip: string) {
 export async function rateLimitWriteAsync(key: string) {
   return rateLimitAsync(`write:${key}`, 30, 60_000);
 }
+
+/**
+ * Client IP for rate-limit keys. The raw X-Forwarded-For header is client-controlled
+ * (anyone can send a fresh value per request), so prefer the address our reverse proxy
+ * sets, then the right-most X-Forwarded-For entry (the one the proxy appended).
+ */
+export function getClientIp(req: Request): string {
+  const real = req.headers.get("x-real-ip");
+  if (real) return real.trim();
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) {
+    const parts = xff.split(",").map((p) => p.trim()).filter(Boolean);
+    if (parts.length) return parts[parts.length - 1];
+  }
+  return "unknown";
+}

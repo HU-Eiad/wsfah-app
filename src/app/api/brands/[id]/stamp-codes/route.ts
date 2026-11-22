@@ -22,7 +22,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const body = await req.json().catch(() => ({}));
   const stampCardId = body.stampCardId;
-  const validSeconds = body.validSeconds || 10; // default 10s for auto-rotating QR
+  // Short-lived by design (auto-rotating QR); clamp so codes can't be minted to share.
+  const requested = Number(body.validSeconds);
+  const validSeconds = Number.isFinite(requested) ? Math.min(Math.max(Math.round(requested), 10), 60) : 10;
 
   if (!stampCardId) {
     return NextResponse.json({ error: "stampCardId required" }, { status: 400 });

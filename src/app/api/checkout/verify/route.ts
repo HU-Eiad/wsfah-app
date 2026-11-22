@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthUser } from "@/lib/auth-mobile";
 import { prisma } from "@/lib/prisma";
 import { getPaymentLink } from "@/lib/streampay";
+import { claimPayment, releasePayment } from "@/lib/payments";
 
 /**
  * POST /api/checkout/verify
@@ -15,11 +16,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
 
-  const { paymentLinkId } = await req.json();
-  if (!paymentLinkId) {
+  const { paymentLinkId } = await req.json().catch(() => ({}));
+  if (!paymentLinkId || typeof paymentLinkId !== "string") {
     return NextResponse.json({ error: "paymentLinkId required" }, { status: 400 });
   }
 
+  let claimed: string | null = null;
   try {
     const link = await getPaymentLink(paymentLinkId);
 
@@ -47,6 +49,16 @@ export async function POST(req: NextRequest) {
     if (!planSlug) {
       return NextResponse.json({ error: "خطة غير محددة" }, { status: 400 });
     }
+    if (metadata.type === "promotion") {
+      return NextResponse.json({ error: "رابط دفع غير صالح" }, { status: 400 });
+    }
+
+    // Each paid link activates a subscription period exactly once.
+    const claimId = `link:${paymentLinkId}`;
+    if (!(await claimPayment(claimId, "subscription", userId))) {
+      return NextResponse.json({ activated: true, plan: planSlug, alreadyProcessed: true });
+    }
+    claimed = claimId;
 
     // Activate subscription
     const isTrial = metadata.is_trial === "true";
@@ -73,6 +85,11 @@ export async function POST(req: NextRequest) {
       });
     } else if (planSlug.startsWith("roaster") && companyId) {
       const tier = planSlug.includes("roaster-pro") ? "pro" : "basic";
+      const company = await prisma.company.findUnique({ where: { id: companyId }, select: { ownerId: true } });
+      if (!company || company.ownerId !== userId) {
+        await releasePayment(claimId);
+        return NextResponse.json({ error: "غير مصرح" }, { status: 403 });
+      }
       await prisma.company.update({
         where: { id: companyId },
         data: {
@@ -98,6 +115,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ activated: true, plan: planSlug });
   } catch (error) {
+    if (claimed) await releasePayment(claimed);
     console.error("Payment verification error:", error);
     return NextResponse.json(
       { error: "فشل التحقق من الدفع" },

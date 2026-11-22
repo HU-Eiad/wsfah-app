@@ -7,6 +7,7 @@ import BrandIcon from "@/components/BrandIcon";
 import BottomNav from "@/components/BottomNav";
 import { useTranslations, useLocale } from "next-intl";
 import { intlLocale } from "@/i18n/format";
+import { useApiErrorMessage } from "@/components/useApiErrorMessage";
 
 interface UserChallenge {
   currentProgress: number;
@@ -41,6 +42,7 @@ interface UserData {
 export default function RewardsPage() {
   const t = useTranslations("rewards");
   const tc = useTranslations("common");
+  const apiError = useApiErrorMessage();
   const nf = intlLocale(useLocale());
   const [user, setUser] = useState<UserData | null>(null);
   const [rewards, setRewards] = useState<Reward[]>([]);
@@ -103,15 +105,14 @@ export default function RewardsPage() {
         setUser((prev) => prev ? { ...prev, points: data.remainingPoints } : prev);
         setRedeemMessage({ type: "success", text: t("redeem.success") });
       } else {
-        const err = await res.json();
-        setRedeemMessage({ type: "error", text: err.error || t("redeem.failed") });
+        setRedeemMessage({ type: "error", text: apiError(res.status) });
       }
     } catch {
       setRedeemMessage({ type: "error", text: t("redeem.error") });
     } finally {
       setRedeeming(null);
     }
-  }, [user, t]);
+  }, [user, t, apiError]);
 
   if (loading) {
     return (

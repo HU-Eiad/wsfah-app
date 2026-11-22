@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getUserTier } from "@/lib/features";
 import { getAuthUser } from "@/lib/auth-mobile";
 
 export async function POST(req: Request) {
@@ -23,11 +24,8 @@ export async function POST(req: Request) {
 
   // Check tier requirement
   if (challenge.requiredTier === "pro") {
-    const dbUser = await prisma.user.findUnique({
-      where: { id: user.id },
-      select: { subscriptionTier: true },
-    });
-    if ((dbUser?.subscriptionTier || "").toLowerCase() !== "pro") {
+    const tier = (await getUserTier(user.id)).toLowerCase();
+    if (tier !== "pro" && tier !== "premium") {
       return NextResponse.json({ error: "Pro subscription required" }, { status: 403 });
     }
   }

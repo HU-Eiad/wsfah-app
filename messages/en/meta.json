@@ -1,4 +1,8 @@
 {
   "title": "WSFA - Coffee & tea recipes",
-  "description": "Discover, brew and share the best coffee and tea recipes"
+  "description": "Discover, brew and share the best coffee and tea recipes",
+  "siteName": "WSFA",
+  "recipeNotFound": "Recipe not found | WSFA",
+  "brandNotFound": "Brand not found | WSFA",
+  "brandDescription": "{name} on WSFA: recipes, products and updates."
 }

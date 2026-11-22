@@ -6,6 +6,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { dirFor, type Locale } from "@/i18n/config";
 import SessionProvider from "@/components/SessionProvider";
 import AdProvider from "@/components/AdProvider";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import "./globals.css";
 
 const epilogue = Epilogue({
@@ -22,7 +23,20 @@ const notoArabic = Noto_Sans_Arabic({
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("meta");
-  return { title: t("title"), description: t("description") };
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.AUTH_URL || process.env.NEXTAUTH_URL || "https://wsfa.app";
+  let metadataBase: URL | undefined;
+  try {
+    metadataBase = new URL(siteUrl);
+  } catch {
+    metadataBase = undefined;
+  }
+  return {
+    metadataBase,
+    title: t("title"),
+    description: t("description"),
+    manifest: "/manifest.json",
+    openGraph: { siteName: t("siteName"), title: t("title"), description: t("description") },
+  };
 }
 
 export default async function RootLayout({
@@ -64,6 +78,7 @@ export default async function RootLayout({
             <AdProvider>{children}</AdProvider>
           </SessionProvider>
         </NextIntlClientProvider>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

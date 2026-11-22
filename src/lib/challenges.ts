@@ -23,11 +23,13 @@ export async function trackChallengeProgress(
     });
 
     for (const uc of userChallenges) {
-      const newProgress = uc.currentProgress + 1;
+      const newProgress = Math.min(uc.currentProgress + 1, uc.challenge.maxProgress);
       const isCompleted = newProgress >= uc.challenge.maxProgress;
 
-      await prisma.userChallenge.update({
-        where: { id: uc.id },
+      // Compare-and-set on the progress we read, so concurrent actions can't
+      // complete the same challenge (and award its points) twice.
+      const res = await prisma.userChallenge.updateMany({
+        where: { id: uc.id, status: "ACTIVE", currentProgress: uc.currentProgress },
         data: {
           currentProgress: newProgress,
           ...(isCompleted
@@ -36,8 +38,7 @@ export async function trackChallengeProgress(
         },
       });
 
-      // Award points on completion
-      if (isCompleted) {
+      if (isCompleted && res.count === 1) {
         await prisma.user.update({
           where: { id: userId },
           data: { points: { increment: uc.challenge.rewardPoints } },

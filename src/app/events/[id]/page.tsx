@@ -30,11 +30,16 @@ export default function EventDetailPage() {
   const [rsvpLoading, setRsvpLoading] = useState(false);
 
   const fetchEvent = useCallback(async () => {
-    const res = await fetch(`/api/events/${id}`);
-    if (res.ok) {
-      setEvent(await res.json());
+    try {
+      const res = await fetch(`/api/events/${id}`);
+      if (res.ok) {
+        setEvent(await res.json());
+      }
+    } catch {
+      // leave event null: the not-found state shows
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [id]);
 
   useEffect(() => {
@@ -43,31 +48,36 @@ export default function EventDetailPage() {
 
   async function handleRsvp(status: "GOING" | "INTERESTED") {
     setRsvpLoading(true);
-    const res = await fetch(`/api/events/${id}/rsvp`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setEvent((prev) =>
-        prev
-          ? {
-              ...prev,
-              userRsvp: data.rsvp,
-              _count: {
-                ...prev._count,
-                rsvps: data.rsvp
-                  ? prev.userRsvp
-                    ? prev._count.rsvps
-                    : prev._count.rsvps + 1
-                  : prev._count.rsvps - 1,
-              },
-            }
-          : prev
-      );
+    try {
+      const res = await fetch(`/api/events/${id}/rsvp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEvent((prev) =>
+          prev
+            ? {
+                ...prev,
+                userRsvp: data.rsvp,
+                _count: {
+                  ...prev._count,
+                  rsvps: data.rsvp
+                    ? prev.userRsvp
+                      ? prev._count.rsvps
+                      : prev._count.rsvps + 1
+                    : prev._count.rsvps - 1,
+                },
+              }
+            : prev
+        );
+      }
+    } catch {
+      // network error: RSVP unchanged
+    } finally {
+      setRsvpLoading(false);
     }
-    setRsvpLoading(false);
   }
 
   function formatDate(dateStr: string) {

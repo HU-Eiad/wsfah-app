@@ -89,5 +89,13 @@
         "24/7 support"
       ]
     }
+  },
+  "promotion": {
+    "checkingTitle": "Confirming your payment…",
+    "checkingBody": "This only takes a moment.",
+    "paidTitle": "Payment received",
+    "paidBody": "Your promotion request has been sent and an admin will review it soon.",
+    "unpaidTitle": "Payment not confirmed yet",
+    "unpaidBody": "If you completed the payment, it may take a few minutes to be confirmed. Contact us if it doesn't show up."
   }
 }

@@ -22,18 +22,17 @@
   "messageLabel": "Message to the admin (optional)",
   "messagePlaceholder": "Tell us about your promotion goals…",
   "promotionDays": "{count, plural, one {# day of promotion} other {# days of promotion}}",
-  "youSave": "You save {amount}",
+  "youSave": "You save <amount>{value}</amount>",
   "howItWorks": {
     "title": "How does it work?",
     "review": "An admin will review your request",
     "visible": "Once approved, your brand appears in the promoted section",
-    "payment": "Payment is arranged after approval"
+    "payment": "Pay securely via StreamPay to submit your request"
   },
-  "success": "Request sent. We'll review it soon.",
-  "conflict": "You already have a promotion request under review.",
-  "submit": "Send promotion request",
+  "submit": "Continue to payment",
   "errors": {
     "submitFailed": "Couldn't send the request",
     "network": "Network error"
-  }
+  },
+  "noPlans": "No promotion plans are available for this placement right now."
 }

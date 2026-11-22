@@ -13,7 +13,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
 
-  const { promotionId, paymentLinkId } = await req.json();
+  // Only the payment link created for this promotion by /api/promotions/checkout counts;
+  // a client-supplied link could be one paid for a different (cheaper) promotion.
+  const { promotionId } = await req.json().catch(() => ({}));
   if (!promotionId) {
     return NextResponse.json({ error: "promotionId required" }, { status: 400 });
   }
@@ -32,7 +34,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Verify payment via StreamPay
-  const linkId = paymentLinkId || promo.paymentLinkId;
+  const linkId = promo.paymentLinkId;
   if (!linkId) {
     return NextResponse.json({ activated: false, message: "لم يتم الدفع بعد" });
   }
@@ -45,13 +47,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ activated: false, message: "لم يتم الدفع بعد" });
     }
 
+    const metadata = link.custom_metadata || {};
+    if (metadata.promotion_id && metadata.promotion_id !== promo.id) {
+      return NextResponse.json({ error: "رابط دفع غير صالح" }, { status: 400 });
+    }
+    const expected = promo.amountPaid ?? 0;
+    if (expected > 0 && amountCollected + 0.01 < expected) {
+      return NextResponse.json({ activated: false, message: "المبلغ المدفوع أقل من المطلوب" });
+    }
+
     // Payment confirmed — activate promotion
     const now = new Date();
     const endDate = new Date(now);
     endDate.setDate(endDate.getDate() + (promo.duration || 7));
 
-    await prisma.promotionRequest.update({
-      where: { id: promotionId },
+    // Conditional update: concurrent verifies activate it once.
+    const res = await prisma.promotionRequest.updateMany({
+      where: { id: promotionId, paymentStatus: { not: "PAID" } },
       data: {
         paymentStatus: "PAID",
         status: "PENDING", // Moves to PENDING for admin review
@@ -60,6 +72,9 @@ export async function POST(req: NextRequest) {
         endDate,
       },
     });
+    if (res.count === 0) {
+      return NextResponse.json({ activated: true, status: "PENDING" });
+    }
 
     await prisma.auditLog.create({
       data: {

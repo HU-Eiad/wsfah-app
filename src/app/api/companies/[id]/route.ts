@@ -12,7 +12,7 @@ export async function GET(
     where: { id },
     include: {
       owner: {
-        select: { id: true, name: true, email: true, image: true },
+        select: { id: true, name: true, image: true }, // public endpoint: no owner email
       },
       products: true,
       recipes: {

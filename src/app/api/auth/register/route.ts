@@ -3,7 +3,7 @@ import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { parseBody, registerSchema } from "@/lib/validation";
 import { logAudit, AUDIT } from "@/lib/audit";
-import { rateLimitAuth } from "@/lib/rate-limit";
+import { rateLimitAuth, getClientIp } from "@/lib/rate-limit";
 import { signMobileToken } from "@/lib/jwt";
 import { sendWelcomeEmail, sendVerificationEmail } from "@/lib/email";
 import { randomUUID } from "crypto";
@@ -11,7 +11,7 @@ import { randomUUID } from "crypto";
 export async function POST(req: Request) {
   try {
     // Rate limit
-    const ip = req.headers.get("x-forwarded-for") || "unknown";
+    const ip = getClientIp(req);
     const rl = rateLimitAuth(ip);
     if (!rl.success) {
       return NextResponse.json({ error: "Too many requests. Try again later." }, { status: 429 });
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
     }
 
     // Return JWT token for mobile app auto-login
-    const token = await signMobileToken({ id: user.id, role: user.role });
+    const token = await signMobileToken({ id: user.id, role: user.role, tokenVersion: user.tokenVersion });
 
     return NextResponse.json(
       { message: "Account created successfully", userId: user.id, token },

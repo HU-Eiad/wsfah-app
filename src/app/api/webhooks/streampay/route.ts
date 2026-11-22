@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { timingSafeEqual } from "crypto";
+import { claimPayment, releasePayment, planExpiry } from "@/lib/payments";
+
+function secretMatches(given: string | null, expected: string) {
+  if (!given) return false;
+  const a = Buffer.from(given);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
 
 // StreamPay webhook event names (from their dashboard)
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-
   // Verify webhook secret (mandatory)
   const webhookSecret = process.env.STREAM_WEBHOOK_SECRET;
   if (!webhookSecret) {
@@ -13,12 +20,30 @@ export async function POST(req: NextRequest) {
   const signature =
     req.headers.get("x-webhook-signature") ||
     req.headers.get("x-webhook-secret");
-  if (signature !== webhookSecret) {
+  if (!secretMatches(signature, webhookSecret)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
+  const body = await req.json().catch(() => null);
+  if (!body) return NextResponse.json({ error: "Bad request" }, { status: 400 });
+
   const event = body.event || body.type;
   const data = body.data || body;
+
+  // Deliveries can be retried or replayed; apply each money-moving event once.
+  // Payment ids are unique per payment. A renewal carries the subscription id, which repeats
+  // every cycle, so it is only deduplicated when the payload names the billing period.
+  let claimId: string | null = null;
+  if ((event === "PAYMENT_SUCCEEDED" || event === "PAYMENT_MARKED_AS_PAID") && data?.id) {
+    claimId = `wh:pay:${data.id}`;
+  } else if (event === "SUBSCRIPTION_CYCLE_RENEWED_SUCCESSFULLY" && data?.id && data.current_period_end) {
+    claimId = `wh:renew:${data.id}:${data.current_period_end}`;
+  }
+  if (claimId) {
+    if (!(await claimPayment(claimId, "webhook", (data.custom_metadata || data.metadata || {}).user_id))) {
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+  }
 
   try {
     switch (event) {
@@ -59,6 +84,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
+    if (claimId) await releasePayment(claimId);
     console.error("Webhook processing error:", error);
     return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
@@ -73,11 +99,11 @@ async function handlePaymentSuccess(data: any) {
     const promo = await prisma.promotionRequest.findUnique({
       where: { id: metadata.promotion_id },
     });
-    if (promo) {
+    if (promo && promo.paymentStatus !== "PAID") {
       const endDate = new Date(now);
       endDate.setDate(endDate.getDate() + (promo.duration || 7));
-      await prisma.promotionRequest.update({
-        where: { id: metadata.promotion_id },
+      await prisma.promotionRequest.updateMany({
+        where: { id: metadata.promotion_id, paymentStatus: { not: "PAID" } },
         data: {
           paymentStatus: "PAID",
           status: "PENDING",
@@ -104,7 +130,13 @@ async function handlePaymentSuccess(data: any) {
   if (planSlug === "pro" || planSlug === "pro-yearly") {
     await prisma.user.update({
       where: { id: userId },
-      data: { subscriptionTier: "pro" },
+      data: {
+        subscriptionTier: "pro",
+        subscriptionStartsAt: now,
+        subscriptionExpiresAt: expiresAt,
+        trialEndsAt: null,
+        trialPlanSlug: null,
+      },
     });
   } else if (planSlug.startsWith("roaster") && companyId) {
     const tier = planSlug.includes("roaster-pro") ? "pro" : "basic";
@@ -197,11 +229,16 @@ async function handleRenewalSuccess(data: any) {
 
   if (!userId) return;
 
-  // Extend expiration by 1 month
-  const expiresAt = new Date();
-  expiresAt.setMonth(expiresAt.getMonth() + 1);
+  // Extend expiration by one billing period
+  const planSlug: string = metadata.plan_slug || "";
+  const expiresAt = planExpiry(planSlug);
 
-  if (companyId) {
+  if (planSlug === "pro" || planSlug === "pro-yearly") {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { subscriptionTier: "pro", subscriptionExpiresAt: expiresAt },
+    });
+  } else if (companyId) {
     await prisma.company.update({
       where: { id: companyId },
       data: { subscriptionExpiresAt: expiresAt },

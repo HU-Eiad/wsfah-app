@@ -1,0 +1,61 @@
+{
+  "title": "Terms of use",
+  "lead": "The rules for using the WSFA website and app. By creating an account or using WSFA you agree to these terms.",
+  "updatedOn": "22 November 2026",
+  "sections": {
+    "acceptance": {
+      "title": "Using WSFA",
+      "body": "WSFA is a community for discovering, brewing and sharing coffee and tea recipes. If you do not agree to these terms, please do not use the service. Our privacy policy explains how we handle your information."
+    },
+    "account": {
+      "title": "Your account",
+      "body": "Give accurate details when you sign up and keep your password and sign-in codes private. You are responsible for activity on your account. Tell us right away if you think someone else has accessed it."
+    },
+    "content": {
+      "title": "Your content",
+      "body": "You keep ownership of the recipes, photos and other content you post. By posting it you allow WSFA to store, display and share it within the service (including on public recipe and profile pages and in link previews) for as long as it stays on WSFA. Only post content you have the right to share."
+    },
+    "conduct": {
+      "title": "Acceptable use",
+      "body": "When using WSFA you agree not to:",
+      "points": [
+        "Post content that is illegal, hateful, harassing, sexually explicit, or that infringes someone else's rights.",
+        "Spam, mislead other users, or impersonate a person or brand.",
+        "Try to access accounts or data that are not yours, or disrupt or overload the service.",
+        "Manipulate points, ratings, challenges or rewards, or use automated tools to do so."
+      ]
+    },
+    "brands": {
+      "title": "Brand accounts",
+      "body": "Brands, roasters and cafés must represent a real business they are authorised to manage. Brand information, products, events and promotions must be accurate. Promotion requests are reviewed by WSFA and may be declined."
+    },
+    "payments": {
+      "title": "Subscriptions and payments",
+      "body": "Paid plans and promotions are charged through StreamPay at the price shown before you pay. Cancellations and refunds follow our refund policy."
+    },
+    "rewards": {
+      "title": "Points and rewards",
+      "body": "Points, badges, stamps and rewards are part of the community experience. They have no cash value, cannot be transferred or sold, and may be removed if earned through abuse. Rewards offered by brands are provided by those brands under their own conditions."
+    },
+    "brewing": {
+      "title": "Recipes and brewing",
+      "body": "Recipes and brewing tips are shared by the community and brands for general guidance. Brewing involves hot water and equipment, so take care and follow your equipment's instructions."
+    },
+    "availability": {
+      "title": "Changes to the service",
+      "body": "We work to keep WSFA available and secure, but we may change, pause or remove features at any time, and the service may sometimes be unavailable."
+    },
+    "termination": {
+      "title": "Suspension and closing accounts",
+      "body": "We may remove content or suspend accounts that break these terms. You can stop using WSFA at any time and ask us to delete your account as described in the privacy policy."
+    },
+    "liability": {
+      "title": "Responsibility",
+      "body": "WSFA is provided as is. To the extent permitted by law, we are not responsible for content posted by users or brands, or for indirect losses arising from use of the service."
+    },
+    "changes": {
+      "title": "Changes to these terms",
+      "body": "We may update these terms. We will update the date at the top of this page and, for significant changes, let you know in the app. Continuing to use WSFA after a change means you accept the updated terms."
+    }
+  }
+}

@@ -119,6 +119,8 @@ export async function POST(req: NextRequest) {
       where: { id: user.id },
       data: {
         subscriptionTier: basePlan === "pro" ? "pro" : "free",
+        // The trial ends on its own unless a payment extends it.
+        ...(basePlan === "pro" ? { subscriptionStartsAt: new Date(), subscriptionExpiresAt: trialEnd } : {}),
         trialUsed: true,
         trialEndsAt: trialEnd,
         trialPlanSlug: planSlug,

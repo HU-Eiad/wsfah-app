@@ -36,10 +36,11 @@ export default function EventsPage() {
 
   useEffect(() => {
     fetch("/api/events")
-      .then((r) => r.json())
+      .then((r) => (r.ok ? r.json() : []))
       .then((data) => {
         if (Array.isArray(data)) setEvents(data);
       })
+      .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
 
@@ -47,24 +48,29 @@ export default function EventsPage() {
     e.preventDefault();
     if (!form.title.trim() || !form.startDate) return;
     setCreating(true);
-    const res = await fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: form.title,
-        description: form.description || undefined,
-        location: form.location || undefined,
-        startDate: form.startDate,
-        endDate: form.endDate || undefined,
-      }),
-    });
-    if (res.ok) {
-      const created = await res.json();
-      setShowCreate(false);
-      setForm({ title: "", description: "", location: "", startDate: "", endDate: "" });
-      router.push(`/events/${created.id}`);
+    try {
+      const res = await fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: form.title,
+          description: form.description || undefined,
+          location: form.location || undefined,
+          startDate: form.startDate,
+          endDate: form.endDate || undefined,
+        }),
+      });
+      if (res.ok) {
+        const created = await res.json();
+        setShowCreate(false);
+        setForm({ title: "", description: "", location: "", startDate: "", endDate: "" });
+        router.push(`/events/${created.id}`);
+      }
+    } catch {
+      // network error: keep the form open so the user can retry
+    } finally {
+      setCreating(false);
     }
-    setCreating(false);
   }
 
   function formatDate(dateStr: string) {

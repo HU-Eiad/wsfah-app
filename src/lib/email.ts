@@ -27,6 +27,18 @@ async function send(to: string, subject: string, html: string) {
   }
 }
 
+// ─── HTML escaping ───
+
+/** Escapes user-provided text before it is placed inside email HTML. */
+function escapeHtml(value: string | null | undefined): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 // ─── Shared Layout ───
 
 function layout(content: string) {
@@ -62,7 +74,7 @@ function layout(content: string) {
 
 function button(href: string, text: string) {
   return `<div style="text-align:center;margin:24px 0 8px;">
-    <a href="${href}" style="display:inline-block;background:#25f459;color:#0f1714;padding:14px 36px;border-radius:14px;text-decoration:none;font-weight:800;font-size:15px;letter-spacing:0.3px;">${text}</a>
+    <a href="${escapeHtml(href)}" style="display:inline-block;background:#25f459;color:#0f1714;padding:14px 36px;border-radius:14px;text-decoration:none;font-weight:800;font-size:15px;letter-spacing:0.3px;">${text}</a>
   </div>`;
 }
 
@@ -72,7 +84,7 @@ export async function sendWelcomeEmail(to: string, name: string) {
   const html = layout(`
     <div style="text-align:center;margin-bottom:24px;">
       <div style="font-size:36px;margin-bottom:8px;">👋</div>
-      <h1 style="color:#f5f5f0;margin:0;font-size:22px;font-weight:800;">أهلاً بك، ${name}</h1>
+      <h1 style="color:#f5f5f0;margin:0;font-size:22px;font-weight:800;">أهلاً بك، ${escapeHtml(name)}</h1>
       <p style="color:rgba(245,245,240,0.5);margin:8px 0 0;font-size:14px;">مرحباً في مجتمع وصفة</p>
     </div>
 
@@ -106,7 +118,7 @@ export async function sendWelcomeEmail(to: string, name: string) {
 // ─── Password Reset Email ───
 
 export async function sendPasswordResetEmail(to: string, name: string, resetToken: string) {
-  const resetUrl = `https://wsfa.app/reset-password?token=${resetToken}`;
+  const resetUrl = `https://wsfa.app/reset-password?token=${encodeURIComponent(resetToken)}`;
 
   const html = layout(`
     <div style="text-align:center;margin-bottom:24px;">
@@ -117,7 +129,7 @@ export async function sendPasswordResetEmail(to: string, name: string, resetToke
     <div style="border-top:1px solid rgba(245,245,240,0.06);margin:20px 0;"></div>
 
     <p style="color:rgba(245,245,240,0.7);font-size:14px;line-height:1.8;margin:0 0 8px;">
-      مرحباً ${name}،
+      مرحباً ${escapeHtml(name)}،
     </p>
     <p style="color:rgba(245,245,240,0.7);font-size:14px;line-height:1.8;margin:0 0 4px;">
       تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك.
@@ -140,7 +152,7 @@ export async function sendPasswordResetEmail(to: string, name: string, resetToke
 // ─── Email Verification ───
 
 export async function sendVerificationEmail(to: string, name: string, verifyToken: string) {
-  const verifyUrl = `https://wsfa.app/verify-email?token=${verifyToken}`;
+  const verifyUrl = `https://wsfa.app/verify-email?token=${encodeURIComponent(verifyToken)}`;
 
   const html = layout(`
     <div style="text-align:center;margin-bottom:24px;">
@@ -151,7 +163,7 @@ export async function sendVerificationEmail(to: string, name: string, verifyToke
     <div style="border-top:1px solid rgba(245,245,240,0.06);margin:20px 0;"></div>
 
     <p style="color:rgba(245,245,240,0.7);font-size:14px;line-height:1.8;margin:0 0 8px;">
-      مرحباً ${name}،
+      مرحباً ${escapeHtml(name)}،
     </p>
     <p style="color:rgba(245,245,240,0.7);font-size:14px;line-height:1.8;margin:0;">
       يرجى تأكيد بريدك الإلكتروني بالضغط على الزر أدناه:

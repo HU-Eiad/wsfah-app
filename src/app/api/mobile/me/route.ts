@@ -28,6 +28,7 @@ export async function GET(req: Request) {
     where: { id: tokenData.id },
     select: {
       id: true, name: true, email: true, image: true, role: true,
+      status: true, tokenVersion: true,
       points: true, subscriptionTier: true, bio: true, phone: true,
       followers: true, following: true,
       _count: {
@@ -43,6 +44,9 @@ export async function GET(req: Request) {
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404, headers: cors });
   }
+  if (user.status === "SUSPENDED" || user.tokenVersion !== tokenData.tokenVersion) {
+    return NextResponse.json({ error: "Invalid token" }, { status: 401, headers: cors });
+  }
 
   // Resolve effective tier (Pro if part of active roaster)
   const effectiveTier = await getUserTier(user.id);
@@ -55,5 +59,7 @@ export async function GET(req: Request) {
     savedCount: user._count.saves,
     avgRating: 0,
     _count: undefined,
+    tokenVersion: undefined,
+    status: undefined,
   }, { headers: cors });
 }

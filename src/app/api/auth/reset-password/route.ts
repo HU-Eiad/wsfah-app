@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
   const hashedPassword = await hash(password, 12);
   await prisma.user.update({
     where: { id: user.id },
-    data: { password: hashedPassword },
+    // Bumping tokenVersion signs out every mobile session (e.g. a stolen phone).
+    data: { password: hashedPassword, tokenVersion: { increment: 1 } },
   });
 
   // Delete used token

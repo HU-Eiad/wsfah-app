@@ -1,0 +1,12 @@
+{
+  "appName": "WSFA",
+  "homeAria": "WSFA home",
+  "login": "Log in",
+  "lastUpdated": "Last updated: {date}",
+  "contactTitle": "Questions?",
+  "contactBody": "Contact us about privacy, your data or these terms. Please write from the email or phone number linked to your account so we can verify the request.",
+  "privacyLink": "Privacy",
+  "termsLink": "Terms",
+  "refundLink": "Refund policy",
+  "copyright": "© {year} WSFA. All rights reserved."
+}

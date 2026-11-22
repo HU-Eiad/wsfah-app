@@ -1,0 +1,10 @@
+{
+  "badRequest": "Some of the details aren't valid. Please check them and try again.",
+  "unauthorized": "Please sign in to continue.",
+  "forbidden": "You don't have permission to do this.",
+  "notFound": "We couldn't find what you were looking for.",
+  "conflict": "This already exists or has changed. Please refresh and try again.",
+  "rateLimited": "Too many attempts. Please wait a moment and try again.",
+  "server": "Something went wrong on our side. Please try again later.",
+  "generic": "Something went wrong. Please try again."
+}

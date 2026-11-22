@@ -51,7 +51,10 @@ export default async function HomePage() {
   const recipePlaceholder = "/brand/banners/recipe-placeholder.svg";
 
 
-  const hour = new Date().getHours();
+  // Server time is UTC; greet by the hour in Saudi Arabia.
+  const hour = Number(
+    new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: false, timeZone: "Asia/Riyadh" }).format(new Date())
+  ) % 24;
   const greeting = hour < 12 ? t("greetingMorning", { name: userName }) : t("greetingEvening", { name: userName });
 
   const typeLabel = (type: string) =>

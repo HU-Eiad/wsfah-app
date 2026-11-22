@@ -1,29 +1,34 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import MaterialIcon from "./MaterialIcon";
 
+// The `dark` class on <html> (set before first paint by the inline script in
+// the root layout) is the source of truth; watch it as an external store.
+function subscribe(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
+const getSnapshot = () => document.documentElement.classList.contains("dark");
+// Unknown on the server: render the neutral state, then the real one after hydration.
+const getServerSnapshot = (): boolean | null => null;
+
 export default function DarkModeToggle() {
   const t = useTranslations("darkModeToggle");
-  const [dark, setDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    // Read actual state from DOM (set by inline script in <head>)
-    setDark(document.documentElement.classList.contains("dark"));
-    setMounted(true);
-  }, []);
+  const dark = useSyncExternalStore<boolean | null>(subscribe, getSnapshot, getServerSnapshot);
+  const mounted = dark !== null;
 
   const toggle = () => {
     const next = !dark;
-    setDark(next);
+    try {
+      localStorage.setItem("wsfa-dark", next ? "true" : "false");
+    } catch {}
     if (next) {
       document.documentElement.classList.add("dark");
-      localStorage.setItem("wsfa-dark", "true");
     } else {
       document.documentElement.classList.remove("dark");
-      localStorage.setItem("wsfa-dark", "false");
     }
   };
 

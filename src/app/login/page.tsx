@@ -2,17 +2,26 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import LanguageSwitch from "@/components/LanguageSwitch";
+import { useApiErrorMessage } from "@/components/useApiErrorMessage";
 import { loginWithCredentials, loginWithPhoneOtp } from "./actions";
 
 type Tab = "phone" | "email";
 
+// Post-login destination from ?callbackUrl=, limited to same-site relative paths.
+function getCallbackUrl(): string {
+  if (typeof window === "undefined") return "/";
+  const value = new URLSearchParams(window.location.search).get("callbackUrl");
+  return value && value.startsWith("/") && !value.startsWith("//") && !value.startsWith("/\\")
+    ? value
+    : "/";
+}
+
 export default function LoginPage() {
-  const router = useRouter();
   const t = useTranslations("login");
+  const apiError = useApiErrorMessage();
   const [tab, setTab] = useState<Tab>("phone");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -36,12 +45,15 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) {
+        setError(apiError(res.status));
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
       setOtpSent(true);
       if (data.otp_for_testing) setTestOtp(data.otp_for_testing);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t("sendOtpFailed"));
+    } catch {
+      setError(t("sendOtpFailed"));
     } finally {
       setLoading(false);
     }
@@ -51,7 +63,7 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const result = await loginWithPhoneOtp(phone, otp);
+      const result = await loginWithPhoneOtp(phone, otp, getCallbackUrl());
       if (result && !result.success) {
         setError(result.error || t("invalidOtp"));
         setLoading(false);
@@ -69,7 +81,7 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     try {
-      const result = await loginWithCredentials(email, password);
+      const result = await loginWithCredentials(email, password, getCallbackUrl());
       if (result && !result.success) {
         setError(result.error || t("invalidCredentials"));
         setLoading(false);
@@ -82,7 +94,7 @@ export default function LoginPage() {
   };
 
   const loginWithGoogle = () => {
-    signIn("google", { callbackUrl: "/" });
+    signIn("google", { callbackUrl: getCallbackUrl() });
   };
 
 

@@ -1,22 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
 import { hash, compare } from "bcryptjs";
 import { parseBody, userUpdateSchema } from "@/lib/validation";
 import { logAudit, AUDIT } from "@/lib/audit";
-import { verifyMobileToken } from "@/lib/jwt";
+import { getAuthUser } from "@/lib/auth-mobile";
+import { signMobileToken } from "@/lib/jwt";
 import { getUserTier } from "@/lib/features";
 
 async function getUserId(req: Request): Promise<string | null> {
-  // Check Bearer token first (mobile app)
-  const authHeader = req.headers.get("authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    const tokenData = await verifyMobileToken(authHeader.slice(7));
-    if (tokenData) return tokenData.id;
-  }
-  // Fall back to NextAuth session (web app)
-  const session = await auth();
-  return session?.user?.id || null;
+  // Bearer token (mobile) or NextAuth session (web); rejects suspended users and revoked tokens.
+  const user = await getAuthUser(req);
+  return user?.id ?? null;
 }
 
 export async function GET(req: Request) {
@@ -52,7 +46,8 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  const { password: _, ...safeUser } = user;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password: _, tokenVersion: _tv, ...safeUser } = user;
 
   // Resolve effective tier (Pro if part of active roaster)
   const effectiveTier = await getUserTier(userId);
@@ -66,7 +61,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
+  const body = await req.json().catch(() => ({}));
   const parsed = parseBody(userUpdateSchema, body);
   if (!parsed.ok) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
@@ -77,23 +72,37 @@ export async function PATCH(req: Request) {
   if (parsed.data.name !== undefined) data.name = parsed.data.name;
   if (parsed.data.bio !== undefined) data.bio = parsed.data.bio;
   if (parsed.data.image !== undefined) data.image = parsed.data.image;
-  if (parsed.data.email !== undefined) data.email = parsed.data.email;
+  const current = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true, password: true },
+  });
+  if (!current) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  if (parsed.data.email !== undefined && parsed.data.email !== current.email) {
+    // A changed email must be verified again (Google sign-in links accounts by email).
+    data.email = parsed.data.email;
+    data.emailVerified = null;
+  }
   if (parsed.data.phone !== undefined) data.phone = parsed.data.phone;
 
+  let passwordChanged = false;
   if (parsed.data.newPassword) {
-    if (parsed.data.currentPassword) {
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { password: true },
-      });
-      if (user?.password) {
-        const valid = await compare(parsed.data.currentPassword, user.password);
-        if (!valid) {
-          return NextResponse.json({ error: "Current password is incorrect" }, { status: 400 });
-        }
+    // Accounts that already have a password must prove they know it.
+    // (Google-only accounts have none and may set their first password.)
+    if (current.password) {
+      const valid = parsed.data.currentPassword
+        ? await compare(parsed.data.currentPassword, current.password)
+        : false;
+      if (!valid) {
+        return NextResponse.json({ error: "Current password is incorrect" }, { status: 400 });
       }
     }
     data.password = await hash(parsed.data.newPassword, 12);
+    // Revoke every existing mobile session.
+    data.tokenVersion = { increment: 1 };
+    passwordChanged = true;
     logAudit(userId, AUDIT.PASSWORD_CHANGE, "user", userId);
   }
 
@@ -101,18 +110,31 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "No fields to update" }, { status: 400 });
   }
 
-  const updated = await prisma.user.update({
-    where: { id: userId },
-    data,
-    select: {
-      id: true, name: true, email: true, phone: true,
-      image: true, bio: true, role: true, status: true, points: true,
-    },
-  });
+  let updated;
+  try {
+    updated = await prisma.user.update({
+      where: { id: userId },
+      data,
+      select: {
+        id: true, name: true, email: true, phone: true,
+        image: true, bio: true, role: true, status: true, points: true, tokenVersion: true,
+      },
+    });
+  } catch (e) {
+    if ((e as { code?: string })?.code === "P2002") {
+      return NextResponse.json({ error: "Email or phone already in use" }, { status: 409 });
+    }
+    throw e;
+  }
 
   logAudit(userId, AUDIT.PROFILE_UPDATE, "user", userId, {
     fields: Object.keys(data).filter((k) => k !== "password"),
   });
 
-  return NextResponse.json(updated);
+  const { tokenVersion, ...result } = updated;
+  // After a password change, hand the caller a fresh mobile token (old ones are revoked).
+  const token = passwordChanged
+    ? await signMobileToken({ id: updated.id, role: updated.role, tokenVersion })
+    : undefined;
+  return NextResponse.json({ ...result, ...(token ? { token } : {}) });
 }

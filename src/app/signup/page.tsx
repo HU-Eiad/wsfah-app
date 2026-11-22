@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import LanguageSwitch from "@/components/LanguageSwitch";
+import { ApiError, useApiErrorMessage } from "@/components/useApiErrorMessage";
 import { signupAndLogin } from "./actions";
 
 type Tab = "phone" | "email";
@@ -13,6 +14,7 @@ type Tab = "phone" | "email";
 export default function SignupPage() {
   const router = useRouter();
   const t = useTranslations("signup");
+  const apiError = useApiErrorMessage();
   const [tab, setTab] = useState<Tab>("phone");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -39,12 +41,12 @@ export default function SignupPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new ApiError(res.status);
+      const data = await res.json().catch(() => ({}));
       setOtpSent(true);
       if (data.otp_for_testing) setTestOtp(data.otp_for_testing);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t("sendOtpFailed"));
+      setError(err instanceof ApiError ? apiError(err.status) : t("sendOtpFailed"));
     } finally {
       setLoading(false);
     }
@@ -60,8 +62,7 @@ export default function SignupPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, phone, password: phonePassword }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new ApiError(res.status);
 
       // Then sign in with OTP (server action)
       const result = await signupAndLogin("phone-otp", { phone, otp });
@@ -73,7 +74,7 @@ export default function SignupPage() {
         setLoading(false);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t("registrationFailed"));
+      setError(err instanceof ApiError ? apiError(err.status) : t("registrationFailed"));
       setLoading(false);
     }
   };
@@ -92,8 +93,7 @@ export default function SignupPage() {
           password: emailPassword,
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) throw new ApiError(res.status);
 
       // Auto-login after registration (server action)
       const result = await signupAndLogin("credentials", { email, password: emailPassword });
@@ -105,7 +105,7 @@ export default function SignupPage() {
         setLoading(false);
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t("registrationFailed"));
+      setError(err instanceof ApiError ? apiError(err.status) : t("registrationFailed"));
       setLoading(false);
     }
   };

@@ -8,19 +8,26 @@ function isRedirect(error: unknown): boolean {
   // Next.js 14-16 uses different redirect error shapes
   if (error instanceof Error) {
     const msg = error.message || "";
-    const digest = (error as any).digest;
+    const digest = (error as { digest?: unknown }).digest;
     if (msg.includes("NEXT_REDIRECT") || msg.includes("redirect")) return true;
     if (typeof digest === "string" && digest.includes("NEXT_REDIRECT")) return true;
   }
   return false;
 }
 
-export async function loginWithCredentials(email: string, password: string) {
+// Only same-site relative paths are accepted as a post-login destination.
+function safeCallback(url: unknown): string {
+  return typeof url === "string" && url.startsWith("/") && !url.startsWith("//") && !url.startsWith("/\\")
+    ? url
+    : "/";
+}
+
+export async function loginWithCredentials(email: string, password: string, callbackUrl?: string) {
   try {
     await signIn("credentials", {
       email,
       password,
-      redirectTo: "/",
+      redirectTo: safeCallback(callbackUrl),
     });
     return { success: true };
   } catch (error) {
@@ -35,12 +42,12 @@ export async function loginWithCredentials(email: string, password: string) {
   }
 }
 
-export async function loginWithPhoneOtp(phone: string, otp: string) {
+export async function loginWithPhoneOtp(phone: string, otp: string, callbackUrl?: string) {
   try {
     await signIn("phone-otp", {
       phone,
       otp,
-      redirectTo: "/",
+      redirectTo: safeCallback(callbackUrl),
     });
     return { success: true };
   } catch (error) {

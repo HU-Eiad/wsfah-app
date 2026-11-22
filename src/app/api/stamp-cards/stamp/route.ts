@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   const user = await getAuthUser(req);
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { stampCode } = await req.json();
+  const { stampCode } = await req.json().catch(() => ({}));
   if (!stampCode) {
     return NextResponse.json({ error: "stampCode required" }, { status: 400 });
   }
@@ -28,6 +28,11 @@ export async function POST(req: Request) {
 
   if (codeRecord.expiresAt < new Date()) {
     return NextResponse.json({ error: "This stamp code has expired" }, { status: 400 });
+  }
+
+  // Staff can't stamp their own card with a code they issued.
+  if (codeRecord.issuedById === user.id) {
+    return NextResponse.json({ error: "You can't use a stamp code you issued" }, { status: 403 });
   }
 
   if (!codeRecord.stampCard.isActive) {
@@ -67,49 +72,58 @@ export async function POST(req: Request) {
   const newStampCount = userStampCard.currentStamps + 1;
   const isCompleted = newStampCount >= userStampCard.stampCard.stampsRequired;
 
-  // Atomic transaction: burn the code + create stamp + update card
-  const [, , updated] = await prisma.$transaction([
-    // 1. Burn the code (mark as used)
-    prisma.stampCode.update({
-      where: { id: codeRecord.id },
-      data: {
-        isUsed: true,
-        usedById: user.id,
-        usedAt: new Date(),
-      },
-    }),
-    // 2. Create stamp record
-    prisma.stamp.create({
-      data: {
-        userStampCardId: userStampCard.id,
-        stampCodeId: codeRecord.id,
-        stampCode: stampCode,
-        stampedById: codeRecord.issuedById,
-      },
-    }),
-    // 3. Update user stamp card progress
-    prisma.userStampCard.update({
-      where: { id: userStampCard.id },
-      data: {
-        currentStamps: newStampCount,
-        lastStampAt: new Date(),
-        ...(isCompleted && {
-          status: "COMPLETED",
-          completedAt: new Date(),
-        }),
-      },
-      include: {
-        stampCard: {
-          select: {
-            title: true,
-            stampsRequired: true,
-            rewardDescription: true,
-            company: { select: { name: true, logo: true } },
+  // Atomic and race-safe: the code is burned only if still unused, and the card only
+  // advances from the stamp count we read — concurrent scans can't double-stamp
+  // or slip past the cooldown.
+  let updated;
+  try {
+    updated = await prisma.$transaction(async (tx) => {
+      const now = new Date();
+      const burn = await tx.stampCode.updateMany({
+        where: { id: codeRecord.id, isUsed: false, expiresAt: { gte: now } },
+        data: { isUsed: true, usedById: user.id, usedAt: now },
+      });
+      if (burn.count === 0) throw new StampError("This stamp code has already been used", 400);
+
+      const advance = await tx.userStampCard.updateMany({
+        where: { id: userStampCard.id, status: "ACTIVE", currentStamps: userStampCard.currentStamps },
+        data: {
+          currentStamps: newStampCount,
+          lastStampAt: now,
+          ...(isCompleted && { status: "COMPLETED", completedAt: now }),
+        },
+      });
+      if (advance.count === 0) throw new StampError("Please try again", 409);
+
+      await tx.stamp.create({
+        data: {
+          userStampCardId: userStampCard.id,
+          stampCodeId: codeRecord.id,
+          stampCode: stampCode,
+          stampedById: codeRecord.issuedById,
+        },
+      });
+
+      return tx.userStampCard.findUniqueOrThrow({
+        where: { id: userStampCard.id },
+        include: {
+          stampCard: {
+            select: {
+              title: true,
+              stampsRequired: true,
+              rewardDescription: true,
+              company: { select: { name: true, logo: true } },
+            },
           },
         },
-      },
-    }),
-  ]);
+      });
+    });
+  } catch (e) {
+    if (e instanceof StampError) {
+      return NextResponse.json({ error: e.message }, { status: e.status });
+    }
+    throw e;
+  }
 
   return NextResponse.json({
     success: true,
@@ -122,4 +136,10 @@ export async function POST(req: Request) {
     brandLogo: updated.stampCard.company.logo,
     userStampCard: updated,
   });
+}
+
+class StampError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+  }
 }

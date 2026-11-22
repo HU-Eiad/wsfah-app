@@ -25,14 +25,14 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { id: tokenData.id },
-    select: { id: true, role: true, status: true },
+    select: { id: true, role: true, status: true, tokenVersion: true },
   });
 
-  if (!user || user.status === "SUSPENDED") {
+  if (!user || user.status === "SUSPENDED" || user.tokenVersion !== tokenData.tokenVersion) {
     return NextResponse.json({ error: "Account not found or suspended" }, { status: 403, headers: cors });
   }
 
-  const token = await signMobileToken({ id: user.id, role: user.role });
+  const token = await signMobileToken({ id: user.id, role: user.role, tokenVersion: user.tokenVersion });
 
   return NextResponse.json({ token }, { headers: cors });
 }

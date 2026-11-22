@@ -5,8 +5,10 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import MaterialIcon from "@/components/MaterialIcon";
 import RiyalSign from "@/components/RiyalSign";
+import { PENDING_PROMOTION_KEY } from "@/components/PromoteButton";
 import BottomNav from "@/components/BottomNav";
 import { useTranslations } from "next-intl";
+import { useApiErrorMessage } from "@/components/useApiErrorMessage";
 
 export const dynamic = "force-dynamic";
 
@@ -79,7 +81,10 @@ function PricingPage() {
   const searchParams = useSearchParams();
   const t = useTranslations("pricing");
   const tc = useTranslations("common");
+  const apiError = useApiErrorMessage();
   const status = searchParams.get("status");
+  const isPromotion = searchParams.get("type") === "promotion";
+  const [promoState, setPromoState] = useState<"checking" | "paid" | "unpaid">("checking");
   const [tab, setTab] = useState<"users" | "roasters">("users");
   const [interval, setInterval] = useState<Interval>("monthly");
   const [loading, setLoading] = useState<string | null>(null);
@@ -92,6 +97,51 @@ function PricingPage() {
         if (data.user) setUserTier(data.user.tier);
       })
       .catch(() => {});
+  }, []);
+
+  // Back from a promotion payment: confirm it with the server using the stored id.
+  useEffect(() => {
+    if (status !== "success" && status !== "cancelled") return;
+    let promotionId: string | null = null;
+    try {
+      promotionId = sessionStorage.getItem(PENDING_PROMOTION_KEY);
+      if (status === "cancelled") sessionStorage.removeItem(PENDING_PROMOTION_KEY);
+    } catch {}
+    if (status !== "success" || !isPromotion) return;
+    let cancelled = false;
+    if (!promotionId) {
+      // Nothing stored (e.g. another device/tab): StreamPay only sends users
+      // here after a successful payment, so show the received message.
+      Promise.resolve().then(() => { if (!cancelled) setPromoState("paid"); });
+      return () => { cancelled = true; };
+    }
+    fetch("/api/promotions/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ promotionId }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled) return;
+        if (data?.activated) {
+          try { sessionStorage.removeItem(PENDING_PROMOTION_KEY); } catch {}
+          setPromoState("paid");
+        } else {
+          setPromoState("unpaid");
+        }
+      })
+      .catch(() => { if (!cancelled) setPromoState("unpaid"); });
+    return () => { cancelled = true; };
+  }, [status, isPromotion]);
+
+  // Returning from the payment page via the back button restores this page from
+  // the bfcache with the buttons still disabled; re-enable them.
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) setLoading(null);
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
   }, []);
 
   async function handleSubscribe(planSlug: string, companyId?: string) {
@@ -108,15 +158,16 @@ function PricingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ planSlug, companyId }),
       });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || t("errorGeneric"));
+      const data = res.ok ? await res.json().catch(() => ({})) : {};
+      if (res.ok && data.url) {
+        // Keep the buttons disabled while the browser leaves for the payment page.
+        window.location.assign(data.url);
+        return;
       }
+      alert(res.ok ? t("errorGeneric") : apiError(res.status));
+      setLoading(null);
     } catch {
       alert(t("paymentConnectionFailed"));
-    } finally {
       setLoading(null);
     }
   }
@@ -136,7 +187,21 @@ function PricingPage() {
 
       <main className="flex-1 px-4 pb-28 pt-6 max-w-2xl mx-auto w-full">
         {/* Success/Cancel banner */}
-        {status === "success" && (
+        {status === "success" && isPromotion && (
+          <div className={`${promoState === "unpaid" ? "bg-amber-50 border-amber-200" : "bg-green-50 border-green-200"} border rounded-2xl p-4 mb-6 text-center`} role="status">
+            <MaterialIcon
+              icon={promoState === "unpaid" ? "hourglass_top" : "check_circle"}
+              className={`${promoState === "unpaid" ? "text-amber-700" : "text-green-700"} text-3xl mb-2`}
+            />
+            <p className={`${promoState === "unpaid" ? "text-amber-800" : "text-green-800"} font-bold`}>
+              {t(`promotion.${promoState}Title`)}
+            </p>
+            <p className={`${promoState === "unpaid" ? "text-amber-700" : "text-green-700"} text-sm mt-1`}>
+              {t(`promotion.${promoState}Body`)}
+            </p>
+          </div>
+        )}
+        {status === "success" && !isPromotion && (
           <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-6 text-center">
             <MaterialIcon icon="check_circle" className="text-green-700 text-3xl mb-2" />
             <p className="text-green-800 font-bold">{t("successTitle")}</p>
@@ -296,7 +361,7 @@ function PricingPage() {
                 ) : (
                   <button
                     onClick={() => handleSubscribe(slug)}
-                    disabled={loading === slug}
+                    disabled={loading !== null}
                     className={`w-full py-3 text-center rounded-xl font-bold text-sm transition-colors ${
                       plan.highlighted
                         ? "bg-paper text-pine hover:bg-leaf"

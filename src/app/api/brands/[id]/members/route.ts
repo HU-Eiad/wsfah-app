@@ -97,13 +97,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         include: { user: { select: { id: true, name: true, email: true, image: true } } },
       });
 
-  // Auto-upgrade invited user to Pro
-  if (invitee.subscriptionTier?.toLowerCase() !== "pro") {
-    await prisma.user.update({
-      where: { id: invitee.id },
-      data: { subscriptionTier: "pro" },
-    });
-  }
+  // No write to the invitee's own plan: active members get Pro through
+  // getUserTier() for as long as the brand's subscription is live.
 
   return NextResponse.json(member, { status: 201 });
 }

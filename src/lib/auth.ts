@@ -16,7 +16,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       ? [Google({
           clientId: process.env.GOOGLE_CLIENT_ID,
           clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          checks: ["none"],
+          // state + PKCE protect against login CSRF / code injection.
+          checks: ["pkce", "state"],
         })]
       : []),
     Credentials({
@@ -132,7 +133,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.role = (user as any).role || "USER";
       }
 
-      if (account?.provider === "google" && profile?.email) {
+      if (account?.provider === "google" && profile?.email && profile.email_verified !== false) {
         try {
           let dbUser = await prisma.user.findUnique({
             where: { email: profile.email },

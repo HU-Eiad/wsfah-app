@@ -20,6 +20,7 @@ model User {
   bio           String?
   role          String    @default("USER") // USER, CREATOR, BRAND_ADMIN, SUPERADMIN
   status        String    @default("ACTIVE") // ACTIVE, INACTIVE, SUSPENDED
+  tokenVersion  Int       @default(0) // bump to revoke all mobile tokens
   points        Int       @default(0)
   followers     Int       @default(0)
   following     Int       @default(0)
@@ -1053,4 +1054,12 @@ model BrandCouponClaim {
   coupon BrandCoupon @relation(fields: [couponId], references: [id], onDelete: Cascade)
 
   @@unique([userId, couponId])
+}
+
+// Each external payment (StreamPay payment link / payment id) is applied at most once.
+model ProcessedPayment {
+  id        String   @id // e.g. "link:<paymentLinkId>" or "wh:<paymentId>"
+  kind      String   // subscription, promotion
+  userId    String?
+  createdAt DateTime @default(now())
 }

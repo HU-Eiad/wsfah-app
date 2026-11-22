@@ -10,8 +10,36 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const t = await getTranslations("meta");
+  let company: { id: string; name: string; description: string | null; logo: string | null } | null = null;
+  try {
+    company = await prisma.company.findUnique({
+      where: { id },
+      select: { id: true, name: true, description: true, logo: true },
+    });
+  } catch {
+    company = null;
+  }
+  if (!company) return { title: t("brandNotFound"), robots: { index: false } };
+
+  const title = `${company.name} | ${t("siteName")}`;
+  const description = (company.description || t("brandDescription", { name: company.name })).slice(0, 200);
+  const images = company.logo ? [{ url: company.logo, alt: company.name }] : undefined;
+  const url = `/brand/${company.id}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: "profile", title, description, url, siteName: t("siteName"), images },
+    twitter: { card: "summary", title, description, images: images?.map((i) => i.url) },
+  };
+}
 
 export default async function BrandProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

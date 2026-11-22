@@ -39,7 +39,11 @@ function NewBrewLogInner() {
   const [brewTime, setBrewTime] = useState("");
   const [coffeeGrams, setCoffeeGrams] = useState("");
   const [waterMl, setWaterMl] = useState("");
-  const [brewDate, setBrewDate] = useState(new Date().toISOString().split("T")[0]);
+  // Today's date in the user's local time zone (toISOString would use UTC).
+  const [brewDate, setBrewDate] = useState(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  });
 
   useEffect(() => {
     fetch("/api/recipes?limit=100")
