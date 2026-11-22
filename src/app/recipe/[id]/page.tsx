@@ -344,7 +344,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
         <div
           className="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden aspect-[4/3] relative"
           style={{
-            backgroundImage: `url("${recipe.imageUrl || "/brand/banners/recipe-placeholder.svg"}")`,
+            backgroundImage: `url("${recipe.imageUrl || "/brand/banners/recipe-placeholder.svg"}"), url("/brand/banners/recipe-placeholder.svg")`,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-pine/90 via-pine/30 to-transparent" />

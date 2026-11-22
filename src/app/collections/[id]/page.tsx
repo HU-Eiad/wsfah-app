@@ -256,6 +256,7 @@ export default function CollectionDetailPage({ params }: { params: Promise<{ id:
                   <div className="relative aspect-[4/3] rounded-[20px] overflow-hidden bg-pine">
                     <SafeImage
                       src={recipe.imageUrl || "/brand/banners/recipe-placeholder.svg"}
+                      fallbackSrc="/brand/banners/recipe-placeholder.svg"
                       alt=""
                       fill
                       sizes="(min-width: 768px) 33vw, 50vw"

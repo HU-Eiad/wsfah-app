@@ -212,6 +212,7 @@ function SearchContent() {
                     sizes="50vw"
                     className="object-cover"
                     src={item.imageUrl || "/brand/banners/recipe-placeholder.svg"}
+                    fallbackSrc="/brand/banners/recipe-placeholder.svg"
                   />
                   <span
                     className={`absolute top-3 start-3 text-[11px] font-bold px-2 py-1 rounded-md text-white flex items-center gap-1 ${

@@ -190,6 +190,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                         sizes="(max-width: 768px) 50vw, 360px"
                         className="object-cover"
                         src={p.imageUrl || "/brand/banners/recipe-placeholder.svg"}
+                        fallbackSrc="/brand/banners/recipe-placeholder.svg"
                         alt={p.name}
                       />
                       {p.externalUrl ? (
@@ -246,6 +247,7 @@ export default function BrandTabs({ products, recipes, galleryPosts, isOwner, co
                     sizes="(max-width: 768px) 50vw, 360px"
                     className="object-cover"
                     src={r.imageUrl || "/brand/banners/recipe-placeholder.svg"}
+                    fallbackSrc="/brand/banners/recipe-placeholder.svg"
                     alt=""
                   />
                   <span className="absolute top-3 start-3 bg-brand-gold text-white text-[11px] font-bold px-2 py-1 rounded-md flex items-center gap-1">

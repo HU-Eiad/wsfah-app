@@ -126,7 +126,7 @@ export default async function LandingPage() {
               <Image src="/brand/banners/landing-hero.svg" alt="" fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-left" />
             </div>
             {/* Recipe slip: overlaps the image edge on phones, floats over its corner on desktop */}
-            <div className="relative -mt-10 ms-auto me-4 md:absolute md:mt-0 md:me-0 md:-bottom-8 md:-start-10 w-60 bg-surface rounded-2xl shadow-[0_18px_40px_-18px_rgba(20,53,36,0.45)] border border-espresso/5 p-5">
+            <div className="relative -mt-10 ms-auto me-4 md:absolute md:mt-0 md:me-0 md:-bottom-8 md:-start-10 w-60 bg-surface rounded-2xl border border-espresso/10 p-5">
               <div className="flex items-baseline justify-between mb-4">
                 <span className="text-lg font-bold">V60</span>
                 <span className="text-xs text-espresso/60">{t("hero.ratio")}</span>
@@ -199,9 +199,9 @@ export default async function LandingPage() {
       {/* Pricing — Brewers */}
       <section id="pricing" className="py-20 md:py-28 bg-surface border-y border-espresso/5">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
+          <div className="text-start mb-16">
             <h2 className="text-3xl md:text-4xl mb-4">{t("pricing.title")}</h2>
-            <p className="text-base text-espresso/65 max-w-lg mx-auto">
+            <p className="text-base text-espresso/65 max-w-lg">
               {t("pricing.lead")}
             </p>
           </div>
@@ -212,13 +212,10 @@ export default async function LandingPage() {
       {/* Pricing — Roasters */}
       <section className="py-20 md:py-28">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-brand-gold/10 rounded-full px-4 py-1.5 mb-6">
-              <MaterialIcon icon="storefront" className="text-brand-gold text-sm" />
-              <span className="text-xs font-bold text-brand-gold">{t("roasters.badge")}</span>
-            </div>
+          <div className="text-start mb-16">
+            <p className="text-sm font-semibold text-espresso/60 mb-3">{t("roasters.badge")}</p>
             <h2 className="text-3xl md:text-4xl mb-4">{t("roasters.title")}</h2>
-            <p className="text-base text-espresso/65 max-w-lg mx-auto">
+            <p className="text-base text-espresso/65 max-w-lg">
               {t("roasters.lead")}
             </p>
           </div>

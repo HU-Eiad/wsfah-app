@@ -19,6 +19,18 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: buildRemotePatterns(uploadsUrl),
   },
+  // One canonical host. Google sign-in always returns to wsfa.app, so a sign-in
+  // started on www would lose its state/PKCE cookies ("state value could not be parsed").
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.wsfa.app" }],
+        destination: "https://wsfa.app/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

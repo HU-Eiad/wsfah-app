@@ -47,6 +47,7 @@ export default function RecommendedRecipes() {
             <div className="relative aspect-[3/4] rounded-[20px] overflow-hidden bg-pine">
               <SafeImage
                 src={recipe.imageUrl || "/brand/banners/recipe-placeholder.svg"}
+                fallbackSrc="/brand/banners/recipe-placeholder.svg"
                 alt=""
                 fill
                 sizes="176px"

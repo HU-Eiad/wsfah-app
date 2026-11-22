@@ -112,6 +112,7 @@ export default async function HomePage() {
                   sizes="(min-width: 672px) 640px, 100vw"
                   className="object-cover"
                   src={featuredRecipe.imageUrl || recipePlaceholder}
+                  fallbackSrc={recipePlaceholder}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-pine via-pine/75 to-pine/10"></div>
                 <div className="relative p-6">
@@ -206,6 +207,7 @@ export default async function HomePage() {
                     sizes="(min-width: 768px) 33vw, 50vw"
                     className="object-cover"
                     src={item.imageUrl || recipePlaceholder}
+                    fallbackSrc={recipePlaceholder}
                   />
                   <span
                     className={`absolute top-3 start-3 text-[11px] font-bold px-2 py-1 rounded-md text-white flex items-center gap-1 ${

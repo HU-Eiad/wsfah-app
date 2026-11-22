@@ -197,6 +197,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                       sizes="(min-width: 768px) 33vw, 50vw"
                       className="object-cover"
                       src={r.imageUrl || "/brand/banners/recipe-placeholder.svg"}
+                      fallbackSrc="/brand/banners/recipe-placeholder.svg"
                       alt=""
                     />
                   </div>

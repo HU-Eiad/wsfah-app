@@ -7,6 +7,7 @@ import { dirFor, type Locale } from "@/i18n/config";
 import SessionProvider from "@/components/SessionProvider";
 import AdProvider from "@/components/AdProvider";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import AppFrame from "@/components/AppFrame";
 import "./globals.css";
 
 const epilogue = Epilogue({
@@ -75,7 +76,9 @@ export default async function RootLayout({
         )}
         <NextIntlClientProvider>
           <SessionProvider>
-            <AdProvider>{children}</AdProvider>
+            <AdProvider>
+              <AppFrame>{children}</AppFrame>
+            </AdProvider>
           </SessionProvider>
         </NextIntlClientProvider>
         <ServiceWorkerRegister />

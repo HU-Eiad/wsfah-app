@@ -61,6 +61,21 @@ body {
   color: var(--c-ink);
 }
 
+/* App screens are phone-first: on wide windows show them as a centred column
+   (see AppFrame.tsx). BottomNav uses the same width. */
+:root {
+  --app-width: 480px;
+}
+@media (min-width: 640px) {
+  .app-frame {
+    max-width: var(--app-width);
+    margin-inline: auto;
+    min-height: 100vh;
+    border-inline: 1px solid var(--c-line);
+    background-color: var(--c-bg);
+  }
+}
+
 /* Headings rely on this weight (the redesign removed per-heading font-bold classes). */
 h1,
 h2 {

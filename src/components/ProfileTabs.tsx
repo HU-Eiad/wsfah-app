@@ -68,6 +68,7 @@ function RecipeGrid({ items, emptyText, emptyAction }: {
               sizes="(max-width: 768px) 50vw, 360px"
               className="object-cover"
               src={r.imageUrl || PLACEHOLDER_IMG}
+              fallbackSrc={PLACEHOLDER_IMG}
               alt=""
             />
             <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-pine/80 to-transparent p-3">
